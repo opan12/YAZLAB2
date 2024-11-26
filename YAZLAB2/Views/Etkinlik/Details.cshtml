@@ -1,0 +1,17 @@
+﻿@model YAZLAB2.Models.Etkinlik
+
+@{
+    ViewData["Title"] = "Etkinlik Detayı";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h3>@Model.EtkinlikAdi</h3>
+    <p><strong>Açıklama:</strong> @Model.Aciklama</p>
+    <p><strong>Tarih:</strong> @Model.Tarih.ToString("dd/MM/yyyy")</p>
+    <p><strong>Konum:</strong> @Model.Konum</p>
+</div>
+
+<a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>
+<a href="@Url.Action("Edit", new { id = Model.EtkinlikId })" class="btn btn-warning">Düzenle</a>

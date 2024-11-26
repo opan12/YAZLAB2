@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YAZLAB2.Data;
+using YAZLAB2.Models;
 
 public class KategoriController : Controller
 {
@@ -87,10 +88,17 @@ public class KategoriController : Controller
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
+    [HttpGet]
+    public IActionResult Create()
+    {
+        // Yeni bir Etkinlik modelini görünüm için oluşturun
+        var model = new Kategori();
+        return View(model);
+    }
 
     // POST: KategoriEkle
     [HttpPost]
-    public async Task<IActionResult> KategoriEkle([FromForm] Kategori kategori)
+    public async Task<IActionResult> Create([FromForm] Kategori kategori)
     {
         if (kategori != null && !string.IsNullOrEmpty(kategori.KategoriAdi))
         {

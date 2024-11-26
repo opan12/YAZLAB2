@@ -1,13 +1,215 @@
 ﻿@model User
 
 @{
-    ViewData["Title"] = "User Hub Area";
+    ViewData["Title"] = "Home Page";
 }
 
-<div class="container">
-    <div>
-        <a href="/Etkinlik/Create" class="btn btn-success">Etkinlik Git</a>
-    </div>
-    <h1>Hoşgeldin, @Model.Ad @Model.Soyad</h1>
+<div class="home-container">
+    <header class="home-header">
+        <img src="~/assets/images/logo.jpeg" alt="HEYOO" class="logo" onclick="navigateTo('/home')" />
+        <div class="header-buttons">
+            <button class="create-event-button" onclick="navigateTo('/create-event')">
+                Etkinlik Oluştur
+            </button>
+            <button class="profile-button" onclick="navigateTo('/profile')">
+                Profil
+            </button>
+        </div>
+    </header>
 
+    <main class="main-content">
+        <section class="user-info">
+            <h1>Hoşgeldin, @Model.Ad @Model.Soyad</h1>
+            <div>
+                <a href="/Etkinlik/Index" class="btn btn-success">Etkinlik Git</a>
+                <a href="/User/Profile" class="btn btn-success">Profil Git</a>
+            </div>
+        </section>
+
+        <section class="attended-events">
+            <h2>Katılınan Etkinlikler</h2>
+            <div id="attended-events-list" class="event-list">
+                <!-- Katılınan etkinlikler burada dinamik olarak gösterilecek -->
+            </div>
+        </section>
+
+        <section class="recommended-events">
+            <h2>Önerilen Etkinlikler</h2>
+            <div id="recommended-events-list" class="recommended-event-list">
+                <!-- Önerilen etkinlikler burada dinamik olarak gösterilecek -->
+            </div>
+        </section>
+    </main>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+            if (isLoggedIn) {
+                fetchAttendedEvents();
+                fetchRecommendedEvents();
+            }
+
+            function navigateTo(path) {
+                window.location.href = path;
+            }
+
+            async function fetchAttendedEvents() {
+                try {
+                    const userId = localStorage.getItem("userId");
+                    const response = await fetch(`/api/User/katilim?userId=${userId}`);
+                    const data = await response.json();
+                    renderEvents("attended-events-list", data);
+                } catch (error) {
+                    console.error("Error fetching attended events:", error);
+                }
+            }
+
+            async function fetchRecommendedEvents() {
+                try {
+                    const userId = localStorage.getItem("userId");
+                    const response = await fetch(`/api/Oneri/GetOneriler/${userId}`);
+                    const data = await response.json();
+                    renderEvents("recommended-events-list", data);
+                } catch (error) {
+                    console.error("Error fetching recommended events:", error);
+                }
+            }
+
+            function renderEvents(containerId, events) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = "";
+
+                events.forEach((event) => {
+                    const eventItem = document.createElement("div");
+                    eventItem.className = "event-item";
+                    eventItem.onclick = () => navigateTo(`/event/${event.etkinlikId}`);
+                    eventItem.innerHTML = `
+                                <h3>${event.etkinlikAdi}</h3>
+                                <p>${new Date(event.tarih).toLocaleDateString()}</p>
+                            `;
+                    container.appendChild(eventItem);
+                });
+            }
+        });
+    </script>
+}
+
+<style>
+    .home-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(233, 236, 253, 0.85);
+        z-index: 10;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .home-container {
+        font-family: 'Arial, sans-serif';
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: linear-gradient(135deg, #007bff, #d991ee);
+        color: #fff;
+        min-height: 100vh;
+    }
+
+    .header-buttons {
+        display: flex;
+        gap: 50px;
+        justify-content: right;
+        margin-top: 8px;
+    }
+
+    .logo {
+        width: 200px;
+        height: 100px;
+        object-fit: contain;
+        cursor: pointer;
+    }
+
+    .create-event-button,
+    .profile-button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+        min-width: 180px;
+        max-width: 220px;
+    }
+
+        .create-event-button:hover,
+        .profile-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+    .main-content {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 120px;
+    }
+
+    .user-info {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .attended-events,
+    .recommended-events {
+        margin-top: 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .event-list,
+    .recommended-event-list {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .event-item,
+    .recommended-event-item {
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        min-width: 250px;
+        max-width: 300px;
+        text-align: left;
+    }
+
+        .event-item:hover,
+        .recommended-event-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    h2 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+</style>

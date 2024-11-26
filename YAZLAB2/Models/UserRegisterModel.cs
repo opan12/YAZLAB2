@@ -1,4 +1,6 @@
-﻿namespace YAZLAB2.Models
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace YAZLAB2.Models
 {
     public class UserRegisterModel
     {
@@ -13,6 +15,7 @@
         public string ProfilFoto { get; set; } // Base64 veya URL olarak saklanabilir
         public List<int> IlgiAlanlari { get; set; }  // KategoriId listesi
         public string Email { get; set; }
+        public List<SelectListItem> Kategoriler { get; set; }
 
 
     }

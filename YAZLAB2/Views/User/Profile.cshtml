@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+
+<h1>Profile</h1>
+<div class="profile-container">
+    <div class="profile-header">
+        <img src="@Model.ProfilFoto ?? Url.Content(" ~ /images/default-profile-pic.jpg")" alt="Profil Fotoğrafı" class="profile-pic" />
+        <h2 class="username">@Model.Ad @Model.Soyad</h2>
+        <p class="location">@(!string.IsNullOrEmpty(Model.Konum) ? Model.Konum : "Konum bilgisi yok")</p>
+    </div>
+
+    <div class="details-container">
+        <div class="info-section">
+            <h3 class="section-title">Kişisel Bilgiler</h3>
+            <p><strong>E-posta:</strong> @Model.Email</p>
+            <p><strong>Doğum Tarihi:</strong> @(Model.DogumTarihi.HasValue ? Model.DogumTarihi.Value.ToString("dd/MM/yyyy") : "Bilinmiyor")</p>
+            <p><strong>Cinsiyet:</strong> @(string.IsNullOrEmpty(Model.Cinsiyet) ? "Belirtilmemiş" : Model.Cinsiyet)</p>
+            <p><strong>Telefon:</strong> @(!string.IsNullOrEmpty(Model.TelefonNumarasi) ? Model.TelefonNumarasi : "Telefon numarası yok")</p>
+        </div>
+    </div>
+
+    <div class="profile-actions">
+        <a href="@Url.Action("UserHubArea", "User", new { Username = Model.UserName })" class="button back-to-home-button">Anasayfa</a>
+        <a href="@Url.Action("UpdateProfile", "User")" class="button profile-update-button">Profili Güncelle</a>
+        <a href="@Url.Action("UpdatePassword", "User")" class="button password-update-button">Şifre Yenile</a>
+        <a href="@Url.Action("Logout", "User")" class="button logout-button">Çıkış Yap</a>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .profile-container {
+            margin: 20px auto;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .username {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .location {
+            font-size: 16px;
+            color: #777;
+        }
+
+        .details-container {
+            margin-top: 20px;
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .profile-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+            .button:hover {
+                background-color: #0056b3;
+            }
+
+        .logout-button {
+            background-color: #e63946;
+        }
+
+            .logout-button:hover {
+                background-color: #d62828;
+            }
+    </style>
+}

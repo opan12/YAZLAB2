@@ -60,6 +60,7 @@
                 Konum = yeniEtkinlik.Konum,
                 Aciklama = yeniEtkinlik.Aciklama,
                 Tarih = yeniEtkinlik.Tarih,
+                Saat=yeniEtkinlik.Saat,
                 EtkinlikSuresi = yeniEtkinlik.EtkinlikSuresi
             };
 

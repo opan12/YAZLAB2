@@ -13,6 +13,7 @@ public class Etkinlik
     public string EtkinlikAdi { get; set; }
     public string Aciklama { get; set; }
     public DateTime Tarih { get; set; }
+    public TimeSpan Saat { get; set; }
     public TimeSpan EtkinlikSuresi { get; set; }
     public string Konum { get; set; }
 

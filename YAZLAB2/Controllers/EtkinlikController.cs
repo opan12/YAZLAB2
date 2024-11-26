@@ -54,7 +54,9 @@ namespace Yazlab__2.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            // Yeni bir Etkinlik modelini görünüm için oluşturun
+            var model = new Etkinlik();
+            return View(model);
         }
 
         // Yeni Etkinlik Oluşturma (Post)
@@ -65,13 +67,9 @@ namespace Yazlab__2.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Login", "User");
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(yeniEtkinlik);
-            }
 
             yeniEtkinlik.UserId = user.Id;
             yeniEtkinlik.OnayDurumu = false;

@@ -5,6 +5,7 @@ using YAZLAB2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using YAZLAB2.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 public class UserController : Controller
@@ -19,14 +20,61 @@ public class UserController : Controller
         _signInManager = signInManager;
         _context = context;
     }
-    [HttpGet]
     public IActionResult Register()
     {
-        var model = new UserRegisterModel();
-        // Modeli doldur
+        // Kategorileri veritabanından çekiyoruz
+        var kategoriler = _context.Kategoris.ToList();
+
+        // Kategorileri SelectListItem formatına dönüştürüyoruz
+        var kategoriList = kategoriler.Select(k => new SelectListItem
+        {
+            Value = k.KategoriId.ToString(),
+            Text = k.KategoriAdi
+        }).ToList();
+
+        // ViewModel'i oluşturup, Kategoriler listesini set ediyoruz
+        var model = new UserRegisterModel
+        {
+            Kategoriler = kategoriList
+        };
+
         return View(model);
     }
-    [HttpGet]
+
+
+    [HttpPost]
+    public async Task<IActionResult> Register(UserRegisterModel model)
+    {
+      
+            var user = new User
+            {
+                UserName = model.UserName,
+                Ad = model.Ad,
+                Soyad = model.Soyad,
+                Email = model.Email,
+                TelefonNumarasi = model.TelefonNumarasi,
+                Konum = model.Konum,
+                DogumTarihi = model.DogumTarihi,
+                Cinsiyet = model.Cinsiyet,
+                ProfilFoto = model.ProfilFoto
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Şifre);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+
+                return RedirectToAction("Login");
+            
+         
+        }
+
+        // Return view if the model is not valid
+        return View(model);
+    }
+
+
+[HttpGet]
     [Authorize(Roles = "User")]
     public async Task<IActionResult> UserHubArea(string Username)
     {
@@ -45,51 +93,6 @@ public class UserController : Controller
     }
 
 
-    // Kullanıcı Kayıt İşlemi
-    [HttpPost]
-    public async Task<IActionResult> Register(UserRegisterModel model)
-    {
-        
-            var user = new User
-            {
-                UserName = model.UserName,
-                Ad = model.Ad,
-                Soyad = model.Soyad,
-                Email = model.Email,
-                TelefonNumarasi = model.TelefonNumarasi,
-                Konum=model.Konum,
-                DogumTarihi = model.DogumTarihi,
-                Cinsiyet = model.Cinsiyet,
-                ProfilFoto = model.ProfilFoto
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Şifre);
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
-
-                if (model.IlgiAlanlari != null && model.IlgiAlanlari.Any())
-                {
-                    var ilgiAlanlari = model.IlgiAlanlari.Select(kategoriId => new IlgiAlanı
-                    {
-                        KullanıcıId = user.Id,
-                        KategoriId = kategoriId
-                    }).ToList();
-
-                    await _context.IlgiAlanları.AddRangeAsync(ilgiAlanlari);
-                    await _context.SaveChangesAsync();
-                }
-
-                return RedirectToAction("Login");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-        
-        return View(model);
-    }
 
     // Kullanıcı Giriş Sayfası (View Gönderimi)
     [HttpGet]
@@ -147,7 +150,6 @@ public class UserController : Controller
     }
 
   
-    // Kullanıcı Çıkış İşlemi
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
@@ -155,7 +157,6 @@ public class UserController : Controller
         return RedirectToAction("Login");
     }
 
-    // Profil Sayfası
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
@@ -165,23 +166,16 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
-        var ilgiAlanlari = await _context.IlgiAlanları
-                                         .Where(ia => ia.KullanıcıId == user.Id)
-                                         .ToListAsync();
-
-        var kategoriIds = ilgiAlanlari.Select(ia => ia.KategoriId).ToList();
-        var kategoriler = await _context.Kategoris
-                                        .Where(k => kategoriIds.Contains(k.KategoriId))
-                                        .ToListAsync();
-
+      
         var model = new UserProfileViewModel
         {
             Ad = user.Ad,
             Soyad = user.Soyad,
             Email = user.Email,
+            Konum = user.Konum,
+            DogumTarihi = user.DogumTarihi,
             TelefonNumarasi = user.TelefonNumarasi,
             ProfilFoto = user.ProfilFoto,
-            IlgiAlanlari = kategoriler.Select(k => k.KategoriAdi).ToList()
         };
 
         return View(model);
@@ -193,6 +187,8 @@ public class UserProfileViewModel
     public string Soyad { get; set; }
     public string Email { get; set; }
     public string TelefonNumarasi { get; set; }
+    public DateTime DogumTarihi { get; set; }
     public string ProfilFoto { get; set; }
+    public string Konum { get; set; }
     public List<string> IlgiAlanlari { get; set; }
 }

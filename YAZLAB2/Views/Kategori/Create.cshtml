@@ -1,12 +1,11 @@
-﻿<h3>Yeni Kategori Ekle</h3>
-<form asp-action="KategoriEkle" method="post">
+﻿@model YAZLAB2.Models.Kategori
+
+<h3>Yeni Kategori Ekle</h3>
+<form asp-action="Create" method="post">
     <div class="form-group">
         <label for="KategoriAdi">Kategori Adı</label>
         <input type="text" class="form-control" id="KategoriAdi" name="KategoriAdi" placeholder="Kategori Adı" required>
     </div>
-    <div class="form-group">
-        <label for="EtkinlikId">Etkinlik ID</label>
-        <input type="number" class="form-control" id="EtkinlikId" name="EtkinlikId" placeholder="Etkinlik ID" required>
-    </div>
+   
     <button type="submit" class="btn btn-success">Kategori Ekle</button>
 </form>

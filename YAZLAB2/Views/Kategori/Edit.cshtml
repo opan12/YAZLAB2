@@ -1,0 +1,17 @@
+﻿@model YAZLAB2.Models.Kategori
+
+@{
+    ViewData["Title"] = "Kategori Düzenle";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="KategoriId" value="@Model.KategoriId" />
+    <div class="form-group">
+        <label for="KategoriAdi">Kategori Adı</label>
+        <input type="text" class="form-control" id="KategoriAdi" name="KategoriAdi" value="@Model.KategoriAdi" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>
+</form>

@@ -1,0 +1,47 @@
+﻿@model YAZLAB2.Models.Etkinlik
+
+@{
+    ViewData["Title"] = "Yeni Etkinlik Oluştur";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="EtkinlikAdi">Etkinlik Adı</label>
+        <input type="text" class="form-control" id="EtkinlikAdi" name="EtkinlikAdi" value="@Model.EtkinlikAdi" required />
+    </div>
+    <div class="form-group">
+        <label for="Aciklama">Açıklama</label>
+        <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3" required>@Model.Aciklama</textarea>
+    </div>
+    <div class="form-group">
+        <label for="Tarih">Tarih</label>
+        <input type="date" class="form-control" id="Tarih" name="Tarih" value="@Model.Tarih.ToString("yyyy-MM-dd")" required />
+    </div>
+    <div class="form-group">
+        <label for="Saat">Saat</label>
+        <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString(@"hh\:mm")" required />
+    </div>
+    <div class="form-group">
+        <label for="EtkinlikSuresi">Etkinlik Süresi</label>
+        <input type="time" class="form-control" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi.ToString(@"hh\:mm")" required />
+    </div>
+    <div class="form-group">
+        <label for="Konum">Konum</label>
+        <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" required />
+    </div>
+    <div class="form-group">
+        <label for="KategoriId">Kategori</label>
+        <select class="form-control" id="KategoriId" name="KategoriId" required>
+            <option value="">Bir kategori seçin</option>
+            @foreach (var kategori in ViewBag.Kategoriler)
+            {
+                <option value="@kategori.KategoriId" selected="@((kategori.KategoriId == Model.KategoriId) ? "selected" : "")">@kategori.KategoriAdi</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>
+</form>

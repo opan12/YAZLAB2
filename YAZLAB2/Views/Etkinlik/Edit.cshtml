@@ -1,0 +1,31 @@
+﻿@model YAZLAB2.Models.Etkinlik
+
+@{
+    ViewData["Title"] = "Etkinlik Düzenle";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="EtkinlikId" value="@Model.EtkinlikId" />
+
+    <div class="form-group">
+        <label for="EtkinlikAdi">Etkinlik Adı</label>
+        <input type="text" class="form-control" id="EtkinlikAdi" name="EtkinlikAdi" value="@Model.EtkinlikAdi" required />
+    </div>
+    <div class="form-group">
+        <label for="Aciklama">Açıklama</label>
+        <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3" required>@Model.Aciklama</textarea>
+    </div>
+    <div class="form-group">
+        <label for="Tarih">Tarih</label>
+        <input type="date" class="form-control" id="Tarih" name="Tarih" value="@Model.Tarih.ToString("yyyy-MM-dd")" required />
+    </div>
+    <div class="form-group">
+        <label for="Konum">Konum</label>
+        <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>
+</form>

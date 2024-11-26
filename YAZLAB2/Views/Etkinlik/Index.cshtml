@@ -1,0 +1,41 @@
+﻿@model IEnumerable<YAZLAB2.Models.Etkinlik>
+
+@{
+    ViewData["Title"] = "Etkinliklerim";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Yeni Etkinlik Oluştur</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Etkinlik Adı</th>
+            <th>Açıklama</th>
+            <th>Tarih</th>
+            <th>Konum</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var etkinlik in Model)
+        {
+            <tr>
+                <td>@etkinlik.EtkinlikAdi</td>
+                <td>@etkinlik.Aciklama</td>
+                <td>@etkinlik.Tarih.ToString("dd/MM/yyyy")</td>
+                <td>@etkinlik.Konum</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = etkinlik.EtkinlikId })" class="btn btn-info">Detaylar</a>
+                    <a href="@Url.Action("Edit", new { id = etkinlik.EtkinlikId })" class="btn btn-warning">Düzenle</a>
+                    <form method="post" action="@Url.Action("Delete", new { id = etkinlik.EtkinlikId })" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Silmek istediğinize emin misiniz?')">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
