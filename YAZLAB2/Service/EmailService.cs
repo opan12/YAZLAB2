@@ -2,24 +2,29 @@
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace Yazlab_2.Models.Service
+namespace YAZLAB2.Service
 {
     public class EmailService
     {
+        private readonly string _smtpHost = "smtp.gmail.com";
+        private readonly int _smtpPort = 587;
+        private readonly string _smtpUser = "sudeopan3@gmail.com";  // Burada güvenlik için ortam değişkeni veya başka bir güvenli yöntem kullanılabilir
+        private readonly string _smtpPass = "Sudeopan.123";  // Burada güvenlik için ortam değişkeni veya başka bir güvenli yöntem kullanılabilir
+
         public async Task SendResetPasswordEmail(string toEmail, string resetLink)
         {
-            var smtpClient = new SmtpClient("smtp.gmail.com")
+            var smtpClient = new SmtpClient(_smtpHost)
             {
-                Port = 587, // TLS için doğru port
-                Credentials = new NetworkCredential("sudeopan3@gmail.com", "Sudeopan.123"), // Gmail hesabınızın bilgileri
+                Port = _smtpPort, // TLS için doğru port
+                Credentials = new NetworkCredential(_smtpUser, _smtpPass), // Gmail hesabınızın bilgileri
                 EnableSsl = true // SSL/TLS bağlantısı aktif
             };
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress("your-email@gmail.com"), // Gönderen e-posta adresi
+                From = new MailAddress(_smtpUser), // Gönderen e-posta adresi
                 Subject = "Şifre Sıfırlama Talebi",
-                Body = $"Şifrenizi sıfırlamak için linke tıklayın: {resetLink}",
+                Body = $"Şifrenizi sıfırlamak için linke tıklayın: <a href='{resetLink}'>Sıfırlama Linki</a>",
                 IsBodyHtml = true // HTML içerik kullanıyorsanız true yapın
             };
 
@@ -31,10 +36,10 @@ namespace Yazlab_2.Models.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Hata: {ex.Message}");
-                throw;
+                // Hata loglama işlemi burada yapılabilir
+                Console.WriteLine($"E-posta gönderme hatası: {ex.Message}");
+                throw; // Hata tekrar fırlatılır
             }
         }
     }
-
 }

@@ -20,6 +20,8 @@ namespace YAZLAB2.Data
         public DbSet<Mesaj> Mesajlar { get; set; }
         public DbSet<Puan> Puanlar { get; set; }
         public DbSet<IlgiAlanı> IlgiAlanları { get; set; }
+        public DbSet<Bildirim> Bildirimler { get; set; }
+
         public DbSet<Kategori> Kategoris { get; set; }
 
         // Model configuration

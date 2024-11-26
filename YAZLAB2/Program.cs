@@ -4,9 +4,10 @@ using YAZLAB2.Models;  // Make sure this is present
 using Microsoft.AspNetCore.Builder;
 using Yazlab__2.Core.Service;
 using Yazlab__2.Service;
-using Yazlab_2.Models.Service;
 using YAZLAB2.Models;
 using YAZLAB2.Data;
+using YAZLAB2.Services;
+using YAZLAB2.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,9 @@ builder.Services.AddScoped<EtkinlikService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<PuanHesaplayiciService>();
 builder.Services.AddScoped<MesajServisi>();
+ builder.Services.AddScoped<BildirimService>();
 builder.Services.AddScoped<EtkinlikOnerisiServisi>();
+
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

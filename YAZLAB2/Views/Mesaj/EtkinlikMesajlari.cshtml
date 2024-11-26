@@ -1,8 +1,15 @@
 ﻿@model List<YAZLAB2.Models.Mesaj>
 
-<h2>Etkinlik Mesajları</h2>
+@{
+    ViewData["Title"] = "Etkinlik Mesajları";
+    var etkinlikId = ViewData["EtkinlikId"];
+}
 
-@if (Model.Count > 0)
+<h2>@ViewData["Title"]</h2>
+
+<h3>Etkinlik Mesajları</h3>
+
+@if (Model.Any())
 {
     <ul>
         @foreach (var mesaj in Model)
@@ -19,4 +26,12 @@ else
     <p>Henüz mesaj bulunmamaktadır.</p>
 }
 
-<h3>Yeni Yorum Ekle</h3>
+<!-- Yorum Ekleme Formu -->
+<h3>Yeni Mesaj Ekle</h3>
+<form asp-action="EtkinlikMesajEkle" method="post">
+    <input type="hidden" name="etkinlikId" value="@etkinlikId" />
+    <textarea name="mesajMetni" required class="form-control" placeholder="Mesajınızı yazın..."></textarea><br />
+    <button type="submit" class="btn btn-primary">Mesaj Gönder</button>
+</form>
+
+<a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Ana Sayfaya Dön</a>

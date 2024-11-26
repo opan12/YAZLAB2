@@ -23,7 +23,35 @@ namespace YAZLAB2.Controllers
                 .OrderBy(m => m.GonderimZamani)
                 .ToListAsync();
 
+            // EtkinlikId'yi ViewData ile geçirme
+            ViewData["EtkinlikId"] = etkinlikId;
+
             return View(mesajlar);
+        }
+
+
+        // Etkinliğe yeni mesaj ekleme
+        [HttpPost]
+        public async Task<IActionResult> EtkinlikMesajEkle(int etkinlikId, string mesajMetni)
+        {
+            if (string.IsNullOrEmpty(mesajMetni))
+            {
+                return BadRequest("Mesaj boş olamaz.");
+            }
+
+            var yeniMesaj = new Mesaj
+            {
+                GondericiID = User.Identity.Name,  // Kullanıcı adı veya ID
+                AliciID = null,  // Eğer mesaj bireysel değilse, alıcı bilgisi null olabilir
+                MesajMetni = mesajMetni,
+                GonderimZamani = DateTime.Now,
+                EtkinlikId = etkinlikId
+            };
+
+            _context.Mesajlar.Add(yeniMesaj);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("EtkinlikMesajlari", new { etkinlikId = etkinlikId });  // Mesaj ekledikten sonra etkinlik mesajları sayfasına yönlendir
         }
 
         // Yeni mesaj ekleme
@@ -50,8 +78,8 @@ namespace YAZLAB2.Controllers
 
             return RedirectToAction("Mesajlarim");  // Gönderim sonrası gelen mesajlar sayfasına yönlendir
         }
+        [HttpGet]
 
-        // Kullanıcıya ait tüm mesajları görüntüleme
         public async Task<IActionResult> Mesajlarim()
         {
             var aliciId = User.Identity.Name;  // Kullanıcı ID'si
@@ -63,6 +91,7 @@ namespace YAZLAB2.Controllers
 
             return View(mesajlar);
         }
+        [HttpGet]
 
         // Kullanıcıya gönderenlerin mesajlarını listeleme
         public async Task<IActionResult> GonderilenMesajlar()

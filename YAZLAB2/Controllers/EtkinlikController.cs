@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Yazlab__2.Service;
 using YAZLAB2.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using YAZLAB2.Services;
 
 
 
@@ -19,12 +20,16 @@ namespace Yazlab__2.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly EtkinlikService _etkinlikService;
+        private readonly BildirimService _bildirimService;
 
-        public EtkinlikController(ApplicationDbContext context, UserManager<User> userManager, EtkinlikService etkinlikService)
+
+        public EtkinlikController(ApplicationDbContext context, UserManager<User> userManager, EtkinlikService etkinlikService, BildirimService bildirimService)
         {
             _context = context;
             _userManager = userManager;
             _etkinlikService = etkinlikService;
+            _bildirimService = bildirimService;
+
         }
 
         // Kullanıcının etkinliklerini listele
@@ -51,58 +56,54 @@ namespace Yazlab__2.Controllers
 
             return View(etkinlik);
         }
-        [HttpPost("{etkinlikId}/katil")]
-        [Authorize(Roles = "User")]
+        [HttpPost]
         public async Task<IActionResult> Katil(int etkinlikId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Unauthorized("Kullanıcı girişi gerekli.");
+                return RedirectToAction("Login", "Account");
             }
 
-            // Etkinliği bul
-            var etkinlik = await _context.Etkinlikler.FindAsync(etkinlikId);
-            if (etkinlik == null)
-            {
-                return NotFound("Etkinlik bulunamadı.");
-            }
-
-            // Kullanıcının daha önce katıldığı etkinliklerin zamanlarını al
             var kullaniciEtkinlikleri = await _context.Katilimcis
                 .Where(k => k.KullanıcıId == user.Id)
+                .Select(k => k.EtkinlikID)
                 .ToListAsync();
 
-            // Kullanıcının katılmak istediği etkinlik ile zaman çakışması olup olmadığını kontrol et
-            foreach (var katilim in kullaniciEtkinlikleri)
-            {
-                var mevcutEtkinlik = await _context.Etkinlikler
-                    .Where(e => e.EtkinlikId == katilim.EtkinlikID)
-                    .FirstOrDefaultAsync();
+            var kullaniciIlgiAlani = await _context.IlgiAlanları
+                .Where(k => k.KullanıcıId == user.Id)
+                .Select(k => k.KategoriId)
+                .ToListAsync();
 
-                if (mevcutEtkinlik != null)
-                {
-                    // Zaman çakışması kontrolü
-                    if ((etkinlik.Tarih < mevcutEtkinlik.Tarih.AddMinutes(mevcutEtkinlik.EtkinlikSuresi.TotalMinutes)) &&
-                        (etkinlik.Tarih.AddMinutes(etkinlik.EtkinlikSuresi.TotalMinutes) > mevcutEtkinlik.Tarih))
-                    {
-                        return BadRequest($"Zaman çakışması: Bu etkinlik, daha önce katıldığınız '{mevcutEtkinlik.EtkinlikAdi}' etkinliği ile çakışmaktadır.");
-                    }
-                }
+            if (kullaniciEtkinlikleri.Contains(etkinlikId))
+            {
+                TempData["Error"] = "Bu etkinliğe zaten katıldınız.";
+                return RedirectToAction("Details", new { id = etkinlikId });
             }
 
-            // Kullanıcıyı etkinliğe katılacak şekilde kaydet
-            var yeniKatilim = new Katilimci
+            var katilimci = new Katilimci
             {
-                EtkinlikID = etkinlikId,
                 KullanıcıId = user.Id,
+                EtkinlikID = etkinlikId,
             };
 
-            _context.Katilimcis.Add(yeniKatilim);
+            _context.Katilimcis.Add(katilimci);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("UserHubArea", "User"); // Katılım başarılı olduğunda kullanıcıyı Hub sayfasına yönlendiriyoruz.
+            var alternatifEtkinlikler = await _context.Etkinlikler
+                .Where(e => kullaniciIlgiAlani.Contains(e.KategoriId) && e.EtkinlikId != etkinlikId)
+                .ToListAsync(); // Veritabanından alınan veriler
+
+            // Kullanıcının katıldığı etkinlikleri ayıkla
+            alternatifEtkinlikler = alternatifEtkinlikler
+                .Where(e => !kullaniciEtkinlikleri.Contains(e.EtkinlikId))
+                .ToList(); // Bellekte filtreleme
+
+            TempData["Success"] = "Etkinliğe başarıyla katıldınız.";
+            return View("AlternatifEtkinlikler", alternatifEtkinlikler);
         }
+
+
 
         // Yeni Etkinlik Oluşturma (Get)
         [HttpGet]
@@ -146,6 +147,7 @@ namespace Yazlab__2.Controllers
                 ModelState.AddModelError(string.Empty, "Etkinlik tarihi ve saati çakışıyor.");
                 return View(yeniEtkinlik);
             }
+            await _bildirimService.AddBildirimAsync(user.Id, yeniEtkinlik.EtkinlikId); // Kullanıcıya bildirim
 
             return RedirectToAction(nameof(Index));
         }
