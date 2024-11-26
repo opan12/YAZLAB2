@@ -5,7 +5,9 @@
 <h1>Profile</h1>
 <div class="profile-container">
     <div class="profile-header">
-        <img src="@Model.ProfilFoto ?? Url.Content(" ~ /images/default-profile-pic.jpg")" alt="Profil Fotoğrafı" class="profile-pic" />
+        <!-- Display profile picture, if available, otherwise show default image -->
+        <img src="@(!string.IsNullOrEmpty(Model.ProfilFoto) ? Model.ProfilFoto : Url.Content("~/images/default-profile-pic.jpg"))"
+             alt="Profil Fotoğrafı" class="profile-pic" />
         <h2 class="username">@Model.Ad @Model.Soyad</h2>
         <p class="location">@(!string.IsNullOrEmpty(Model.Konum) ? Model.Konum : "Konum bilgisi yok")</p>
     </div>
@@ -14,7 +16,16 @@
         <div class="info-section">
             <h3 class="section-title">Kişisel Bilgiler</h3>
             <p><strong>E-posta:</strong> @Model.Email</p>
-            <p><strong>Doğum Tarihi:</strong> @(Model.DogumTarihi.HasValue ? Model.DogumTarihi.Value.ToString("dd/MM/yyyy") : "Bilinmiyor")</p>
+         
+            @if (Model.DogumTarihi != null)
+            {
+                <p><strong>Doğum Tarihi:</strong> @Model.DogumTarihi?.ToString("yyyy-MM-dd")</p>
+            }
+            else
+            {
+                <p><strong>Doğum Tarihi:</strong> Tarih bilgisi yok</p>
+            }
+
             <p><strong>Cinsiyet:</strong> @(string.IsNullOrEmpty(Model.Cinsiyet) ? "Belirtilmemiş" : Model.Cinsiyet)</p>
             <p><strong>Telefon:</strong> @(!string.IsNullOrEmpty(Model.TelefonNumarasi) ? Model.TelefonNumarasi : "Telefon numarası yok")</p>
         </div>
@@ -22,14 +33,36 @@
 
     <div class="profile-actions">
         <a href="@Url.Action("UserHubArea", "User", new { Username = Model.UserName })" class="button back-to-home-button">Anasayfa</a>
-        <a href="@Url.Action("UpdateProfile", "User")" class="button profile-update-button">Profili Güncelle</a>
+        <a href="@Url.Action("UpdateUser", "User")" class="button profile-update-button">Profili Güncelle</a>
         <a href="@Url.Action("UpdatePassword", "User")" class="button password-update-button">Şifre Yenile</a>
-        <a href="@Url.Action("Logout", "User")" class="button logout-button">Çıkış Yap</a>
+        <a href="@Url.Action("Login", "User")" class="button logout-button">Çıkış Yap</a>
+    </div>
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success">
+            @ViewBag.SuccessMessage
+        </div>
+    }
+
+    <div class="info-section">
+        <h3 class="section-title">İlgi Alanları</h3>
+        @if (Model.IlgiAlanlari != null && Model.IlgiAlanlari.Count > 0)
+        {
+            <ul>
+                @foreach (var ilgi in Model.IlgiAlanlari)
+                {
+                    <li>@ilgi</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>İlgi alanı eklenmemiş.</p>
+        }
     </div>
 </div>
 
-@section Styles {
-    <style>
+<style>
         .profile-container {
             margin: 20px auto;
             max-width: 800px;
@@ -84,6 +117,15 @@
             justify-content: center;
         }
 
+        .info-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        .info-section li {
+            margin-bottom: 5px;
+        }
+
         .button {
             padding: 10px 15px;
             background-color: #007bff;
@@ -106,5 +148,5 @@
             .logout-button:hover {
                 background-color: #d62828;
             }
-    </style>
-}
+</style>
+
