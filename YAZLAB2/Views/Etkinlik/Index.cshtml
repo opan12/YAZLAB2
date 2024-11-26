@@ -30,6 +30,9 @@
                 <td>@etkinlik.Konum</td>
                 <td>
                     <a href="@Url.Action("Details", new { id = etkinlik.EtkinlikId })" class="btn btn-info">Detaylar</a>
+                    <a href="@Url.Action("Katil", new { id = etkinlik.EtkinlikId })" class="btn btn-info">katıl</a>
+
+
                     <a href="@Url.Action("Edit", new { id = etkinlik.EtkinlikId })" class="btn btn-warning">Düzenle</a>
                     <form method="post" action="@Url.Action("Delete", new { id = etkinlik.EtkinlikId })" style="display:inline;">
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Silmek istediğinize emin misiniz?')">Sil</button>

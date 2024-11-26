@@ -1,0 +1,58 @@
+﻿@model IEnumerable<YAZLAB2.Models.Etkinlik>
+@{
+    ViewData["Title"] = "Tüm Etkinlikler";
+}
+
+<h1>Tüm Etkinlikler</h1>
+
+@if (Model == null || !Model.Any())
+{
+    <p>Hiç etkinlik bulunamadı.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Etkinlik Adı</th>
+                <th>Durumu</th>
+                <th>Seçenekler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var etkinlik in Model)
+            {
+                <tr>
+                    <td>@etkinlik.EtkinlikAdi</td>
+                    <td>@(etkinlik.OnayDurumu ? "Onaylandı" : "Reddedildi")</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <!-- Onayla Butonu -->
+                            <form asp-action="EtkinlikOnayla" method="post" style="display:inline-block;">
+                                <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
+                                <button type="submit" class="btn btn-success">Onayla</button>
+                            </form>
+
+                            <!-- Reddet Butonu -->
+                            <form asp-action="EtkinlikReddet" method="post" style="display:inline-block;">
+                                <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
+                                <button type="submit" class="btn btn-danger">Reddet</button>
+                            </form>
+
+                            <!-- Güncelle Butonu -->
+                            <a href="@Url.Action("EtkinlikDuzenle", new { id = etkinlik.EtkinlikId })" class="btn btn-warning">Güncelle</a>
+
+                            <!-- Sil Butonu -->
+                            <a href="@Url.Action("EtkinlikSil", new { id = etkinlik.EtkinlikId })" class="btn btn-danger">Sil</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- JavaScript Kütüphaneleri -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>

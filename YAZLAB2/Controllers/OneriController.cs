@@ -46,14 +46,13 @@ namespace Yazlab__2.Controllers
         [HttpGet("GetOneriler")]
         public async Task<IActionResult> GetOneriler()
         {
-            // Kullanıcının kimliğini al
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Unauthorized("Kullanıcı girişi gerekli.");
             }
 
-            // Kullanıcının etkinlik önerilerini al
+            // Fetch the list of recommended events for the user
             var oneriListesi = _etkinlikOnerisiServisi.OneriGetir(user.Id);
 
             if (oneriListesi == null || !oneriListesi.Any())
@@ -61,8 +60,10 @@ namespace Yazlab__2.Controllers
                 return NotFound("No event suggestions found.");
             }
 
+            // Return the list as JSON
             return Ok(oneriListesi);
         }
+
         //[HttpGet("GetFilteredOneriler")]
         //public async Task<IActionResult> GetFilteredOneriler(string? konum = null, string? kategori = null)
         //{

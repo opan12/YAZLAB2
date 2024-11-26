@@ -1,10 +1,13 @@
-﻿@model User
-
-@{
+﻿@{
     ViewData["Title"] = "Admin Hub Area";
 }
 
-<div class="container">
-    <h1>Hoşgeldin, @Model.Ad @Model.Soyad</h1>
+<h1>Admin Paneline Hoşgeldiniz</h1>
 
+<div>
+    <ul>
+        <li><a asp-action="TumKullanicilar">Tüm Kullanıcıları Listele</a></li>
+        <li><a asp-action="TumEtkinlikler">Tüm Etkinlikleri Listele</a></li>
+        <a href="/Kategori/Index" class="btn btn-success">Kategori Git</a>
+    </ul>
 </div>

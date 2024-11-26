@@ -10,6 +10,7 @@ namespace YAZLAB2.Models
         public DateTime DogumTarihi { get; set; }
         public string Cinsiyet { get; set; }
         public string TelefonNumarasi { get; set; }
+    
         public string ProfilFoto { get; set; }  // Fotoğrafı byte dizisi olarak saklıyoruz
     }
 }

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<YAZLAB2.Models.User>
+@{
+    ViewData["Title"] = "Tüm Kullanıcılar";
+}
+
+<h1>Tüm Kullanıcılar</h1>
+
+@if (Model == null || !Model.Any())
+{
+    <p>Hiç kullanıcı bulunamadı.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Kullanıcı Adı</th>
+                <th>Email</th>
+                <th>Ad Soyad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Ad @user.Soyad</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

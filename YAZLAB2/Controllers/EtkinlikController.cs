@@ -49,6 +49,59 @@ namespace Yazlab__2.Controllers
 
             return View(etkinlik);
         }
+        // Action for user to join an event (already provided)
+        [HttpPost("{etkinlikId}/katil")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> Katil(int etkinlikId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("Kullanıcı girişi gerekli.");
+            }
+
+            // Etkinliği bul
+            var etkinlik = await _context.Etkinlikler.FindAsync(etkinlikId);
+            if (etkinlik == null)
+            {
+                return NotFound("Etkinlik bulunamadı.");
+            }
+
+            // Kullanıcının daha önce katıldığı etkinliklerin zamanlarını al
+            var kullaniciEtkinlikleri = await _context.Katilimcis
+                .Where(k => k.KullanıcıId == user.Id)
+                .ToListAsync();
+
+            // Kullanıcının katılmak istediği etkinlik ile zaman çakışması olup olmadığını kontrol et
+            foreach (var katilim in kullaniciEtkinlikleri)
+            {
+                var mevcutEtkinlik = await _context.Etkinlikler
+                    .Where(e => e.EtkinlikId == katilim.EtkinlikID)
+                    .FirstOrDefaultAsync();
+
+                if (mevcutEtkinlik != null)
+                {
+                    // Zaman çakışması kontrolü
+                    if ((etkinlik.Tarih < mevcutEtkinlik.Tarih.AddMinutes(mevcutEtkinlik.EtkinlikSuresi.TotalMinutes)) &&
+                        (etkinlik.Tarih.AddMinutes(etkinlik.EtkinlikSuresi.TotalMinutes) > mevcutEtkinlik.Tarih))
+                    {
+                        return BadRequest($"Zaman çakışması: Bu etkinlik, daha önce katıldığınız '{mevcutEtkinlik.EtkinlikAdi}' etkinliği ile çakışmaktadır.");
+                    }
+                }
+            }
+
+            // Kullanıcıyı etkinliğe katılacak şekilde kaydet
+            var yeniKatilim = new Katilimci
+            {
+                EtkinlikID = etkinlikId,
+                KullanıcıId = user.Id,
+            };
+
+            _context.Katilimcis.Add(yeniKatilim);
+            await _context.SaveChangesAsync();
+
+            return Ok("Etkinliğe katılım başarılı.");
+        }
 
         // Yeni Etkinlik Oluşturma (Get)
         [HttpGet]

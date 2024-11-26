@@ -1,0 +1,19 @@
+﻿@model YAZLAB2.Models.Etkinlik
+@{
+    ViewData["Title"] = "Etkinlik Düzenle";
+}
+
+<h1>Etkinlik Düzenle</h1>
+
+<form asp-action="EtkinlikDuzenle" method="post">
+    <input type="hidden" asp-for="EtkinlikId" />
+    <div>
+        <label for="EtkinlikAdi">Etkinlik Adı:</label>
+        <input asp-for="EtkinlikAdi" />
+    </div>
+    <div>
+        <label for="OnayDurumu">Onay Durumu:</label>
+        <input asp-for="OnayDurumu" type="checkbox" />
+    </div>
+    <button type="submit">Kaydet</button>
+</form>

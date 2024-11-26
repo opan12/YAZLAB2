@@ -1,0 +1,84 @@
+﻿@model IEnumerable<YAZLAB2.Models.Etkinlik> 
+
+@{
+    ViewData["Title"] = "Etkinlikler";
+}
+
+<div class="events-container">
+    <h1>Etkinlikler</h1>
+
+    <div class="events-list">
+        @foreach (var etkinlik in Model)
+        {
+            <div class="event-item">
+                <h3>@etkinlik.EtkinlikAdi</h3>
+                <p>@etkinlik.Tarih.ToString("dd MMM yyyy HH:mm")</p>
+                <p>@etkinlik.Aciklama</p>
+                <button class="join-event-button" onclick="joinEvent(@etkinlik.EtkinlikId)">Katıl</button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Function to handle joining an event
+        async function joinEvent(etkinlikId) {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            if (!isLoggedIn) {
+                alert("Lütfen önce giriş yapın.");
+                return;
+            }
+
+            const userId = localStorage.getItem("userId");
+            const response = await fetch(`/api/Etkinlikler/${etkinlikId}/katil`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}` // Assuming the token is stored in localStorage
+                }
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(result);
+            } else {
+                alert(result);
+            }
+        }
+    </script>
+}
+
+<style>
+    .events-container {
+        font-family: 'Arial, sans-serif';
+        padding: 20px;
+        margin-top: 50px;
+    }
+
+    .events-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .event-item {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .join-event-button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .join-event-button:hover {
+        background-color: #0056b3;
+    }
+</style>

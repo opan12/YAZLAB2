@@ -1,0 +1,14 @@
+﻿@model YAZLAB2.Models.Kategori
+
+@{
+    ViewData["Title"] = "Silme Onayı";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>Bu kategoriyi silmek istediğinize emin misiniz?</p>
+
+<form asp-action="Delete" asp-route-id="@Model.KategoriId" method="post">
+    <button type="submit">Evet, sil</button>
+    <a href="@Url.Action("Index", "Kategori")">Hayır, geri dön</a>
+</form>

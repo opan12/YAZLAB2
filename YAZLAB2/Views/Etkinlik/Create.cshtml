@@ -31,16 +31,6 @@
         <label for="Konum">Konum</label>
         <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" required />
     </div>
-    <div class="form-group">
-        <label for="KategoriId">Kategori</label>
-        <select class="form-control" id="KategoriId" name="KategoriId" required>
-            <option value="">Bir kategori seçin</option>
-            @foreach (var kategori in ViewBag.Kategoriler)
-            {
-                <option value="@kategori.KategoriId" selected="@((kategori.KategoriId == Model.KategoriId) ? "selected" : "")">@kategori.KategoriAdi</option>
-            }
-        </select>
-    </div>
 
     <button type="submit" class="btn btn-primary">Kaydet</button>
     <a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>

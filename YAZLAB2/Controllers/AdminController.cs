@@ -51,7 +51,13 @@ namespace YAZLAB2.Controllers
 
             return Json("Kayıt Başarısız");
         }
-       
+        [Authorize(Roles = "Admin")]
+
+        public IActionResult AdminHubArea()
+        {
+            return View("AdminHubArea"); // Doğru görünüm adı
+        }
+
 
         // Kullanıcıları Listele
         public async Task<IActionResult> TumKullanicilar()
@@ -68,15 +74,10 @@ namespace YAZLAB2.Controllers
         // Etkinlikleri Listele
         public async Task<IActionResult> TumEtkinlikler()
         {
-            var etkinlikler = await _context.Etkinlikler
-                .Include(e => e.UserId)
-                .ToListAsync();
+            var etkinlikler = await _context.Etkinlikler.ToListAsync();
+        
 
-            if (etkinlikler == null || !etkinlikler.Any())
-            {
-                ViewBag.Message = "Hiç etkinlik bulunamadı.";
-                return View();
-            }
+           
             return View(etkinlikler);
         }
 

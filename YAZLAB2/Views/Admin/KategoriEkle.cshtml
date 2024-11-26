@@ -1,0 +1,19 @@
+﻿@model YAZLAB2.Models.Kategori
+@{
+    ViewData["Title"] = "Kategori Ekle";
+}
+
+<h1>Kategori Ekle</h1>
+
+<form asp-action="KategoriEkle" method="post">
+    <div>
+        <label for="KategoriAdi">Kategori Adı:</label>
+        <input type="text" id="KategoriAdi" name="KategoriAdi" />
+    </div>
+    <button type="submit">Ekle</button>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <p>@TempData["Message"]</p>
+}
