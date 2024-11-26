@@ -1,4 +1,4 @@
-﻿@model User
+﻿@model IEnumerable<YAZLAB2.Models.Etkinlik> // Oneri listesi modelini kullanıyoruz
 
 @{
     ViewData["Title"] = "User Hub Area";
@@ -7,12 +7,32 @@
 <div class="container">
     <div>
         <a href="/Etkinlik/Index" class="btn btn-success">Etkinlik Git</a>
-        <a href="/User/Profile" class="btn btn-success">profil Git</a>
-        <a href="/User/GetEvents" class="btn btn-success">profil Git</a>
-
-
-
+        <a href="/User/Profile" class="btn btn-success">Profil Git</a>
     </div>
-    <h1>Hoşgeldin, @Model.Ad @Model.Soyad</h1>
 
+    <h1>Hoşgeldin, @User.Identity.Name</h1>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">@TempData["Message"]</div>
+    }
+
+    <h2>Önerilen Etkinlikler</h2>
+    @if (Model == null || !Model.Any())
+    {
+        <p>Hiç etkinlik önerisi bulunamadı.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var oneri in Model)
+            {
+                <li>
+                    <a href="@Url.Action("Details", "Etkinlik", new { id = oneri.EtkinlikId })">
+                        @oneri.EtkinlikAdi
+                    </a>
+                </li>
+            }
+        </ul>
+    }
 </div>

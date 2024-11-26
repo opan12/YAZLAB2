@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Yazlab__2.Service;
 using YAZLAB2.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 
@@ -29,6 +30,7 @@ namespace Yazlab__2.Controllers
         // Kullanıcının etkinliklerini listele
         public async Task<IActionResult> Index()
         {
+
             var user = await _userManager.GetUserAsync(User);
             var etkinlikler = await _context.Etkinlikler
                 .Where(e => e.UserId == user.Id)
@@ -49,7 +51,6 @@ namespace Yazlab__2.Controllers
 
             return View(etkinlik);
         }
-        // Action for user to join an event (already provided)
         [HttpPost("{etkinlikId}/katil")]
         [Authorize(Roles = "User")]
         public async Task<IActionResult> Katil(int etkinlikId)
@@ -100,17 +101,25 @@ namespace Yazlab__2.Controllers
             _context.Katilimcis.Add(yeniKatilim);
             await _context.SaveChangesAsync();
 
-            return Ok("Etkinliğe katılım başarılı.");
+            return RedirectToAction("UserHubArea", "User"); // Katılım başarılı olduğunda kullanıcıyı Hub sayfasına yönlendiriyoruz.
         }
 
         // Yeni Etkinlik Oluşturma (Get)
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // Yeni bir Etkinlik modelini görünüm için oluşturun
+            // Kategorileri veritabanından al
+            var kategoriler = await _context.Kategoris.ToListAsync();
+
+            // Yeni bir Etkinlik modelini oluştur
             var model = new Etkinlik();
+
+            // Etkinlik modeli için kategorileri ViewData ile göndereceğiz
+            ViewData["Kategoriler"] = kategoriler;
+
             return View(model);
         }
+
 
         // Yeni Etkinlik Oluşturma (Post)
         [HttpPost]
@@ -123,13 +132,17 @@ namespace Yazlab__2.Controllers
                 return RedirectToAction("Login", "User");
             }
 
-
+            // Kullanıcı ID'sini ve onay durumunu ayarlıyoruz.
             yeniEtkinlik.UserId = user.Id;
             yeniEtkinlik.OnayDurumu = false;
 
+            // Etkinliği oluşturma işlemi
             var result = await _etkinlikService.CreateEtkinlik(yeniEtkinlik);
             if (!result)
             {
+                // Eğer etkinlik oluşturulamazsa, kategorilerle birlikte tekrar formu gösteriyoruz.
+                var kategoriler = await _context.Kategoris.ToListAsync();
+                ViewData["Kategoriler"] = kategoriler;
                 ModelState.AddModelError(string.Empty, "Etkinlik tarihi ve saati çakışıyor.");
                 return View(yeniEtkinlik);
             }

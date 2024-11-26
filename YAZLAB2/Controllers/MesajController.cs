@@ -1,108 +1,80 @@
-﻿namespace Yazlab__2.WebApi.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+using YAZLAB2.Models;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using YAZLAB2.Data;
+
+namespace YAZLAB2.Controllers
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Yazlab__2.Core.Service;
-    using System.Security.Claims;
-
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MesajController : ControllerBase
+    public class MesajController : Controller
     {
-        private readonly MesajServisi _mesajServisi;
+        private readonly ApplicationDbContext _context;
 
-        public MesajController(MesajServisi mesajServisi)
+        public MesajController(ApplicationDbContext context)
         {
-            _mesajServisi = mesajServisi;
+            _context = context;
         }
 
-        // Etkinliğe yorum ekleme
-        [HttpPost("YorumEkle")]
-        public async Task<IActionResult> YorumEkle([FromBody] YorumEkleModel model)
+        // Etkinlik bazında mesajları listeleme
+        public async Task<IActionResult> EtkinlikMesajlari(int etkinlikId)
         {
-            var GöndericiId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Kullanıcının ID'sini alıyoruz
+            var mesajlar = await _context.Mesajlar
+                .Where(m => m.EtkinlikId == etkinlikId)
+                .OrderBy(m => m.GonderimZamani)
+                .ToListAsync();
 
-            if (string.IsNullOrEmpty(GöndericiId) || string.IsNullOrEmpty(model.MesajMetni) || model.EtkinlikId == 0)
+            return View(mesajlar);
+        }
+
+        // Yeni mesaj ekleme
+        // Mesaj gönderme işlemi
+        [HttpPost]
+        public async Task<IActionResult> MesajGonder(string aliciId, string mesajMetni)
+        {
+            if (string.IsNullOrEmpty(aliciId) || string.IsNullOrEmpty(mesajMetni))
             {
                 return BadRequest("Geçersiz giriş.");
             }
 
-            var sonuc = await _mesajServisi.YorumEkle(GöndericiId, model.EtkinlikId, model.MesajMetni);
-
-            if (sonuc)
+            var yeniMesaj = new Mesaj
             {
-                return Ok("Yorum başarıyla eklendi.");
-            }
+                GondericiID = User.Identity.Name,  // Kullanıcı adı veya ID
+                AliciID = aliciId,
+                MesajMetni = mesajMetni,
+                GonderimZamani = DateTime.Now,
+                EtkinlikId = 0 // İlgili etkinlik ID'si varsa eklenebilir
+            };
 
-            return BadRequest("Yorum eklenemedi.");
-        }
-        [HttpGet("KullaniciMesajlari")]
-        public async Task<IActionResult> KullaniciMesajlari()
-        {
-            var GöndericiId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Kullanıcının ID'sini alıyoruz
+            _context.Mesajlar.Add(yeniMesaj);
+            await _context.SaveChangesAsync();
 
-            if (string.IsNullOrEmpty(GöndericiId))
-            {
-                return BadRequest("Kullanıcı kimliği bulunamadı.");
-            }
-
-            // Kullanıcıya ait tüm mesajları alıyoruz
-            var mesajlar = await _mesajServisi.KullaniciMesajlari(GöndericiId);
-
-            if (mesajlar == null || mesajlar.Count == 0)
-            {
-                return NotFound("Hiç mesaj bulunamadı.");
-            }
-
-            return Ok(mesajlar);
-        }
-        // Etkinlik yorumlarını getirme
-        [HttpGet("EtkinlikYorumlari/{etkinlikId}")]
-        public async Task<IActionResult> EtkinlikYorumlari(int etkinlikId)
-        {
-            var yorumlar = await _mesajServisi.EtkinlikYorumlari(etkinlikId);
-
-            if (yorumlar == null || yorumlar.Count == 0)
-            {
-                return NotFound("Hiç yorum bulunamadı.");
-            }
-
-            return Ok(yorumlar);
+            return RedirectToAction("Mesajlarim");  // Gönderim sonrası gelen mesajlar sayfasına yönlendir
         }
 
-        [HttpPost("MesajGonder")]
-        public async Task<IActionResult> MesajGonder([FromBody] MesajGonderModel model)
+        // Kullanıcıya ait tüm mesajları görüntüleme
+        public async Task<IActionResult> Mesajlarim()
         {
-            var GöndericiId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Kullanıcının ID'sini alıyoruz
+            var aliciId = User.Identity.Name;  // Kullanıcı ID'si
 
-            if (string.IsNullOrEmpty(GöndericiId) || string.IsNullOrEmpty(model.MesajMetni))
-            {
-                return BadRequest("Geçersiz giriş.");
-            }
+            var mesajlar = await _context.Mesajlar
+                .Where(m => m.AliciID == aliciId)
+                .OrderByDescending(m => m.GonderimZamani)
+                .ToListAsync();
 
-            var sonuc = await _mesajServisi.MesajGonder(GöndericiId, model.AlıcıId, model.MesajMetni);
-
-            if (sonuc)
-            {
-                return Ok("Mesaj başarıyla gönderildi.");
-            }
-
-            return BadRequest("Mesaj gönderilemedi.");
+            return View(mesajlar);
         }
 
-        // Yorum ekleme model
-        public class YorumEkleModel
+        // Kullanıcıya gönderenlerin mesajlarını listeleme
+        public async Task<IActionResult> GonderilenMesajlar()
         {
-            public int EtkinlikId { get; set; }
-            public string MesajMetni { get; set; }
-        }
+            var gondericiId = User.Identity.Name;  // Kullanıcı ID'si
 
-        // Mesaj gönderme model
-        public class MesajGonderModel
-        {
-            public string AlıcıId { get; set; }
-            public string MesajMetni { get; set; }
+            var mesajlar = await _context.Mesajlar
+                .Where(m => m.GondericiID == gondericiId)
+                .OrderByDescending(m => m.GonderimZamani)
+                .ToListAsync();
+
+            return View(mesajlar);
         }
     }
 }

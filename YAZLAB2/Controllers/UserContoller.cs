@@ -13,12 +13,17 @@ public class UserController : Controller
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly ApplicationDbContext _context;
+    private readonly EtkinlikOnerisiServisi _etkinlikOnerisiServisi;
 
-    public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context)
+
+    public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, EtkinlikOnerisiServisi etkinlikOnerisiServisi
+)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _context = context;
+        _etkinlikOnerisiServisi = etkinlikOnerisiServisi;
+
     }
     // GET: Register
     [HttpGet]
@@ -50,61 +55,6 @@ public class UserController : Controller
         var events = await _context.Etkinlikler.ToListAsync();  // Get the list of events from the database
         return Ok(events);  // Return the list as JSON
     }
-
-    // Action for user to join an event (already provided)
-    [HttpPost("{etkinlikId}/katil")]
-    [Authorize(Roles = "User")]
-    public async Task<IActionResult> Katil(int etkinlikId)
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized("Kullanıcı girişi gerekli.");
-        }
-
-        // Etkinliği bul
-        var etkinlik = await _context.Etkinlikler.FindAsync(etkinlikId);
-        if (etkinlik == null)
-        {
-            return NotFound("Etkinlik bulunamadı.");
-        }
-
-        // Kullanıcının daha önce katıldığı etkinliklerin zamanlarını al
-        var kullaniciEtkinlikleri = await _context.Katilimcis
-            .Where(k => k.KullanıcıId == user.Id)
-            .ToListAsync();
-
-        // Kullanıcının katılmak istediği etkinlik ile zaman çakışması olup olmadığını kontrol et
-        foreach (var katilim in kullaniciEtkinlikleri)
-        {
-            var mevcutEtkinlik = await _context.Etkinlikler
-                .Where(e => e.EtkinlikId == katilim.EtkinlikID)
-                .FirstOrDefaultAsync();
-
-            if (mevcutEtkinlik != null)
-            {
-                // Zaman çakışması kontrolü
-                if ((etkinlik.Tarih < mevcutEtkinlik.Tarih.AddMinutes(mevcutEtkinlik.EtkinlikSuresi.TotalMinutes)) &&
-                    (etkinlik.Tarih.AddMinutes(etkinlik.EtkinlikSuresi.TotalMinutes) > mevcutEtkinlik.Tarih))
-                {
-                    return BadRequest($"Zaman çakışması: Bu etkinlik, daha önce katıldığınız '{mevcutEtkinlik.EtkinlikAdi}' etkinliği ile çakışmaktadır.");
-                }
-            }
-        }
-
-        // Kullanıcıyı etkinliğe katılacak şekilde kaydet
-        var yeniKatilim = new Katilimci
-        {
-            EtkinlikID = etkinlikId,
-            KullanıcıId = user.Id,
-        };
-
-        _context.Katilimcis.Add(yeniKatilim);
-        await _context.SaveChangesAsync();
-
-        return Ok("Etkinliğe katılım başarılı.");
-    }
-
 
     [HttpPost]
     public async Task<IActionResult> Register(UserRegisterModel model)
@@ -172,25 +122,26 @@ public class UserController : Controller
         return View(model);
     }
 
-    [HttpGet]
-    [Authorize(Roles = "User")]
-    public async Task<IActionResult> UserHubArea(string Username)
+    // Fetch event suggestions for the user
+    public async Task<IActionResult> UserHubArea()
     {
-        if (string.IsNullOrEmpty(Username))
-        {
-            return BadRequest("Username parametresi eksik.");
-        }
-
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == Username);
+        var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return NotFound($"Kullanıcı {Username} bulunamadı.");
+            return Unauthorized("Kullanıcı girişi gerekli.");
         }
 
-        return View(user); // Kullanıcıyı view'e gönder
+        // Fetch event suggestions for the user
+        var oneriListesi = _etkinlikOnerisiServisi.OneriGetir(user.Id);
+
+        if (oneriListesi == null || !oneriListesi.Any())
+        {
+            TempData["Message"] = "Hiçbir etkinlik önerisi bulunamadı.";
+            return View(); // No events to display
+        }
+
+        return View(oneriListesi); // Pass the event list to the View
     }
-
-
 
     // Kullanıcı Giriş Sayfası (View Gönderimi)
     [HttpGet]

@@ -21,6 +21,8 @@ builder.Services.AddScoped<EtkinlikService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<PuanHesaplayiciService>();
 builder.Services.AddScoped<MesajServisi>();
+builder.Services.AddScoped<EtkinlikOnerisiServisi>();
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));

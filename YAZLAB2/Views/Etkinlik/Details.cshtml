@@ -13,5 +13,9 @@
     <p><strong>Konum:</strong> @Model.Konum</p>
 </div>
 
-<a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>
-<a href="@Url.Action("Edit", new { id = Model.EtkinlikId })" class="btn btn-warning">Düzenle</a>
+<!-- Katılım Butonu -->
+<form asp-action="Katil" method="post" asp-route-etkinlikId="@Model.EtkinlikId">
+    <button type="submit" class="btn btn-primary">Etkinliğe Katıl</button>
+</form>
+
+<a href="@Url.Action("UserHubArea")" class="btn btn-secondary">Geri</a>
