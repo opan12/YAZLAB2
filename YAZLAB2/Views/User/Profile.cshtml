@@ -34,7 +34,7 @@
     <div class="profile-actions">
         <a href="@Url.Action("UserHubArea", "User", new { Username = Model.UserName })" class="button back-to-home-button">Anasayfa</a>
         <a href="@Url.Action("UpdateUser", "User")" class="button profile-update-button">Profili Güncelle</a>
-        <a href="@Url.Action("UpdatePassword", "User")" class="button password-update-button">Şifre Yenile</a>
+        <a href="@Url.Action("ForgotPassword", "Account")" class="button password-update-button">Şifre Yenile</a>
         <a href="@Url.Action("Login", "User")" class="button logout-button">Çıkış Yap</a>
     </div>
     @if (ViewBag.SuccessMessage != null)

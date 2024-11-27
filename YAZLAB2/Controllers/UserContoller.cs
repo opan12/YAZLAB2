@@ -5,6 +5,7 @@ using YAZLAB2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using YAZLAB2.Service;
 
 
 public class UserController : Controller
@@ -275,4 +276,83 @@ public class UserController : Controller
         return View(model); 
     }
 
+
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult ForgotPassword()
+    {
+        return View(new ForgotPasswordViewModel());
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            // Giriş yapmış kullanıcıyı al
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || user.Email != model.Email)
+            {
+                ModelState.AddModelError(string.Empty, "Geçersiz işlem. E-posta adresi mevcut kullanıcıyla eşleşmiyor.");
+                return View(model);
+            }
+
+            TempData["Message"] = "Şifre sıfırlama talebi başarılı. Yeni şifrenizi belirlemek için devam edin.";
+            return RedirectToAction("ResetPassword");
+        }
+
+        return View(model);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult ResetPassword()
+    {
+        return View(new ResetPasswordViewModel());
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            // Giriş yapmış kullanıcıyı al
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Geçersiz işlem. Kullanıcı bulunamadı.");
+                return View(model);
+            }
+
+            // Yeni şifreyi doğrudan ayarla
+            var result = await _userManager.RemovePasswordAsync(user);
+            if (result.Succeeded)
+            {
+                var addPasswordResult = await _userManager.AddPasswordAsync(user, model.Şifre);
+                if (addPasswordResult.Succeeded)
+                {
+                    TempData["Message"] = "Şifreniz başarıyla güncellendi.";
+                    return RedirectToAction("Profile");
+                }
+                foreach (var error in addPasswordResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+        }
+
+        return View(model);
+    }
+
 }
+

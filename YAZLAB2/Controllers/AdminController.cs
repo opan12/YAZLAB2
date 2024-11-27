@@ -62,7 +62,10 @@ namespace YAZLAB2.Controllers
         // Kullanıcıları Listele
         public async Task<IActionResult> TumKullanicilar()
         {
-            var users = await _userManager.Users.ToListAsync();
+            //var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users
+                                  .Where(user => user.UserName != "admin")
+                                  .ToListAsync();
             if (users == null || !users.Any())
             {
                 ViewBag.Message = "Hiç kullanıcı bulunamadı.";
