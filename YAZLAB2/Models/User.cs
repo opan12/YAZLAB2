@@ -9,8 +9,8 @@ namespace YAZLAB2.Models
         public string Soyad { get; set; }
         public DateTime? DogumTarihi { get; set; }
         public string Cinsiyet { get; set; }
+        //public List<string> IlgiAlanlari { get; set; }
         public string TelefonNumarasi { get; set; }
-    
         public string ProfilFoto { get; set; }  // Fotoğrafı byte dizisi olarak saklıyoruz
     }
 }

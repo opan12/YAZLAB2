@@ -4,7 +4,6 @@ using YAZLAB2.Models;
 using YAZLAB2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using YAZLAB2.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 
@@ -35,7 +34,6 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
-        // Create and pass a UserProfileViewModel to the view
         var model = new UserProfileViewModel
         {
             Ad = user.Ad,
@@ -77,7 +75,6 @@ public class UserController : Controller
         {
             TempData["SuccessMessage"] = "Profil başarıyla güncellendi.";
 
-            // Return the updated UserProfileViewModel after successful update
             var updatedModel = new UserProfileViewModel
             {
                 Ad = user.Ad,
@@ -91,7 +88,7 @@ public class UserController : Controller
                 UserName = user.UserName
             };
 
-            return View("Profile", updatedModel); // Ensure it uses the correct model type
+            return View("Profile", updatedModel);
         }
 
         foreach (var error in result.Errors)
@@ -99,24 +96,20 @@ public class UserController : Controller
             ModelState.AddModelError(string.Empty, error.Description);
         }
 
-        return View(model); // Return the same model with errors
+        return View(model);
     }
 
-    // GET: Register
     [HttpGet]
     public IActionResult Register()
     {
-        // Kategorileri veritabanından çekiyoruz
         var kategoriler = _context.Kategoris.ToList();
 
-        // Kategorileri SelectListItem formatına dönüştürüyoruz
         var kategoriList = kategoriler.Select(k => new SelectListItem
         {
             Value = k.KategoriId.ToString(),
             Text = k.KategoriAdi
         }).ToList();
 
-        // ViewModel'i oluşturup, Kategoriler listesini set ediyoruz
         var model = new UserRegisterModel
         {
             Kategoriler = kategoriList
@@ -125,81 +118,68 @@ public class UserController : Controller
         return View(model);
     }
 
-    // Controller action to get the list of events
     [HttpGet("Etkinlikler")]
     public async Task<IActionResult> GetEvents()
     {
-        var events = await _context.Etkinlikler.ToListAsync();  // Get the list of events from the database
-        return Ok(events);  // Return the list as JSON
+        var events = await _context.Etkinlikler.ToListAsync(); 
+        return Ok(events);  
     }
 
     [HttpPost]
     public async Task<IActionResult> Register(UserRegisterModel model)
     {
-            // Yeni kullanıcı nesnesi oluşturuyoruz
-            var user = new User
+        var user = new User
+        {
+            UserName = model.UserName,
+            Ad = model.Ad,
+            Soyad = model.Soyad,
+            Email = model.Email,
+            TelefonNumarasi = model.TelefonNumarasi,
+            Konum = model.Konum,
+            DogumTarihi = model.DogumTarihi,
+            Cinsiyet = model.Cinsiyet,
+            ProfilFoto = model.ProfilFoto
+        };
+
+        var result = await _userManager.CreateAsync(user, model.Şifre);
+
+        if (result.Succeeded)
+        {
+            await _userManager.AddToRoleAsync(user, "User");
+
+            if (model.IlgiAlanlari != null && model.IlgiAlanlari.Any())
             {
-                UserName = model.UserName,
-                Ad = model.Ad,
-                Soyad = model.Soyad,
-                Email = model.Email,
-                TelefonNumarasi = model.TelefonNumarasi,
-                Konum = model.Konum,
-                DogumTarihi = model.DogumTarihi,
-                Cinsiyet = model.Cinsiyet,
-                ProfilFoto = model.ProfilFoto
-            };
+                var mevcutIlgiAlanlari = await _context.IlgiAlanları
+                    .Where(ia => ia.KullanıcıId == user.Id)
+                    .ToListAsync();
 
-            // Kullanıcıyı veritabanına kaydediyoruz
-            var result = await _userManager.CreateAsync(user, model.Şifre);
-
-            if (result.Succeeded)
-            {
-                // Yeni kullanıcıya 'User' rolü ekliyoruz
-                await _userManager.AddToRoleAsync(user, "User");
-
-                // Seçilen ilgi alanlarını kontrol ediyoruz
-                if (model.IlgiAlanlari != null && model.IlgiAlanlari.Any())
-                {
-                    // Veritabanında daha önce eklenmiş olan ilgi alanlarını alıyoruz
-                    var mevcutIlgiAlanlari = await _context.IlgiAlanları
-                        .Where(ia => ia.KullanıcıId == user.Id)
-                        .ToListAsync();
-
-                    // Yeni ilgi alanlarını oluşturuyoruz
-                    var yeniIlgiAlanlari = model.IlgiAlanlari
-                        .Where(kategoriId => !mevcutIlgiAlanlari.Any(ia => ia.KategoriId == kategoriId))
-                        .Select(kategoriId => new IlgiAlanı
-                        {
-                            KullanıcıId = user.Id, // Kullanıcıyı ilişkilendiriyoruz
-                            KategoriId = kategoriId // KategoriId'yi alıyoruz
-                        })
-                        .ToList();
-
-                    // Yeni ilgi alanlarını veritabanına ekliyoruz
-                    if (yeniIlgiAlanlari.Any())
+                var yeniIlgiAlanlari = model.IlgiAlanlari
+                    .Where(kategoriId => !mevcutIlgiAlanlari.Any(ia => ia.KategoriId == kategoriId))
+                    .Select(kategoriId => new IlgiAlanı
                     {
-                        await _context.IlgiAlanları.AddRangeAsync(yeniIlgiAlanlari);
-                        await _context.SaveChangesAsync();
-                    }
+                        KullanıcıId = user.Id,
+                        KategoriId = kategoriId
+                    })
+                    .ToList();
+
+                if (yeniIlgiAlanlari.Any())
+                {
+                    await _context.IlgiAlanları.AddRangeAsync(yeniIlgiAlanlari);
+                    await _context.SaveChangesAsync();
                 }
-
-                // Başarıyla işlemi tamamladıktan sonra giriş sayfasına yönlendiriyoruz
-                return RedirectToAction("Login");
             }
 
-            // Eğer işlem başarısızsa, model hatalarını ekliyoruz
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-        
+            return RedirectToAction("Login");
+        }
 
-        // Model hatalıysa, aynı sayfayı tekrar döndürüyoruz
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+
         return View(model);
     }
 
-    // Fetch event suggestions for the user
     public async Task<IActionResult> UserHubArea()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -208,16 +188,15 @@ public class UserController : Controller
             return Unauthorized("Kullanıcı girişi gerekli.");
         }
 
-        // Fetch event suggestions for the user
         var oneriListesi = _etkinlikOnerisiServisi.OneriGetir(user.Id);
 
         if (oneriListesi == null || !oneriListesi.Any())
         {
             TempData["Message"] = "Hiçbir etkinlik önerisi bulunamadı.";
-            return View(); // No events to display
+            return View(); 
         }
 
-        return View(oneriListesi); // Pass the event list to the View
+        return View(oneriListesi); 
     }
 
     // Kullanıcı Giriş Sayfası (View Gönderimi)
@@ -272,6 +251,13 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
+        // Fetch user's interests (if any)
+        /*var ilgiAlanlari = await _context.IlgiAlanları
+            .Where(ia => ia.KullanıcıId == user.Id)
+            .Include(ia => ia.Kategori)
+            .Select(ia => ia.Kategori.KategoriAdi)
+            .ToListAsync();
+        */
         var model = new YAZLAB2.Models.UserProfileViewModel
         {
             Ad = user.Ad,
@@ -281,25 +267,12 @@ public class UserController : Controller
             Konum = user.Konum,
             DogumTarihi = user.DogumTarihi,
             Cinsiyet = user.Cinsiyet,
+            //IlgiAlanlari = ilgiAlanlari,
             ProfilFoto = user.ProfilFoto,
             UserName = user.UserName
         };
 
-        return View(model); // Ensure the view gets the correct model
+        return View(model); 
     }
 
 }
-
-/*
-public class UserProfileViewModel
-{
-    public string Ad { get; set; }
-    public string Soyad { get; set; }
-    public string Email { get; set; }
-    public string TelefonNumarasi { get; set; }
-    public DateTime DogumTarihi { get; set; }
-    public string ProfilFoto { get; set; }
-    public string Konum { get; set; }
-    public List<string> IlgiAlanlari { get; set; }
-}
-*/

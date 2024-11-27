@@ -8,5 +8,6 @@ namespace YAZLAB2.Models
         public string KullanıcıId { get; set; }
         public int KategoriId { get; set; }
 
+
     }
 }

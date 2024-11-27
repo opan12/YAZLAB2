@@ -44,109 +44,110 @@
         </div>
     }
 
-    <div class="info-section">
-        <h3 class="section-title">İlgi Alanları</h3>
-        @if (Model.IlgiAlanlari != null && Model.IlgiAlanlari.Count > 0)
-        {
-            <ul>
-                @foreach (var ilgi in Model.IlgiAlanlari)
+    <div>
+        <h3>Kullanıcının İlgi Alanları</h3>
+        <ul>
+            @if (Model.IlgiAlanlari != null && Model.IlgiAlanlari.Any())
+            {
+                foreach (var ilgiAlani in Model.IlgiAlanlari)
                 {
-                    <li>@ilgi</li>
+                    <li>@ilgiAlani</li>
                 }
-            </ul>
-        }
-        else
-        {
-            <p>İlgi alanı eklenmemiş.</p>
-        }
+            }
+            else
+            {
+                <p>Henüz bir ilgi alanı eklenmemiş.</p>
+            }
+        </ul>
     </div>
+
 </div>
 
 <style>
-        .profile-container {
-            margin: 20px auto;
-            max-width: 800px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    .profile-container {
+        margin: 20px auto;
+        max-width: 800px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-pic {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+    }
+
+    .username {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .location {
+        font-size: 16px;
+        color: #777;
+    }
+
+    .details-container {
+        margin-top: 20px;
+    }
+
+    .info-section {
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .profile-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .info-section ul {
+        list-style-type: disc;
+        margin-left: 20px;
+    }
+
+    .info-section li {
+        margin-bottom: 5px;
+    }
+
+    .button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+        .button:hover {
+            background-color: #0056b3;
         }
 
-        .profile-header {
-            text-align: center;
-            margin-bottom: 20px;
+    .logout-button {
+        background-color: #e63946;
+    }
+
+        .logout-button:hover {
+            background-color: #d62828;
         }
-
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-        }
-
-        .username {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .location {
-            font-size: 16px;
-            color: #777;
-        }
-
-        .details-container {
-            margin-top: 20px;
-        }
-
-        .info-section {
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .profile-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .info-section ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-
-        .info-section li {
-            margin-bottom: 5px;
-        }
-
-        .button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-            .button:hover {
-                background-color: #0056b3;
-            }
-
-        .logout-button {
-            background-color: #e63946;
-        }
-
-            .logout-button:hover {
-                background-color: #d62828;
-            }
 </style>
 
