@@ -25,6 +25,83 @@ public class UserController : Controller
         _etkinlikOnerisiServisi = etkinlikOnerisiServisi;
 
     }
+    [HttpGet]
+    [Authorize(Roles = "User")]
+    public async Task<IActionResult> UpdateUser()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction("Login");
+        }
+
+        // Create and pass a UserProfileViewModel to the view
+        var model = new UserProfileViewModel
+        {
+            Ad = user.Ad,
+            Soyad = user.Soyad,
+            Email = user.Email,
+            TelefonNumarasi = user.TelefonNumarasi,
+            Konum = user.Konum,
+            DogumTarihi = user.DogumTarihi,
+            Cinsiyet = user.Cinsiyet,
+            ProfilFoto = user.ProfilFoto,
+            UserName = user.UserName
+        };
+
+        return View(model);
+    }
+    [HttpPost]
+    [Authorize(Roles = "User")]
+    public async Task<IActionResult> UpdateUser(UserProfileViewModel model)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction("Login");
+        }
+
+        // Update user properties
+        user.Ad = model.Ad;
+        user.Soyad = model.Soyad;
+        user.Email = model.Email;
+        user.TelefonNumarasi = model.TelefonNumarasi;
+        user.Konum = model.Konum;
+        user.DogumTarihi = model.DogumTarihi;
+        user.Cinsiyet = model.Cinsiyet;
+        user.ProfilFoto = model.ProfilFoto;
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (result.Succeeded)
+        {
+            TempData["SuccessMessage"] = "Profil başarıyla güncellendi.";
+
+            // Return the updated UserProfileViewModel after successful update
+            var updatedModel = new UserProfileViewModel
+            {
+                Ad = user.Ad,
+                Soyad = user.Soyad,
+                Email = user.Email,
+                TelefonNumarasi = user.TelefonNumarasi,
+                Konum = user.Konum,
+                DogumTarihi = user.DogumTarihi,
+                Cinsiyet = user.Cinsiyet,
+                ProfilFoto = user.ProfilFoto,
+                UserName = user.UserName
+            };
+
+            return View("Profile", updatedModel); // Ensure it uses the correct model type
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+
+        return View(model); // Return the same model with errors
+    }
+
     // GET: Register
     [HttpGet]
     public IActionResult Register()
@@ -195,21 +272,25 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
-      
-        var model = new UserProfileViewModel
+        var model = new YAZLAB2.Models.UserProfileViewModel
         {
             Ad = user.Ad,
             Soyad = user.Soyad,
             Email = user.Email,
+            TelefonNumarasi = user.TelefonNumarasi,
             Konum = user.Konum,
             DogumTarihi = user.DogumTarihi,
-            TelefonNumarasi = user.TelefonNumarasi,
+            Cinsiyet = user.Cinsiyet,
             ProfilFoto = user.ProfilFoto,
+            UserName = user.UserName
         };
 
-        return View(model);
+        return View(model); // Ensure the view gets the correct model
     }
+
 }
+
+/*
 public class UserProfileViewModel
 {
     public string Ad { get; set; }
@@ -221,3 +302,4 @@ public class UserProfileViewModel
     public string Konum { get; set; }
     public List<string> IlgiAlanlari { get; set; }
 }
+*/

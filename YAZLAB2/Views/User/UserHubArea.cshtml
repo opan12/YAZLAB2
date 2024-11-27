@@ -1,44 +1,59 @@
-﻿@model IEnumerable<YAZLAB2.Models.Etkinlik> // Oneri listesi modelini kullanıyoruz
+﻿@model IEnumerable<YAZLAB2.Models.Etkinlik>
 
 @{
     ViewData["Title"] = "User Hub Area";
 }
 
-<div class="container">
-    <div>
-        <a href="/Etkinlik/Index" class="btn btn-success">Etkinlik Git</a>
-        <a href="/User/Profile" class="btn btn-success">Profil Git</a>
-        <a href="/Mesaj/Mesajlarım" class="btn btn-success">Mesajlarım Git</a>
-        <a href="/Mesaj/MesajGonder" class="btn btn-success">MesajGonder Git</a>
-        <a href="/Account/ForgotPassword" class="btn btn-success">ForgotPassword Git</a>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Section -->
+        <div class="col-md-3 bg-light vh-100 d-flex flex-column align-items-start p-3 shadow-sm">
+            <a href="/Etkinlik/Index" class="btn btn-primary btn-block mb-3">Etkinliklere Git</a>
+            <a href="/User/Profile" class="btn btn-primary btn-block mb-3">Profil</a>
+            <a href="/Mesaj/Mesajlarım" class="btn btn-primary btn-block mb-3">Mesajlarım</a>
+            <a href="/Mesaj/MesajGonder" class="btn btn-primary btn-block mb-3">Mesaj Gönder</a>
+            <a href="/Account/ForgotPassword" class="btn btn-secondary btn-block mb-3">Şifreyi Sıfırla</a>
+        </div>
 
+        <!-- Main Content Section -->
+        <div class="col-md-9">
+            <!-- Welcome Section -->
+            <div class="text-center my-4">
+                <h1 class="display-4">Hoşgeldin, @User.Identity.Name!</h1>
+            </div>
 
-
-    </div>
-
-    <h1>Hoşgeldin, @User.Identity.Name</h1>
-
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-info">@TempData["Message"]</div>
-    }
-
-    <h2>Önerilen Etkinlikler</h2>
-    @if (Model == null || !Model.Any())
-    {
-        <p>Hiç etkinlik önerisi bulunamadı.</p>
-    }
-    else
-    {
-        <ul>
-            @foreach (var oneri in Model)
+            <!-- TempData Message -->
+            @if (TempData["Message"] != null)
             {
-                <li>
-                    <a href="@Url.Action("Details", "Etkinlik", new { id = oneri.EtkinlikId })">
-                        @oneri.EtkinlikAdi
-                    </a>
-                </li>
+                <div class="alert alert-info text-center">@TempData["Message"]</div>
             }
-        </ul>
-    }
+
+            <!-- Recommended Events Section -->
+            <div class="mt-5">
+                <h2 class="mb-4">Önerilen Etkinlikler</h2>
+                @if (Model == null || !Model.Any())
+                {
+                    <p class="text-muted">Hiç etkinlik önerisi bulunamadı.</p>
+                }
+                else
+                {
+                    <div class="row">
+                        @foreach (var oneri in Model)
+                        {
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@oneri.EtkinlikAdi</h5>
+                                        <a href="@Url.Action("Details", "Etkinlik", new { id = oneri.EtkinlikId })" class="btn btn-outline-primary btn-sm">
+                                            Detaylara Git
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>

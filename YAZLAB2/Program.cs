@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using YAZLAB2.Models;  // Make sure this is present
+using YAZLAB2.Models; 
 using Microsoft.AspNetCore.Builder;
 using Yazlab__2.Core.Service;
 using Yazlab__2.Service;
-using YAZLAB2.Models;
 using YAZLAB2.Data;
 using YAZLAB2.Services;
 using YAZLAB2.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -22,16 +20,15 @@ builder.Services.AddScoped<EtkinlikService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<PuanHesaplayiciService>();
 builder.Services.AddScoped<MesajServisi>();
- builder.Services.AddScoped<BildirimService>();
+builder.Services.AddScoped<BildirimService>();
 builder.Services.AddScoped<EtkinlikOnerisiServisi>();
-
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>() // Add roles for authentication
+    .AddRoles<IdentityRole>() 
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
@@ -57,7 +54,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -69,11 +65,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Add authentication middleware
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=User}/{action=Login}/{id?}");
 
 app.Run();
