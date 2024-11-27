@@ -4,18 +4,112 @@
     ViewData["Title"] = "Etkinlik Detayı";
 }
 
-<h2>@ViewData["Title"]</h2>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-<div>
-    <h3>@Model.EtkinlikAdi</h3>
-    <p><strong>Açıklama:</strong> @Model.Aciklama</p>
-    <p><strong>Tarih:</strong> @Model.Tarih.ToString("dd/MM/yyyy")</p>
-    <p><strong>Konum:</strong> @Model.Konum</p>
-</div>
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-<a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>
-<form asp-action="Katil" method="post" asp-route-etkinlikId="@Model.EtkinlikId">
-    <button type="submit" class="btn btn-primary">Etkinliğe Katıl</button>
-</form>
+        .card-header {
+            position: relative;
+        }
 
-<a href="@Url.Action("EtkinlikMesajlari", "Mesaj", new { etkinlikId = Model.EtkinlikId })" class="btn btn-secondary">Yorumlara Git</a>
+        .event-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .detail-label {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header p-0">
+                        <!-- Geri Butonu -->
+                        <a href="@Url.Action("Index")" class="btn btn-secondary back-button">Geri</a>
+                        <!-- Etkinlik Fotoğrafı 
+                        <img src="@Model" alt="Etkinlik Fotoğrafı" class="event-image">-->
+                    </div>
+                    <div class="card-body">
+                        <h2 class="text-center text-primary mb-4">@Model.EtkinlikAdi</h2>
+                        <div class="mb-3">
+                            <p class="detail-label">Açıklama:</p>
+                            <p>@Model.Aciklama</p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="detail-label">Tarih:</p>
+                            <p>@Model.Tarih.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="detail-label">Konum:</p>
+                            <p>@Model.Konum</p>
+                        </div>
+                        <div class="text-center">
+                            <form asp-action="Katil" method="post" asp-route-etkinlikId="@Model.EtkinlikId" style="display: inline-block;">
+                                <button type="submit" class="btn btn-primary">Etkinliğe Katıl</button>
+                            </form>
+                            <a href="@Url.Action("EtkinlikMesajlari", "Mesaj", new { etkinlikId = Model.EtkinlikId })" class="btn btn-secondary">Yorumlara Git</a>
+                        </div>
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-success">
+                                @TempData["Success"]
+                            </div>
+                        }
+
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="alert alert-danger">
+                                @TempData["Error"]
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

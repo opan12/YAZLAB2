@@ -90,17 +90,8 @@ namespace Yazlab__2.Controllers
             _context.Katilimcis.Add(katilimci);
             await _context.SaveChangesAsync();
 
-            var alternatifEtkinlikler = await _context.Etkinlikler
-                .Where(e => kullaniciIlgiAlani.Contains(e.KategoriId) && e.EtkinlikId != etkinlikId)
-                .ToListAsync(); // Veritabanından alınan veriler
-
-            // Kullanıcının katıldığı etkinlikleri ayıkla
-            alternatifEtkinlikler = alternatifEtkinlikler
-                .Where(e => !kullaniciEtkinlikleri.Contains(e.EtkinlikId))
-                .ToList(); // Bellekte filtreleme
-
-            TempData["Success"] = "Etkinliğe başarıyla katıldınız.";
-            return View("AlternatifEtkinlikler", alternatifEtkinlikler);
+            TempData["Success"] = "Etkinliğe başarıyla katıldınız.";  // Başarı mesajı
+            return RedirectToAction("Details", new { id = etkinlikId });  // Aynı sayfaya geri döner
         }
 
 
