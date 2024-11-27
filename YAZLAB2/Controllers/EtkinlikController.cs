@@ -143,7 +143,8 @@ namespace Yazlab__2.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Etkinlik Güncelleme (Get)
+
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -159,14 +160,19 @@ namespace Yazlab__2.Controllers
             return View(etkinlik);
         }
 
-        // Etkinlik Güncelleme (Post)
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Etkinlik updatedEvent)
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
+
             var etkinlik = await _context.Etkinlikler
                 .FirstOrDefaultAsync(e => e.EtkinlikId == updatedEvent.EtkinlikId && e.UserId == user.Id);
+
+            
 
             if (etkinlik == null)
             {
@@ -175,23 +181,38 @@ namespace Yazlab__2.Controllers
 
             if (!ModelState.IsValid)
             {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
                 return View(updatedEvent);
             }
+
 
             etkinlik.EtkinlikAdi = updatedEvent.EtkinlikAdi;
             etkinlik.Aciklama = updatedEvent.Aciklama;
             etkinlik.Tarih = updatedEvent.Tarih;
             etkinlik.Konum = updatedEvent.Konum;
 
-            _context.Entry(etkinlik).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Etkinlikler.Update(etkinlik);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                ModelState.AddModelError("", "Veritabanı hatası: " + ex.Message);
+                return View(updatedEvent);
+            }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", new { id = etkinlik.EtkinlikId });
         }
 
-        // Etkinlik Silme
+
+
+
+   
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -206,7 +227,12 @@ namespace Yazlab__2.Controllers
             _context.Etkinlikler.Remove(etkinlik);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Etkinlik başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
+
+
+
+       
     }
 }

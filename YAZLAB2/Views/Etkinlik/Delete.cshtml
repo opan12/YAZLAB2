@@ -1,1 +1,26 @@
-﻿
+﻿@model YAZLAB2.Models.Etkinlik
+
+@{
+    ViewData["Title"] = "Etkinlik Sil";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">Dikkat!</h4>
+    <p>
+        "@Model.EtkinlikAdi" adlı etkinliği silmek istediğinizden emin misiniz?
+        Bu işlem geri alınamaz.
+    </p>
+    <hr>
+    <p class="mb-0">Lütfen kararınızı onaylayın veya iptal edin.</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <!-- Gizli alan: EtkinlikId -->
+    <input type="hidden" name="id" value="@Model.EtkinlikId" />
+
+    <!-- Onay Butonları -->
+    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">İptal</a>
+</form>

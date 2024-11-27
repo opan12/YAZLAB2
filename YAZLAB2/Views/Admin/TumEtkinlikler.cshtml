@@ -42,17 +42,44 @@ else
                             <!-- Güncelle Butonu -->
                             <a href="@Url.Action("EtkinlikDuzenle", new { id = etkinlik.EtkinlikId })" class="btn btn-warning">Güncelle</a>
 
-                            <!-- Sil Butonu -->
-                            <a href="@Url.Action("EtkinlikSil", new { id = etkinlik.EtkinlikId })" class="btn btn-danger">Sil</a>
+                            <!-- Sil Butonu - Modal'ı açacak buton -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">
+                                Sil
+                            </button>
                         </div>
                     </td>
                 </tr>
+
+                <!-- Silme Modalı -->
+                <div class="modal fade" id="deleteModal-@etkinlik.EtkinlikId" tabindex="-1" aria-labelledby="deleteModalLabel-@etkinlik.EtkinlikId" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel-@etkinlik.EtkinlikId">Etkinlik Sil</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>"<strong>@etkinlik.EtkinlikAdi</strong>" adlı etkinliği silmek istediğinizden emin misiniz?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                <!-- Silme formu -->
+                                <form asp-action="EtkinlikSil" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
+                                    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
         </tbody>
     </table>
 }
 
-<!-- JavaScript Kütüphaneleri -->
+<!-- JavaScript Kütüphaneleri ve Bootstrap Modal için gerekli Scriptler -->
+<script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
