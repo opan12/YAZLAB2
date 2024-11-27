@@ -32,20 +32,33 @@ namespace Yazlab__2.Controllers
 
         }
 
-        // Kullanıcının etkinliklerini listele
         public async Task<IActionResult> Index()
         {
-
             var user = await _userManager.GetUserAsync(User);
-            var etkinlikler = await _context.Etkinlikler
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var userCreatedEvents = await _context.Etkinlikler
                 .Where(e => e.UserId == user.Id)
                 .ToListAsync();
 
-            return View(etkinlikler);
+            var userParticipatedEvents = await _context.Katilimcis
+                .Where(k => k.KullanıcıId == user.Id)
+                .Select(k => k.EtkinlikID)
+                .ToListAsync();
+
+            var participatedEvents = await _context.Etkinlikler
+                .Where(e => userParticipatedEvents.Contains(e.EtkinlikId))
+                .ToListAsync();
+
+            ViewData["ParticipatedEvents"] = participatedEvents;
+
+            return View(userCreatedEvents); 
         }
 
-
-        // Etkinlik Detayı
         public async Task<IActionResult> Details(int id)
         {
             var etkinlik = await _context.Etkinlikler.FindAsync(id);
@@ -90,30 +103,22 @@ namespace Yazlab__2.Controllers
             _context.Katilimcis.Add(katilimci);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Etkinliğe başarıyla katıldınız.";  // Başarı mesajı
-            return RedirectToAction("Details", new { id = etkinlikId });  // Aynı sayfaya geri döner
+            TempData["Success"] = "Etkinliğe başarıyla katıldınız."; 
+            return RedirectToAction("Details", new { id = etkinlikId });  
         }
 
-
-
-        // Yeni Etkinlik Oluşturma (Get)
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // Kategorileri veritabanından al
             var kategoriler = await _context.Kategoris.ToListAsync();
-
-            // Yeni bir Etkinlik modelini oluştur
             var model = new Etkinlik();
 
-            // Etkinlik modeli için kategorileri ViewData ile göndereceğiz
             ViewData["Kategoriler"] = kategoriler;
 
             return View(model);
         }
 
 
-        // Yeni Etkinlik Oluşturma (Post)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Etkinlik yeniEtkinlik)
@@ -124,26 +129,21 @@ namespace Yazlab__2.Controllers
                 return RedirectToAction("Login", "User");
             }
 
-            // Kullanıcı ID'sini ve onay durumunu ayarlıyoruz.
             yeniEtkinlik.UserId = user.Id;
             yeniEtkinlik.OnayDurumu = false;
 
-            // Etkinliği oluşturma işlemi
             var result = await _etkinlikService.CreateEtkinlik(yeniEtkinlik);
             if (!result)
             {
-                // Eğer etkinlik oluşturulamazsa, kategorilerle birlikte tekrar formu gösteriyoruz.
                 var kategoriler = await _context.Kategoris.ToListAsync();
                 ViewData["Kategoriler"] = kategoriler;
                 ModelState.AddModelError(string.Empty, "Etkinlik tarihi ve saati çakışıyor.");
                 return View(yeniEtkinlik);
             }
-            await _bildirimService.AddBildirimAsync(user.Id, yeniEtkinlik.EtkinlikId); // Kullanıcıya bildirim
+            await _bildirimService.AddBildirimAsync(user.Id, yeniEtkinlik.EtkinlikId); 
 
             return RedirectToAction(nameof(Index));
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -172,7 +172,6 @@ namespace Yazlab__2.Controllers
             var etkinlik = await _context.Etkinlikler
                 .FirstOrDefaultAsync(e => e.EtkinlikId == updatedEvent.EtkinlikId && e.UserId == user.Id);
 
-            
 
             if (etkinlik == null)
             {
@@ -187,7 +186,6 @@ namespace Yazlab__2.Controllers
                 }
                 return View(updatedEvent);
             }
-
 
             etkinlik.EtkinlikAdi = updatedEvent.EtkinlikAdi;
             etkinlik.Aciklama = updatedEvent.Aciklama;
@@ -208,10 +206,6 @@ namespace Yazlab__2.Controllers
             return RedirectToAction("Details", new { id = etkinlik.EtkinlikId });
         }
 
-
-
-
-   
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -231,8 +225,5 @@ namespace Yazlab__2.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-
-       
     }
 }

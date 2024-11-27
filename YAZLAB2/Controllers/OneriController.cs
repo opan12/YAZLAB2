@@ -1,20 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using YAZLAB2.Models;
-
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Yazlab__2.Service;
 using YAZLAB2.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Yazlab__2.Controllers
 {
@@ -28,9 +23,6 @@ namespace Yazlab__2.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly ApplicationDbContext _context;
 
-
-        // Injecting the EtkinlikOnerisiServisi service into the controller
-        // Injecting required services into the controller
         public OneriController(
             EtkinlikOnerisiServisi etkinlikOnerisiServisi,
             UserManager<User> userManager,
@@ -42,68 +34,39 @@ namespace Yazlab__2.Controllers
             _signInManager = signInManager;
             _context = context;
         }
-
-        [HttpGet("GetOneriler")]
-        public async Task<IActionResult> GetOneriler()
+        public async Task<List<Etkinlik>> OneriGetir(string kullaniciId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return Unauthorized("Kullanıcı girişi gerekli.");
-            }
+            var tumKategoriler = await _context.IlgiAlanları
+                .Where(i => i.KullanıcıId == kullaniciId)
+                .Select(i => i.KategoriId)
+                .Union(
+                    _context.Katilimcis
+                    .Where(k => k.KullanıcıId == kullaniciId)
+                    .Join(
+                        _context.Etkinlikler,
+                        katilimci => katilimci.EtkinlikID,
+                        etkinlik => etkinlik.EtkinlikId,
+                        (katilimci, etkinlik) => etkinlik.KategoriId
+                    )
+                )
+                .Distinct()
+                .ToListAsync();
 
-            // Fetch the list of recommended events for the user
-            var oneriListesi = _etkinlikOnerisiServisi.OneriGetir(user.Id);
+            var katildigiEtkinlikIds = await _context.Katilimcis
+                .Where(k => k.KullanıcıId == kullaniciId)
+                .Select(k => k.EtkinlikID)
+                .ToListAsync();
 
-            if (oneriListesi == null || !oneriListesi.Any())
-            {
-                return NotFound("No event suggestions found.");
-            }
+            var oneriEtkinlikler = await _context.Etkinlikler
+                .AsNoTracking()
+                .Where(e =>
+                    tumKategoriler.Contains(e.KategoriId) &&
+                    !katildigiEtkinlikIds.Contains(e.EtkinlikId) &&
+                    e.OnayDurumu == true)
+                .ToListAsync();
 
-            // Return the list as JSON
-            return Ok(oneriListesi);
+            return oneriEtkinlikler;
         }
-
-        //[HttpGet("GetFilteredOneriler")]
-        //public async Task<IActionResult> GetFilteredOneriler(string? konum = null, string? kategori = null)
-        //{
-        //    // Kullanıcının kimliğini al
-        //    var user = await _userManager.GetUserAsync(User);
-        //    if (user == null)
-        //    {
-        //        return Unauthorized("Kullanıcı girişi gerekli.");
-        //    }
-
-        //    // Kullanıcının tüm etkinlik önerilerini al
-        //    var oneriListesi = _etkinlikOnerisiServisi.OneriGetir(user.Id);
-
-        //    // Filtreleme
-        //    if (!string.IsNullOrEmpty(konum))
-        //    {
-        //        // Konuma göre filtreleme
-        //        oneriListesi = oneriListesi.Where(o => o.Konum == konum).ToList();
-        //    }
-        //    if (!string.IsNullOrEmpty(kategori))
-        //    {
-        //        if (int.TryParse(kategori, out int kategoriId))
-        //        {
-        //            // Kategoriye göre filtreleme
-        //            oneriListesi = oneriListesi.Where(o => o.KategoriId == kategoriId).ToList();
-        //        }
-        //        else
-        //        {
-        //            // Geçersiz kategori girildiğinde yapılacak işlemler
-        //            return BadRequest("Geçersiz kategori değeri.");
-        //        }
-        //    }
-
-        //    if (!oneriListesi.Any())
-        //    {
-        //        return NotFound("No event suggestions found for the specified criteria.");
-        //    }
-
-        //    return Ok(oneriListesi);
-        //}
 
     }
 }

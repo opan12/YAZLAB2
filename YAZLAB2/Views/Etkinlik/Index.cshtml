@@ -93,17 +93,12 @@
     <div class="mt-5">
         <h3 class="text-primary">Katıldığım Etkinlikler</h3>
         <div class="row">
-            @if (!Model.Any())
+            @if (ViewData["ParticipatedEvents"] is List<YAZLAB2.Models.Etkinlik> participatedEvents && participatedEvents.Any())
             {
-                <div class="col-12 text-center text-muted">Henüz bir etkinlik eklenmemiş.</div>
-            }
-            else
-            {
-                @foreach (var etkinlik in Model)
+                @foreach (var etkinlik in participatedEvents)
                 {
                     <div class="col-md-4 col-lg-3 mb-4">
                         <div class="card shadow-sm h-100">
-                            <!-- Örnek etkinlik resmi -->
                             <img src="https://via.placeholder.com/300x200"
                                  class="card-img-top"
                                  alt="Etkinlik Resmi">
@@ -121,8 +116,13 @@
                     </div>
                 }
             }
+            else
+            {
+                <div class="col-12 text-center text-muted">Henüz katıldığınız bir etkinlik bulunmamaktadır.</div>
+            }
         </div>
     </div>
+
 </div>
 
 <!-- Bootstrap 5 JavaScript ve Popper.js dosyalarını doğru şekilde yüklediğimizden emin olalım -->

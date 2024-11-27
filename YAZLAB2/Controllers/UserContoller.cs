@@ -60,7 +60,6 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
-        // Update user properties
         user.Ad = model.Ad;
         user.Soyad = model.Soyad;
         user.Email = model.Email;
@@ -150,24 +149,16 @@ public class UserController : Controller
 
             if (model.IlgiAlanlari != null && model.IlgiAlanlari.Any())
             {
-                var mevcutIlgiAlanlari = await _context.IlgiAlanları
-                    .Where(ia => ia.KullanıcıId == user.Id)
-                    .ToListAsync();
-
-                var yeniIlgiAlanlari = model.IlgiAlanlari
-                    .Where(kategoriId => !mevcutIlgiAlanlari.Any(ia => ia.KategoriId == kategoriId))
+                var ilgiAlanlarıListesi = model.IlgiAlanlari
                     .Select(kategoriId => new IlgiAlanı
                     {
-                        KullanıcıId = user.Id,
-                        KategoriId = kategoriId
+                        KullanıcıId = user.Id, 
+                        KategoriId = kategoriId 
                     })
                     .ToList();
 
-                if (yeniIlgiAlanlari.Any())
-                {
-                    await _context.IlgiAlanları.AddRangeAsync(yeniIlgiAlanlari);
-                    await _context.SaveChangesAsync();
-                }
+                await _context.IlgiAlanları.AddRangeAsync(ilgiAlanlarıListesi);
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToAction("Login");
@@ -180,7 +171,7 @@ public class UserController : Controller
 
         return View(model);
     }
-
+    
     public async Task<IActionResult> UserHubArea()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -189,7 +180,7 @@ public class UserController : Controller
             return Unauthorized("Kullanıcı girişi gerekli.");
         }
 
-        var oneriListesi = _etkinlikOnerisiServisi.OneriGetir(user.Id);
+        var oneriListesi = await _etkinlikOnerisiServisi.OneriGetir(user.Id);
 
         if (oneriListesi == null || !oneriListesi.Any())
         {
@@ -199,15 +190,13 @@ public class UserController : Controller
 
         return View(oneriListesi); 
     }
-
-    // Kullanıcı Giriş Sayfası (View Gönderimi)
+   
     [HttpGet]
     public IActionResult Login()
     {
         return View();
     }
    
-    // Kullanıcı Giriş İşlemi
     [HttpPost]
     public async Task<IActionResult> Login(UserLoginModel model)
     {
@@ -227,8 +216,6 @@ public class UserController : Controller
                 return RedirectToAction("UserHubArea", "User", new { Username = model.Username });
             }
 
-
-          
             ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
         }
 
@@ -276,8 +263,6 @@ public class UserController : Controller
         return View(model); 
     }
 
-
-
     [HttpGet]
     [Authorize]
     public IActionResult ForgotPassword()
@@ -291,7 +276,6 @@ public class UserController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Giriş yapmış kullanıcıyı al
             var user = await _userManager.GetUserAsync(User);
             if (user == null || user.Email != model.Email)
             {
@@ -319,7 +303,6 @@ public class UserController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Giriş yapmış kullanıcıyı al
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -327,7 +310,6 @@ public class UserController : Controller
                 return View(model);
             }
 
-            // Yeni şifreyi doğrudan ayarla
             var result = await _userManager.RemovePasswordAsync(user);
             if (result.Succeeded)
             {

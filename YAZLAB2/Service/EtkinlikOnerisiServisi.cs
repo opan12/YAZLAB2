@@ -1,4 +1,5 @@
-﻿using YAZLAB2.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using YAZLAB2.Data;
 using YAZLAB2.Models;
 
 public class EtkinlikOnerisiServisi
@@ -9,39 +10,39 @@ public class EtkinlikOnerisiServisi
     {
         _context = context;
     }
-
-    public List<Etkinlik> OneriGetir(string kullaniciId)
+    public async Task<List<Etkinlik>> OneriGetir(string kullaniciId)
     {
-        // Kullanıcının ilgi alanlarını alıyoruz
-        var kullaniciIlgiAlani = _context.IlgiAlanları
+        var kullaniciIlgiAlanlari = await _context.IlgiAlanları
             .Where(i => i.KullanıcıId == kullaniciId)
-            .Select(i => i.KategoriId)  // Kullanıcının ilgisini gösteren kategori ID'lerini alıyoruz
-            .ToList();
+            .Select(i => i.KategoriId)
+            .ToListAsync();
 
-        // Kullanıcının katıldığı etkinliklerin ID'lerini alıyoruz
-        var kullaniciKatilimlar = _context.Katilimcis
+        var katildigiKategoriIds = await _context.Katilimcis
             .Where(k => k.KullanıcıId == kullaniciId)
-            .Select(k => k.EtkinlikID)  // Kullanıcının katıldığı etkinlik ID'leri
-            .ToList();
+            .Join(
+                _context.Etkinlikler,
+                katilimci => katilimci.EtkinlikID,
+                etkinlik => etkinlik.EtkinlikId,
+                (katilimci, etkinlik) => etkinlik.KategoriId
+            )
+            .Distinct()
+            .ToListAsync();
 
-        // Eğer kullanıcının katıldığı etkinlikler yoksa, yalnızca ilgi alanına göre etkinlik öneriyoruz
-        if (kullaniciKatilimlar.Count == 0)
-        {
-            // Kullanıcının ilgi alanına göre etkinlikleri filtreliyoruz
-            var ilgiAlaniOnerileri = _context.Etkinlikler
-                .Where(e => kullaniciIlgiAlani.Contains(e.KategoriId))  // Etkinliklerin kategorisini kullanıcının ilgisiyle karşılaştırıyoruz
-                .ToList();
+        var tumKategoriler = kullaniciIlgiAlanlari.Union(katildigiKategoriIds).ToList();
 
-            return ilgiAlaniOnerileri;  // Sadece ilgi alanına göre önerilen etkinlikler
-        }
-        else
-        {
-            // Kullanıcının katıldığı etkinliklerin dışındaki etkinlikleri öneriyoruz
-            var katilimVeIlgiAlaniOnerileri = _context.Etkinlikler
-                .Where(e => kullaniciIlgiAlani.Contains(e.KategoriId) && kullaniciKatilimlar.Contains(e.EtkinlikId))  // Hem katılım olmayan hem de ilgi alanına uyan etkinlikler
-                .ToList();
+        var katildigiEtkinlikIds = await _context.Katilimcis
+            .Where(k => k.KullanıcıId == kullaniciId)
+            .Select(k => k.EtkinlikID)
+            .ToListAsync();
 
-            return katilimVeIlgiAlaniOnerileri;  // Hem ilgi alanına hem de katılım durumu olmayan etkinliklere göre önerilen etkinlikler
-        }
+        var oneriEtkinlikler = await _context.Etkinlikler
+            .Where(e =>
+                tumKategoriler.Contains(e.KategoriId) && 
+                !katildigiEtkinlikIds.Contains(e.EtkinlikId) && 
+                e.OnayDurumu == true 
+            )
+            .ToListAsync();
+
+        return oneriEtkinlikler;
     }
 }
