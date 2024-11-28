@@ -198,51 +198,6 @@ namespace YAZLAB2.Controllers
             return RedirectToAction("TumEtkinlikler");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> EtkinlikDuzenle(int id)
-        {
-            var etkinlik = await _context.Etkinlikler
-                .FirstOrDefaultAsync(e => e.EtkinlikId == id);
-
-            if (etkinlik == null)
-            {
-                return NotFound();
-            }
-
-            // Kategorileri ViewBag'e ekliyoruz
-            ViewBag.Kategoriler = await _context.Kategoris.ToListAsync();
-
-            // KategoriId'ye göre kategori adını almak
-            var kategori = await _context.Kategoris
-                .FirstOrDefaultAsync(k => k.KategoriId == etkinlik.KategoriId);
-
-            // Kategori ismini modelde bir property olarak ekleyebilirsiniz
-            ViewBag.SelectedKategoriAdi = kategori?.KategoriAdi;
-
-            return View(etkinlik);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EtkinlikDuzenle(Etkinlik etkinlik)
-        {
-            if (!ModelState.IsValid)
-            {
-                // Kategorileri tekrar ViewBag'e ekliyoruz
-                ViewBag.Kategoriler = await _context.Kategoris.ToListAsync();
-                return View(etkinlik);
-            }
-
-            // Etkinliği güncelliyoruz
-            _context.Entry(etkinlik).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            // Kullanıcıya başarı mesajı gösteriyoruz
-            TempData["Message"] = "Etkinlik başarıyla güncellendi.";
-            return RedirectToAction("TumEtkinlikler");
-        }
-
-
-        /*
         // Etkinlik Güncelle
         [HttpGet]
         public async Task<IActionResult> EtkinlikDuzenle(int id)
@@ -269,7 +224,7 @@ namespace YAZLAB2.Controllers
             TempData["Message"] = "Etkinlik başarıyla güncellendi.";
             return RedirectToAction("TumEtkinlikler");
         }
-        */
+        
         // Etkinlik Sil
         [HttpPost]
         public async Task<IActionResult> EtkinlikSil(int id)

@@ -33,17 +33,16 @@
 
     <!-- Saat -->
     <div class="form-group">
-        <label for="Saat">Saat:</label>
-        <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString(@"hh\:mm")" required />
-        <span asp-validation-for="Saat" class="text-danger"></span>
+        <label for="Saat">Saat</label>
+        <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString("hh\\:mm")" required />
     </div>
 
     <!-- Etkinlik Süresi -->
     <div class="form-group">
-        <label for="EtkinlikSuresi">Etkinlik Süresi:</label>
-        <input type="time" class="form-control" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi.ToString(@"hh\:mm")" required />
-        <span asp-validation-for="EtkinlikSuresi" class="text-danger"></span>
+        <label for="EtkinlikSuresi">Etkinlik Süresi</label>
+        <input type="time" class="form-control" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi.ToString("hh\\:mm")" required />
     </div>
+
 
     <!-- Konum -->
     <div class="form-group">
@@ -52,19 +51,7 @@
         <span asp-validation-for="Konum" class="text-danger"></span>
     </div>
 
-   <!-- Etkinlik seçimi -->
-    <div class="form-group">
-        <label for="KategoriId">Kategori</label>
-        <select class="form-control" id="KategoriId" name="KategoriId">
-            <option value="">Kategori Seçin</option>
-            @foreach (var kategori in ViewBag.Kategoriler as List<YAZLAB2.Models.Kategori>)
-            {
-                <option value="@kategori.KategoriId" )>
-                    @kategori.KategoriAdi
-                </option>
-            }
-        </select>
-    </div>
+   
     <!-- Etkinlik Resmi -->
     <div class="form-group">
         <label for="EtkinlikResmi">Etkinlik Resmi (URL):</label>

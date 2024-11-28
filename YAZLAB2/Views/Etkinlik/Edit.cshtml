@@ -31,13 +31,13 @@
     <!-- Saat -->
     <div class="form-group">
         <label for="Saat">Saat</label>
-        <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString(@"hh\:mm")" required />
+        <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString("hh\\:mm")" required />
     </div>
 
     <!-- Etkinlik Süresi -->
     <div class="form-group">
         <label for="EtkinlikSuresi">Etkinlik Süresi</label>
-        <input type="time" class="form-control" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi.ToString(@"hh\:mm")" required />
+        <input type="time" class="form-control" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi.ToString("hh\\:mm")" required />
     </div>
 
     <!-- Konum -->
@@ -46,21 +46,17 @@
         <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" required />
     </div>
 
-    <!-- Kategori -->
     <div class="form-group">
         <label for="KategoriId">Kategori</label>
         <select class="form-control" id="KategoriId" name="KategoriId" required>
-            <option value="">Kategori Seçiniz</option>
-            <option value="1" selected="@(Model.KategoriId == 1)">Kategori 1</option>
-            <option value="2" selected="@(Model.KategoriId == 2)">Kategori 2</option>
-            <option value="3" selected="@(Model.KategoriId == 3)">Kategori 3</option>
+            <option value="">Kategori Seçin</option>
+            @foreach (var kategori in (List<YAZLAB2.Models.Kategori>)ViewData["Kategoriler"])
+            {
+                <option value="@kategori.KategoriId" )>
+                    @kategori.KategoriAdi
+                </option>
+            }
         </select>
-    </div>
-
-    <!-- Kullanıcı ID -->
-    <div class="form-group">
-        <label for="UserId">Kullanıcı ID</label>
-        <input type="text" class="form-control" id="UserId" name="UserId" value="@Model.UserId" required />
     </div>
 
     <!-- Onay Durumu -->

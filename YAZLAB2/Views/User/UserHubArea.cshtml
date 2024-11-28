@@ -33,6 +33,11 @@
                             <div class="col-md-6 mb-4">
                                 <div class="card shadow-sm">
                                     <div class="card-body">
+                                        <!-- Event Image -->
+                                        @if (!string.IsNullOrEmpty(oneri.EtkinlikResmi))
+                                        {
+                                            <img src="@Url.Content(oneri.EtkinlikResmi)" class="card-img-top" alt="Etkinlik Resmi" style="height: 200px; object-fit: cover;">
+                                        }
                                         <!-- Event Name -->
                                         <h5 class="card-title">@oneri.EtkinlikAdi</h5>
 
