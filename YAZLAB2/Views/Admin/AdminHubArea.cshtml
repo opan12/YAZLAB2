@@ -2,12 +2,115 @@
     ViewData["Title"] = "Admin Hub Area";
 }
 
-<h1>Admin Paneline Hoşgeldiniz</h1>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Optional: For icons -->
+    <style>
+        /* General Page Styling */
+        body {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkxmmo1727qSVOSQ8Qwxiu1NOl0b-JG4SWxQ&s');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
 
-<div>
-    <ul>
-        <li><a asp-action="TumKullanicilar">Tüm Kullanıcıları Listele</a></li>
-        <li><a asp-action="TumEtkinlikler">Tüm Etkinlikleri Listele</a></li>
-        <a href="/Kategori/Index" class="btn btn-success">Kategori Git</a>
-    </ul>
-</div>
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-top: 30px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Container for Admin Menu */
+        .admin-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+            .admin-container ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .admin-container li {
+                margin: 15px 0;
+                text-align: center;
+            }
+
+            .admin-container a {
+                display: inline-block;
+                padding: 12px 25px;
+                background-color: #3498db;
+                color: #fff;
+                font-size: 1.2rem;
+                font-weight: bold;
+                border-radius: 5px;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+                .admin-container a:hover {
+                    background-color: #2980b9;
+                    transform: translateY(-3px);
+                }
+
+        .logout-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #e74c3c;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .logout-button:hover {
+                background-color: #c0392b;
+                transform: translateY(-3px);
+            }
+        /* Button Styling for special buttons */
+        .btn-success {
+            background-color: #27ae60;
+            font-size: 1.2rem;
+        }
+
+            .btn-success:hover {
+                background-color: #2ecc71;
+            }
+
+        /* Icons for each button */
+        .admin-container a i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Paneline Hoşgeldiniz</h1>
+
+    <div class="admin-container">
+        <ul>
+            <li><a asp-action="TumKullanicilar"><i class="fas fa-users"></i>Tüm Kullanıcıları Listele</a></li>
+            <li><a asp-action="TumEtkinlikler"><i class="fas fa-calendar-alt"></i>Tüm Etkinlikleri Listele</a></li>
+            <li><a asp-action="Raporlama"><i class="fas fa-chart-line"></i>Raporlama</a></li>
+            <li><a asp-action="KategoriEkle"><i class="fas fa-plus-circle"></i>Kategori Ekle</a></li>
+            <li><a href="/Kategori/Index" class="btn btn-success">Olan Kategoriler</a></li>
+        </ul>
+        <a href="/User/Login" class="logout-button"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+    </div>
+</body>
+</html>

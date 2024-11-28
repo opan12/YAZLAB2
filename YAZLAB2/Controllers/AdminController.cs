@@ -58,7 +58,7 @@ namespace YAZLAB2.Controllers
             return View("AdminHubArea"); // Doğru görünüm adı
         }
 
-
+        /*
         // Kullanıcıları Listele
         public async Task<IActionResult> TumKullanicilar()
         {
@@ -73,6 +73,89 @@ namespace YAZLAB2.Controllers
             }
             return View(users);
         }
+        */
+        public async Task<IActionResult> TumKullanicilar()
+        {
+            var users = await _userManager.Users
+                                          .Where(user => user.UserName != "admin")
+                                          .ToListAsync();
+            if (users == null || !users.Any())
+            {
+                ViewBag.Message = "Hiç kullanıcı bulunamadı.";
+                return View();
+            }
+            return View(users);
+        }
+
+        // Kullanıcı Düzenle
+        [HttpGet]
+        public async Task<IActionResult> KullaniciDuzenle(string id)
+        {
+            var kullanici = await _userManager.FindByIdAsync(id);
+            if (kullanici == null)
+            {
+                return NotFound();
+            }
+            return View(kullanici);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> KullaniciDuzenle(User kullanici)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(kullanici);
+            }
+
+            var mevcutKullanici = await _userManager.FindByIdAsync(kullanici.Id);
+            if (mevcutKullanici == null)
+            {
+                return NotFound();
+            }
+
+            mevcutKullanici.UserName = kullanici.UserName;
+            mevcutKullanici.Email = kullanici.Email;
+            mevcutKullanici.Ad = kullanici.Ad;
+            mevcutKullanici.Soyad = kullanici.Soyad;
+            mevcutKullanici.TelefonNumarasi = kullanici.TelefonNumarasi;
+            mevcutKullanici.Konum = kullanici.Konum;
+            mevcutKullanici.DogumTarihi = kullanici.DogumTarihi;
+            mevcutKullanici.Cinsiyet = kullanici.Cinsiyet;
+            mevcutKullanici.ProfilFoto = kullanici.ProfilFoto;
+
+            var result = await _userManager.UpdateAsync(mevcutKullanici);
+            if (result.Succeeded)
+            {
+                TempData["Message"] = "Kullanıcı başarıyla güncellendi.";
+                return RedirectToAction("TumKullanicilar");
+            }
+
+            TempData["ErrorMessage"] = "Kullanıcı güncellenemedi.";
+            return View(kullanici);
+        }
+
+
+        // Kullanıcı Sil
+        [HttpPost]
+        public async Task<IActionResult> KullaniciSil(string id)
+        {
+            var kullanici = await _userManager.FindByIdAsync(id);
+            if (kullanici == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(kullanici);
+            if (result.Succeeded)
+            {
+                TempData["Message"] = "Kullanıcı başarıyla silindi.";
+                return RedirectToAction("TumKullanicilar");
+            }
+
+            TempData["ErrorMessage"] = "Kullanıcı silinemedi.";
+            return RedirectToAction("TumKullanicilar");
+        }
+
 
         // Etkinlikleri Listele
         public async Task<IActionResult> TumEtkinlikler()

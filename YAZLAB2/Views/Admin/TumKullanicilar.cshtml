@@ -5,6 +5,11 @@
 
 <h1 class="page-title">Tüm Kullanıcılar</h1>
 
+<!-- Back Button -->
+<a href="@Url.Action("AdminHubArea", "Admin")" class="back-button">
+    <i class="fas fa-arrow-left"></i> Geri
+</a>
+
 @if (Model == null || !Model.Any())
 {
     <p class="no-users-message">Hiç kullanıcı bulunamadı.</p>
@@ -37,7 +42,11 @@ else
                         <td>@user.DogumTarihi?.ToString("dd/MM/yyyy")</td>
                         <td>@user.Cinsiyet</td>
                         <td>
-                            <form method="post" action="@Url.Action("KullaniciSil", "Admin", new { userId = user.Id })">
+                            <!-- Kullanıcıyı Düzenle Butonu -->
+                            <a href="@Url.Action("KullaniciDuzenle", "Admin", new { id = user.Id })" class="btn-action btn-edit">Düzenle</a>
+
+                            <form asp-action="KullaniciSil" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@user.Id" />
                                 <button type="submit" class="btn-action btn-delete">Sil</button>
                             </form>
                         </td>
@@ -117,6 +126,36 @@ else
             border-color: #34495e;
         }
 
+    /* Geri Butonu */
+    .back-button {
+        position: absolute;
+        top: 80px;
+        left: 20px;
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 15px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #3498db;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .back-button:active {
+            transform: translateY(1px);
+        }
     /* Button Styling */
     .btn-action {
         padding: 8px 16px;
@@ -128,6 +167,16 @@ else
         transition: all 0.3s ease;
     }
 
+    .btn-edit {
+        background-color: #3498db; /* Blue background */
+        color: #fff;
+    }
+
+        .btn-edit:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+            box-shadow: 0px 4px 8px rgba(52, 152, 219, 0.2); /* Add a subtle shadow on hover */
+        }
+
     .btn-delete {
         background-color: #e74c3c;
         color: #fff;
@@ -137,5 +186,6 @@ else
             background-color: #c0392b;
             box-shadow: 0px 4px 8px rgba(231, 76, 60, 0.2);
         }
+
 
 </style>

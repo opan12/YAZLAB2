@@ -3,83 +3,93 @@
     ViewData["Title"] = "Tüm Etkinlikler";
 }
 
-<h1>Tüm Etkinlikler</h1>
+<h1 class="page-title">Tüm Etkinlikler</h1>
+
+<!-- Back Button -->
+<a href="@Url.Action("AdminHubArea", "Admin")" class="btn btn-primary back-button">
+    <i class="fas fa-arrow-left"></i> Geri
+</a>
 
 @if (Model == null || !Model.Any())
 {
-    <p>Hiç etkinlik bulunamadı.</p>
+    <p class="no-events-message">Hiç etkinlik bulunamadı.</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Etkinlik Adı</th>
-                <th>Durumu</th>
-                <th>Seçenekler</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var etkinlik in Model)
-            {
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+            <thead class="table-dark">
                 <tr>
-                    <td>@etkinlik.EtkinlikAdi</td>
-                    <td>@(etkinlik.OnayDurumu ? "Onaylandı" : "Reddedildi")</td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <!-- Onayla Butonu -->
-                            <form asp-action="EtkinlikOnayla" method="post" style="display:inline-block;">
-                                <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
-                                <button type="submit" class="btn btn-success">Onayla</button>
-                            </form>
-
-                            <!-- Reddet Butonu -->
-                            <form asp-action="EtkinlikReddet" method="post" style="display:inline-block;">
-                                <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
-                                <button type="submit" class="btn btn-danger">Reddet</button>
-                            </form>
-
-                            <!-- Güncelle Butonu -->
-                            <a href="@Url.Action("EtkinlikDuzenle", new { id = etkinlik.EtkinlikId })" class="btn btn-warning">Güncelle</a>
-
-                            <!-- Sil Butonu - Modal'ı açacak buton -->
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">
-                                Sil
-                            </button>
-                        </div>
-                    </td>
+                    <th>Etkinlik Adı</th>
+                    <th>Durumu</th>
+                    <th>Seçenekler</th>
                 </tr>
-
-                <!-- Silme Modalı -->
-                <div class="modal fade" id="deleteModal-@etkinlik.EtkinlikId" tabindex="-1" aria-labelledby="deleteModalLabel-@etkinlik.EtkinlikId" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel-@etkinlik.EtkinlikId">Etkinlik Sil</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>"<strong>@etkinlik.EtkinlikAdi</strong>" adlı etkinliği silmek istediğinizden emin misiniz?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                                <!-- Silme formu -->
-                                <form asp-action="EtkinlikSil" method="post" style="display:inline;">
+            </thead>
+            <tbody>
+                @foreach (var etkinlik in Model)
+                {
+                    <tr>
+                        <td>@etkinlik.EtkinlikAdi</td>
+                        <td>
+                            <span class="badge @(etkinlik.OnayDurumu ? "bg-success" : "bg-danger")">
+                                @(etkinlik.OnayDurumu ? "Onaylandı" : "Reddedildi")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <!-- Onayla Butonu -->
+                                <form asp-action="EtkinlikOnayla" method="post">
                                     <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
-                                    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i> Onayla
+                                    </button>
                                 </form>
+
+                                <!-- Reddet Butonu -->
+                                <form asp-action="EtkinlikReddet" method="post">
+                                    <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-times"></i> Reddet
+                                    </button>
+                                </form>
+
+                                <!-- Güncelle Butonu -->
+                                <a href="@Url.Action("EtkinlikDuzenle", new { id = etkinlik.EtkinlikId })" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Güncelle
+                                </a>
+
+                                <!-- Sil Butonu - Modal'ı açacak buton -->
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">
+                                    <i class="fas fa-trash-alt"></i> Sil
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Silme Modalı -->
+                    <div class="modal fade" id="deleteModal-@etkinlik.EtkinlikId" tabindex="-1" aria-labelledby="deleteModalLabel-@etkinlik.EtkinlikId" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel-@etkinlik.EtkinlikId">Etkinlik Sil</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>"<strong>@etkinlik.EtkinlikAdi</strong>" adlı etkinliği silmek istediğinizden emin misiniz?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                    <!-- Silme formu -->
+                                    <form asp-action="EtkinlikSil" method="post">
+                                        <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
+                                        <button type="submit" class="btn btn-danger">Sil</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-        </tbody>
-    </table>
+                }
+            </tbody>
+        </table>
+    </div>
 }
-
-<!-- JavaScript Kütüphaneleri ve Bootstrap Modal için gerekli Scriptler -->
-<script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
