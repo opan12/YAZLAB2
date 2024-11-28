@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace YAZLAB2.Migrations
 {
     /// <inheritdoc />
-    public partial class Inialcreate : Migration
+    public partial class InialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace YAZLAB2.Migrations
                     Konum = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Ad = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Soyad = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DogumTarihi = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DogumTarihi = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Cinsiyet = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TelefonNumarasi = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilFoto = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -66,11 +66,13 @@ namespace YAZLAB2.Migrations
                     EtkinlikAdi = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Tarih = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Saat = table.Column<TimeSpan>(type: "time", nullable: false),
                     EtkinlikSuresi = table.Column<TimeSpan>(type: "time", nullable: false),
                     Konum = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     KategoriId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OnayDurumu = table.Column<bool>(type: "bit", nullable: false)
+                    OnayDurumu = table.Column<bool>(type: "bit", nullable: false),
+                    EtkinlikResmi = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -251,6 +253,27 @@ namespace YAZLAB2.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Bildirimler",
+                columns: table => new
+                {
+                    BildirimId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BildirimTarih = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    KullanıcıId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EtkinlikId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bildirimler", x => x.BildirimId);
+                    table.ForeignKey(
+                        name: "FK_Bildirimler_Etkinlikler_EtkinlikId",
+                        column: x => x.EtkinlikId,
+                        principalTable: "Etkinlikler",
+                        principalColumn: "EtkinlikId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -289,6 +312,11 @@ namespace YAZLAB2.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bildirimler_EtkinlikId",
+                table: "Bildirimler",
+                column: "EtkinlikId");
         }
 
         /// <inheritdoc />
@@ -310,7 +338,7 @@ namespace YAZLAB2.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Etkinlikler");
+                name: "Bildirimler");
 
             migrationBuilder.DropTable(
                 name: "IlgiAlanları");
@@ -332,6 +360,9 @@ namespace YAZLAB2.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Etkinlikler");
         }
     }
 }

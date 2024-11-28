@@ -12,8 +12,8 @@ using YAZLAB2.Data;
 namespace YAZLAB2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241128134928_ef")]
-    partial class ef
+    [Migration("20241128150639_InialCreate")]
+    partial class InialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
