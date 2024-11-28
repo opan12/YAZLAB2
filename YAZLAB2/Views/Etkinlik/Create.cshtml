@@ -43,6 +43,10 @@
             }
         </select>
     </div>
+    <div class="form-group">
+        <label for="EtkinlikResmi">Etkinlik Resmi URL</label>
+        <input type="url" class="form-control" id="EtkinlikResmi" name="EtkinlikResmi" value="@Model.EtkinlikResmi" />
+    </div>
 
     <button type="submit" class="btn btn-primary">Kaydet</button>
     <a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>

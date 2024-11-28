@@ -66,8 +66,15 @@
                     <div class="card-header p-0">
                         <!-- Geri Butonu -->
                         <a href="@Url.Action("Index")" class="btn btn-secondary back-button">Geri</a>
-                        <!-- Etkinlik Fotoğrafı 
-                        <img src="@Model" alt="Etkinlik Fotoğrafı" class="event-image">-->
+                        <!-- Etkinlik Fotoğrafı -->
+                        @if (!string.IsNullOrEmpty(Model.EtkinlikResmi))
+                        {
+                            <img src="@Model.EtkinlikResmi" alt="Etkinlik Fotoğrafı" class="event-image">
+                        }
+                        else
+                        {
+                            <img src="/path/to/default/image.jpg" alt="Varsayılan Etkinlik Fotoğrafı" class="event-image">
+                        }
                     </div>
                     <div class="card-body">
                         <h2 class="text-center text-primary mb-4">@Model.EtkinlikAdi</h2>

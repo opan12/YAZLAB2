@@ -6,83 +6,92 @@
 }
 
 <h2>Profil Güncelle</h2>
+<!-- Geri Butonu -->
 <div class="container mt-4">
-    <form asp-action="UpdateUser" method="post" enctype="multipart/form-data" class="form-horizontal">
-        <div class="form-group row">
-            <label asp-for="Ad" class="col-sm-3 col-form-label">Ad:</label>
-            <div class="col-sm-9">
-                <input asp-for="Ad" class="form-control" placeholder="Adınızı girin" />
-                <span asp-validation-for="Ad" class="text-danger"></span>
-            </div>
-        </div>
+    <div class="mb-4">
+        <a href="@Url.Action("Profile", "User", new { Username = Model.UserName })" class="btn btn-secondary shadow-sm">
+            <i class="bi bi-arrow-left"></i> Geri
+        </a>
+    </div>
 
-        <div class="form-group row">
-            <label asp-for="Soyad" class="col-sm-3 col-form-label">Soyad:</label>
-            <div class="col-sm-9">
-                <input asp-for="Soyad" class="form-control" placeholder="Soyadınızı girin" />
-                <span asp-validation-for="Soyad" class="text-danger"></span>
+    <div class="container mt-4">
+        <form asp-action="UpdateUser" method="post" enctype="multipart/form-data" class="form-horizontal">
+            <div class="form-group row">
+                <label asp-for="Ad" class="col-sm-3 col-form-label">Ad:</label>
+                <div class="col-sm-9">
+                    <input asp-for="Ad" class="form-control" placeholder="Adınızı girin" />
+                    <span asp-validation-for="Ad" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="Email" class="col-sm-3 col-form-label">Email:</label>
-            <div class="col-sm-9">
-                <input asp-for="Email" class="form-control" type="email" placeholder="Email adresinizi girin" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Soyad" class="col-sm-3 col-form-label">Soyad:</label>
+                <div class="col-sm-9">
+                    <input asp-for="Soyad" class="form-control" placeholder="Soyadınızı girin" />
+                    <span asp-validation-for="Soyad" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="TelefonNumarasi" class="col-sm-3 col-form-label">Telefon Numarası:</label>
-            <div class="col-sm-9">
-                <input asp-for="TelefonNumarasi" class="form-control" placeholder="Telefon numaranızı girin" />
-                <span asp-validation-for="TelefonNumarasi" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Email" class="col-sm-3 col-form-label">Email:</label>
+                <div class="col-sm-9">
+                    <input asp-for="Email" class="form-control" type="email" placeholder="Email adresinizi girin" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="Konum" class="col-sm-3 col-form-label">Konum:</label>
-            <div class="col-sm-9">
-                <input asp-for="Konum" class="form-control" placeholder="Konum bilgisi girin" />
-                <span asp-validation-for="Konum" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="TelefonNumarasi" class="col-sm-3 col-form-label">Telefon Numarası:</label>
+                <div class="col-sm-9">
+                    <input asp-for="TelefonNumarasi" class="form-control" placeholder="Telefon numaranızı girin" />
+                    <span asp-validation-for="TelefonNumarasi" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="DogumTarihi" class="col-sm-3 col-form-label">Doğum Tarihi:</label>
-            <div class="col-sm-9">
-                <input asp-for="DogumTarihi" class="form-control" type="date" />
-                <span asp-validation-for="DogumTarihi" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Konum" class="col-sm-3 col-form-label">Konum:</label>
+                <div class="col-sm-9">
+                    <input asp-for="Konum" class="form-control" placeholder="Konum bilgisi girin" />
+                    <span asp-validation-for="Konum" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="Cinsiyet" class="col-sm-3 col-form-label">Cinsiyet:</label>
-            <div class="col-sm-9">
-                <select asp-for="Cinsiyet" class="form-control">
-                    <option value="">Seçiniz</option>
-                    <option value="Erkek">Erkek</option>
-                    <option value="Kadın">Kadın</option>
-                    <option value="Diğer">Diğer</option>
-                </select>
-                <span asp-validation-for="Cinsiyet" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="DogumTarihi" class="col-sm-3 col-form-label">Doğum Tarihi:</label>
+                <div class="col-sm-9">
+                    <input asp-for="DogumTarihi" class="form-control" type="date" />
+                    <span asp-validation-for="DogumTarihi" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="ProfilFoto" class="col-sm-3 col-form-label">Profil Fotoğrafı (URL veya Dosya):</label>
-            <div class="col-sm-9">
-                <input asp-for="ProfilFoto" class="form-control" type="text" placeholder="Profil fotoğrafı URL'si" />
-                <span asp-validation-for="ProfilFoto" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Cinsiyet" class="col-sm-3 col-form-label">Cinsiyet:</label>
+                <div class="col-sm-9">
+                    <select asp-for="Cinsiyet" class="form-control">
+                        <option value="">Seçiniz</option>
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                        <option value="Diğer">Diğer</option>
+                    </select>
+                    <span asp-validation-for="Cinsiyet" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <div class="col-sm-9 offset-sm-3">
-                <button type="submit" class="btn btn-primary">Güncelle</button>
+            <div class="form-group row">
+                <label asp-for="ProfilFoto" class="col-sm-3 col-form-label">Profil Fotoğrafı (URL veya Dosya):</label>
+                <div class="col-sm-9">
+                    <input asp-for="ProfilFoto" class="form-control" type="text" placeholder="Profil fotoğrafı URL'si" />
+                    <span asp-validation-for="ProfilFoto" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-    </form>
+
+            <div class="form-group row">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="submit" class="btn btn-primary">Güncelle</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <style>

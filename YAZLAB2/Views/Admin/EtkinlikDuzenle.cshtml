@@ -1,5 +1,4 @@
 ﻿@model YAZLAB2.Models.Etkinlik
-
 @{
     ViewData["Title"] = "Etkinlik Düzenle";
 }
@@ -53,18 +52,30 @@
         <span asp-validation-for="Konum" class="text-danger"></span>
     </div>
 
-    <!-- Kategori (Dış Anahtar) -->
+   <!-- Etkinlik seçimi -->
     <div class="form-group">
-        <label for="KategoriId">Kategori:</label>
-        <select class="form-control" id="KategoriId" name="KategoriId" required>
+        <label for="KategoriId">Kategori</label>
+        <select class="form-control" id="KategoriId" name="KategoriId">
             <option value="">Kategori Seçin</option>
-            <!-- Kategoriler, modelden gelmelidir. Örneğin, kategoriler veritabanından çekilir -->
-            @* Örnek bir kategori listesi gösterimi *@
-            <option value="1">Kategori 1</option>
-            <option value="2">Kategori 2</option>
-            <option value="3">Kategori 3</option>
+            @foreach (var kategori in ViewBag.Kategoriler as List<YAZLAB2.Models.Kategori>)
+            {
+                <option value="@kategori.KategoriId" )>
+                    @kategori.KategoriAdi
+                </option>
+            }
         </select>
-        <span asp-validation-for="KategoriId" class="text-danger"></span>
+    </div>
+    <!-- Etkinlik Resmi -->
+    <div class="form-group">
+        <label for="EtkinlikResmi">Etkinlik Resmi (URL):</label>
+        <input type="text" class="form-control" id="EtkinlikResmi" name="EtkinlikResmi" value="@Model.EtkinlikResmi" />
+        <span asp-validation-for="EtkinlikResmi" class="text-danger"></span>
+        @if (!string.IsNullOrEmpty(Model.EtkinlikResmi))
+        {
+            <div>
+                <img src="@Url.Content(Model.EtkinlikResmi)" alt="Etkinlik Resmi" style="max-width: 200px; margin-top: 10px;" />
+            </div>
+        }
     </div>
 
     <!-- Kullanıcı ID -->
@@ -86,6 +97,7 @@
         <a href="@Url.Action("TumEtkinlikler")" class="btn btn-secondary">İptal</a>
     </div>
 </form>
+
 
 <!-- Validasyon script'leri -->
 @section Scripts {

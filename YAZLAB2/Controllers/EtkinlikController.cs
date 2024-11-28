@@ -190,7 +190,10 @@ namespace Yazlab__2.Controllers
             etkinlik.EtkinlikAdi = updatedEvent.EtkinlikAdi;
             etkinlik.Aciklama = updatedEvent.Aciklama;
             etkinlik.Tarih = updatedEvent.Tarih;
+            etkinlik.Saat = updatedEvent.Saat;
             etkinlik.Konum = updatedEvent.Konum;
+            etkinlik.EtkinlikSuresi = updatedEvent.EtkinlikSuresi;
+            etkinlik.EtkinlikResmi = updatedEvent.EtkinlikResmi;
 
             try
             {
