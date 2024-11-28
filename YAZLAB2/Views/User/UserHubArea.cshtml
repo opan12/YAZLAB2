@@ -5,30 +5,21 @@
 }
 
 <div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar Section -->
-        <div class="col-md-3 bg-light vh-100 d-flex flex-column align-items-start p-3 shadow-sm">
-            <a href="/Etkinlik/Index" class="btn btn-primary btn-block mb-3">Etkinliklere Git</a>
-            <a href="/User/Profile" class="btn btn-primary btn-block mb-3">Profil</a>
-            <a href="/Mesaj/Mesajlarım" class="btn btn-primary btn-block mb-3">Mesajlarım</a>
-            <a href="/Mesaj/MesajGonder" class="btn btn-primary btn-block mb-3">Mesaj Gönder</a>
-        </div>
-
+    <div class="row vh-100">
         <!-- Main Content Section -->
-        <div class="col-md-9">
-            <!-- Welcome Section -->
-            <div class="text-center my-4">
-                <h1 class="display-4">Hoşgeldin, @User.Identity.Name!</h1>
+        <div class="col-md-12 d-flex flex-column">
+            <!-- Header Section -->
+            <div class="d-flex justify-content-between align-items-center p-3 shadow-sm bg-light">
+                <h1 class="display-6">Hoşgeldin, @User.Identity.Name!</h1>
+                <div>
+                    <a href="/Etkinlik/Index" class="btn btn-outline-primary me-2">Etkinliklere Git</a>
+                    <a href="/User/Profile" class="btn btn-outline-primary me-2">Profil</a>
+                    <a href="/Account/Logout" class="btn btn-danger">Çıkış Yap</a>
+                </div>
             </div>
 
-            <!-- TempData Message -->
-            @if (TempData["Message"] != null)
-            {
-                <div class="alert alert-info text-center">@TempData["Message"]</div>
-            }
-
             <!-- Recommended Events Section -->
-            <div class="mt-5">
+            <div class="container mt-4">
                 <h2 class="mb-4">Önerilen Etkinlikler</h2>
                 @if (Model == null || !Model.Any())
                 {
@@ -42,7 +33,16 @@
                             <div class="col-md-6 mb-4">
                                 <div class="card shadow-sm">
                                     <div class="card-body">
+                                        <!-- Event Name -->
                                         <h5 class="card-title">@oneri.EtkinlikAdi</h5>
+
+                                        <!-- Event Date and Time -->
+                                        <p class="card-text text-muted">
+                                            <strong>Tarih:</strong> @oneri.Tarih.ToString("dd/MM/yyyy") <br>
+                                            <strong>Saat:</strong> @oneri.Saat
+                                        </p>
+
+                                        <!-- Details Button -->
                                         <a href="@Url.Action("Details", "Etkinlik", new { id = oneri.EtkinlikId })" class="btn btn-outline-primary btn-sm">
                                             Detaylara Git
                                         </a>
