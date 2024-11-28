@@ -19,5 +19,5 @@ public class Etkinlik
     public int KategoriId { get; set; }  // Bu, dış anahtar (foreign key) olacak.
     public string UserId { get; set; }
     public bool OnayDurumu { get; set; }
-    //public string EtkinlikResmi { get; set; }
+    public string EtkinlikResmi { get; set; }
 }

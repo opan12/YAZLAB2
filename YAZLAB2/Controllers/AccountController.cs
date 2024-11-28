@@ -34,7 +34,9 @@ public class AccountController : Controller
     {
         if (string.IsNullOrEmpty(email))
         {
-            return Json(new { success = false, message = "E-posta adresi gerekli." });
+            TempData["Message"] = "E-posta adresi gerekli.";
+            TempData["MessageType"] = "danger"; // Hata mesajı için
+            return View();
         }
 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -49,13 +51,16 @@ public class AccountController : Controller
         {
             // E-posta gönderme işlemi
             await _emailService.SendResetPasswordEmail(user.Email, callbackUrl);
-            return Json(new { success = true, message = "Şifre sıfırlama e-postası başarıyla gönderildi." });
-        }
+            TempData["Message"] = "Şifre sıfırlama e-postası başarıyla gönderildi.";
+            TempData["MessageType"] = "success";      }
         catch (Exception ex)
         {
             // E-posta gönderme hatası
-            return Json(new { success = false, message = "E-posta gönderilirken bir hata oluştu." });
+
+            TempData["Message"] = "E-posta gönderilirken bir hata oluştu.";
+            TempData["MessageType"] = "danger"; // Hata mesajı için        
         }
+        return View();
     }
 
     [HttpGet]
@@ -91,13 +96,16 @@ public class AccountController : Controller
         {
             await _context.SaveChangesAsync();
             await _emailService.SendResetPasswordEmail(user.Email, "Şifreniz başarıyla sıfırlandı.");
-            return Json(new { success = true, message = "Şifre başarıyla güncellendi." });
+            TempData["Message"] = "Şifre başarıyla güncellendi.";
+            TempData["MessageType"] = "success";
         }
         catch (Exception ex)
         {
             // Hata loglama
             return Json(new { success = false, message = "Şifre güncellenirken bir hata oluştu." });
         }
+        return View(model);
+
     }
 
     [HttpGet]
