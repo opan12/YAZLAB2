@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using YAZLAB2.Models;
 using YAZLAB2.Data;
+using YAZLAB2.Services;
 
 
 namespace YAZLAB2.Controllers
@@ -15,11 +16,15 @@ namespace YAZLAB2.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly BildirimService _bildirimService;
 
-        public AdminController(ApplicationDbContext context, UserManager<User> userManager)
+
+        public AdminController(ApplicationDbContext context, UserManager<User> userManager, BildirimService bildirimService)
         {
             _context = context;
             _userManager = userManager;
+            _bildirimService = bildirimService;
+
         }
         [AllowAnonymous]
         public async Task<JsonResult> AdminRegister()
@@ -86,6 +91,42 @@ namespace YAZLAB2.Controllers
             }
             return View(users);
         }
+        public async Task<IActionResult> KullaniciDetay(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var katilimciEtkinlikler = await _context.Katilimcis
+                .Where(k => k.KullanıcıId == user.Id)
+                .Select(k => k.EtkinlikID)
+                .ToListAsync();
+
+            var duzenledigiEtkinlikler = await _context.Etkinlikler
+                .Where(e => e.UserId == user.Id)
+                .ToListAsync();
+
+            var detayModel = new KullaniciEtkinlikViewModel
+            {
+                User = user, // Burada User özelliğini kullanın
+                KatildigiEtkinlikler = await _context.Etkinlikler
+                    .Where(e => katilimciEtkinlikler.Contains(e.EtkinlikId))
+                    .ToListAsync(),
+                DuzenledigiEtkinlikler = duzenledigiEtkinlikler
+            };
+
+            return View(detayModel);
+        }
+    
 
         // Kullanıcı Düzenle
         [HttpGet]
@@ -152,6 +193,34 @@ namespace YAZLAB2.Controllers
             return RedirectToAction("TumKullanicilar");
         }
 
+        public async Task<IActionResult> Detay(int id)
+        {
+            var etkinlik = await (from e in _context.Etkinlikler
+                                  join k in _context.Kategoris on e.KategoriId equals k.KategoriId
+                                  join u in _context.Users on e.UserId equals u.Id
+                                  where e.EtkinlikId == id
+                                  select new EtkinlikDetayViewModel
+                                  {
+                                      EtkinlikId = e.EtkinlikId,
+                                      EtkinlikAdi = e.EtkinlikAdi,
+                                      Aciklama = e.Aciklama,
+                                      Tarih = e.Tarih,
+                                      Saat = e.Saat,
+                                      EtkinlikSuresi = e.EtkinlikSuresi,
+                                      Konum = e.Konum,
+                                      KategoriAdi = k.KategoriAdi,
+                                      KullaniciAdi = u.UserName,
+                                      EtkinlikResmi = e.EtkinlikResmi,
+                                      OnayDurumu = e.OnayDurumu
+                                  }).FirstOrDefaultAsync();
+
+            if (etkinlik == null)
+            {
+                return NotFound();
+            }
+
+            return View(etkinlik);
+        }
 
         // Etkinlikleri Listele
         public async Task<IActionResult> TumEtkinlikler()
@@ -204,18 +273,34 @@ namespace YAZLAB2.Controllers
             return View(etkinlik);
         }
 
+        // Etkinlik Güncelle
         [HttpPost]
         public async Task<IActionResult> EtkinlikDuzenle(Etkinlik etkinlik)
         {
-          
+            if (!ModelState.IsValid)
+            {
+                return View(etkinlik);
+            }
 
             _context.Entry(etkinlik).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
+            var admin = await _userManager.GetUserAsync(User); // İşlemi yapan admin
+            var hedefKullanici = await _context.Users.FindAsync(etkinlik.UserId); // Etkinlik sahibi kullanıcı
+            if (admin != null && hedefKullanici != null)
+            {
+                await _bildirimService.AddBildirimAsync(
+                    hedefKullanici.Id,
+                    etkinlik.EtkinlikId,
+                    $"{admin.UserName} tarafından etkinliğiniz güncellendi.",
+                    isAdminNotification: true // Burada isAdminNotification parametresi ekleniyor
+                );
+            }
+
             TempData["Message"] = "Etkinlik başarıyla güncellendi.";
             return RedirectToAction("TumEtkinlikler");
         }
-        
+
         // Etkinlik Sil
         [HttpPost]
         public async Task<IActionResult> EtkinlikSil(int id)
@@ -228,6 +313,18 @@ namespace YAZLAB2.Controllers
 
             _context.Etkinlikler.Remove(etkinlik);
             await _context.SaveChangesAsync();
+
+            var admin = await _userManager.GetUserAsync(User); // İşlemi yapan admin
+            var hedefKullanici = await _context.Users.FindAsync(etkinlik.UserId); // Etkinlik sahibi kullanıcı
+            if (admin != null && hedefKullanici != null)
+            {
+                await _bildirimService.AddBildirimAsync(
+                    hedefKullanici.Id,
+                    etkinlik.EtkinlikId,
+                    $"{admin.UserName} tarafından etkinliğiniz silindi.",
+                    isAdminNotification: true // Burada isAdminNotification parametresi ekleniyor
+                );
+            }
 
             TempData["Message"] = "Etkinlik başarıyla silindi.";
             return RedirectToAction("TumEtkinlikler");
@@ -247,6 +344,19 @@ namespace YAZLAB2.Controllers
             _context.Entry(etkinlik).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
+            // Bildirim oluştur
+            var admin = await _userManager.GetUserAsync(User);
+            var hedefKullanici = await _context.Users.FindAsync(etkinlik.UserId); // Etkinlik sahibi kullanıcı
+            if (admin != null && hedefKullanici != null)
+            {
+                await _bildirimService.AddBildirimAsync(
+                    hedefKullanici.Id,
+                    id,
+                    $"{admin.UserName} tarafından etkinliğiniz onaylandı.",
+                    isAdminNotification: true // Burada isAdminNotification parametresi ekleniyor
+                );
+            }
+
             TempData["Message"] = "Etkinlik onaylandı.";
             return RedirectToAction("TumEtkinlikler");
         }
@@ -264,6 +374,19 @@ namespace YAZLAB2.Controllers
             etkinlik.OnayDurumu = false;
             _context.Entry(etkinlik).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+            // Bildirim oluştur
+            var admin = await _userManager.GetUserAsync(User);
+            var hedefKullanici = await _context.Users.FindAsync(etkinlik.UserId); // Etkinlik sahibi kullanıcı
+            if (admin != null && hedefKullanici != null)
+            {
+                await _bildirimService.AddBildirimAsync(
+                    hedefKullanici.Id,
+                    id,
+                    $"{admin.UserName} tarafından etkinliğiniz reddedildi.",
+                    isAdminNotification: true // Burada isAdminNotification parametresi ekleniyor
+                );
+            }
 
             TempData["Message"] = "Etkinlik reddedildi.";
             return RedirectToAction("TumEtkinlikler");

@@ -2,14 +2,17 @@
     ViewData["Title"] = "Mesaj Gönder";
 }
 
-<h2>Mesaj Gönder</h2>
-
-<form asp-action="MesajGonder" method="post">
-    <label for="aliciId">Alıcı ID:</label>
-    <input type="text" name="aliciId" required />
-    <br />
-    <label for="mesajMetni">Mesaj:</label>
-    <textarea name="mesajMetni" required></textarea>
-    <br />
-    <button type="submit">Mesaj Gönder</button>
-</form>
+<div class="container mt-4">
+    <h2 class="mb-4">Yeni Mesaj Gönder</h2>
+    <form id="mesajGonderForm" method="post" action="/Mesaj/MesajGonder">
+        <div class="form-group">
+            <label for="aliciUsername">Alıcı Kullanıcı Adı:</label>
+            <input type="text" id="aliciUsername" name="aliciUsername" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="mesajMetni">Mesaj Metni:</label>
+            <textarea id="mesajMetni" name="mesajMetni" class="form-control" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Mesaj Gönder</button>
+    </form>
+</div>

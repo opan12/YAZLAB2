@@ -1,0 +1,37 @@
+﻿@model EtkinlikDetayViewModel
+
+<div class="card mx-auto my-4" style="max-width: 700px;">
+    <!-- Etkinlik Resmi -->
+    @if (!string.IsNullOrEmpty(Model.EtkinlikResmi))
+    {
+        <img src="@Model.EtkinlikResmi" class="card-img-top" alt="Etkinlik Resmi" style="max-height: 400px; object-fit: cover;" />
+    }
+
+    <!-- Etkinlik Detayları -->
+    <div class="card-body">
+        <h2 class="card-title text-center">@Model.EtkinlikAdi</h2>
+        <p class="text-muted text-center mb-4">Kategori: <strong>@Model.KategoriAdi</strong></p>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Açıklama:</strong> @Model.Aciklama</li>
+            <li class="list-group-item"><strong>Tarih:</strong> @Model.Tarih.ToString("dd/MM/yyyy")</li>
+            <li class="list-group-item"><strong>Saat:</strong> @Model.Saat</li>
+            <li class="list-group-item"><strong>Süre:</strong> @Model.EtkinlikSuresi</li>
+            <li class="list-group-item"><strong>Konum:</strong> @Model.Konum</li>
+            <li class="list-group-item"><strong>Oluşturan Kullanıcı:</strong> @Model.KullaniciAdi</li>
+            <li class="list-group-item">
+                <strong>Onay Durumu:</strong>
+                <span class="badge @(Model.OnayDurumu ? "bg-success" : "bg-danger")">
+                    @(Model.OnayDurumu ? "Onaylı" : "Onaysız")
+                </span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer text-center">
+        <a href="@Url.Action("TümEtkinlikler", "Admin")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Geri Dön
+        </a>
+    </div>
+</div>

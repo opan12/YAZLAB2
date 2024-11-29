@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using YAZLAB2.Models; 
+using YAZLAB2.Models;
 using Microsoft.AspNetCore.Builder;
 using Yazlab__2.Core.Service;
 using Yazlab__2.Service;
 using YAZLAB2.Data;
 using YAZLAB2.Services;
 using YAZLAB2.Service;
+using PdfSharp.Charting;
+using YAZLAB2.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,7 @@ builder.Services.AddScoped<PuanHesaplayiciService>();
 builder.Services.AddScoped<MesajServisi>();
 builder.Services.AddScoped<BildirimService>();
 builder.Services.AddScoped<EtkinlikOnerisiServisi>();
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<StatisticsService>();
 
@@ -29,7 +32,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>() 
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
@@ -55,12 +58,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -68,6 +65,9 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<NotificationHub>("/notificationHub"); // Hub'ý burada ekliyoruz
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

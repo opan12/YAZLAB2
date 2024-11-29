@@ -16,7 +16,11 @@ public class Etkinlik
     public TimeSpan Saat { get; set; }
     public TimeSpan EtkinlikSuresi { get; set; }
     public string Konum { get; set; }
-    public int KategoriId { get; set; }  // Bu, dış anahtar (foreign key) olacak.
+  //  [ForeignKey("KategoriId")]
+
+    public int KategoriId { get; set; }
+   // [ForeignKey("UserId")]
+
     public string UserId { get; set; }
     public bool OnayDurumu { get; set; }
     public string EtkinlikResmi { get; set; }

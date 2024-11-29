@@ -5,52 +5,125 @@ using System.Threading.Tasks;
 using YAZLAB2.Models;
 using Microsoft.EntityFrameworkCore;
 using YAZLAB2.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace YAZLAB2.Services
 {
-   
-        public class BildirimService
+
+    public class BildirimService
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _userManager;
+
+        public BildirimService(ApplicationDbContext context, UserManager<User> userManager)
         {
-            private readonly ApplicationDbContext _context;
+            _userManager = userManager;
 
-            public BildirimService(ApplicationDbContext context)
+            _context = context;
+
+        }
+        public async Task<List<Bildirim>> GetKullaniciBildirimlerAsync(string userId)
+        {
+            return await _context.Bildirimler.Where(b => b.KullanıcıId == userId).ToListAsync();
+        }
+
+        // Admin bildirimlerini getir
+        public async Task<List<Bildirim>> GetAdminBildirimlerAsync()
+        {
+            // Admin bildirimlerini almak için gerekli mantığı buraya yazın.
+            return await _context.Bildirimler.Where(b => b.IsAdminNotification).ToListAsync();
+        }
+        //public async Task AddBildirimAsync(string kullaniciId, int etkinlikId, string islemTuru)
+        //{
+        //    // Etkinlik bilgisi alınır
+        //    var etkinlik = await _context.Etkinlikler
+        //        .FirstOrDefaultAsync(e => e.EtkinlikId == etkinlikId);
+
+        //    if (etkinlik == null) return;
+
+        //    // UserManager ile kullanıcı bilgisi alınır
+        //    var user = await _userManager.FindByIdAsync(etkinlik.UserId);
+
+        //    // Kullanıcı bilgisi kontrol edilir
+        //    var olusturanKullanici = user != null ? user.UserName : "Bilinmiyor";
+
+        //    // Bildirim mesajı oluşturulur
+        //    var mesaj = $"Etkinlik İşlemi: {islemTuru} \n" +
+        //                $"Etkinlik Adı: {etkinlik.EtkinlikAdi} \n" +
+        //                $"Oluşturan Kullanıcı: {olusturanKullanici} \n" +
+        //                $"Etkinlik Tarihi: {etkinlik.Tarih:dd/MM/yyyy} \n" +
+        //                $"İşlem Tarihi: {DateTime.Now:dd/MM/yyyy HH:mm}";
+
+        //    // Bildirimi kaydet
+        //    var bildirim = new Bildirim
+        //    {
+        //        KullanıcıId = kullaniciId,
+        //        EtkinlikId = etkinlikId,
+        //        BildirimTarih = DateTime.Now,
+        //        Mesaj = mesaj
+        //    };
+
+        //    _context.Bildirimler.Add(bildirim);
+        //    await _context.SaveChangesAsync();
+        //}
+
+        //public async Task AddBildirimAsync(string kullaniciId, int etkinlikId)
+        //{
+        //    var bildirim = new Bildirim
+        //    {
+        //        KullanıcıId = kullaniciId,
+        //        EtkinlikId = etkinlikId,
+        //        BildirimTarih = DateTime.Now
+        //    };
+
+        //    _context.Bildirimler.Add(bildirim);
+        //    await _context.SaveChangesAsync();
+        //}
+
+        // Belirli bir bildirimi silme
+        public async Task DeleteBildirimAsync(int bildirimId)
+        {
+            var bildirim = await _context.Bildirimler.FindAsync(bildirimId);
+            if (bildirim != null)
             {
-                _context = context;
-            }
-
-            // Admin'e bildirim ekleme
-            public async Task AddBildirimToAdminAsync(string kullaniciId, int etkinlikId)
-            {
-                // Etkinlik bilgisini al
-                var etkinlik = await _context.Etkinlikler
-                    .Include(e => e.UserId)  // Etkinliği oluşturan kullanıcıyı da çekiyoruz
-                    .FirstOrDefaultAsync(e => e.EtkinlikId == etkinlikId);
-
-                if (etkinlik == null)
-                {
-                    return;  // Etkinlik bulunamazsa, işlem yapma
-                }
-
-                // Admin'e gösterilecek bildirim metni
-                var bildirim = new Bildirim
-                {
-                    KullanıcıId = kullaniciId, // Admin'e bildirim
-                    EtkinlikId = etkinlikId,
-                    BildirimTarih = DateTime.Now
-                };
-
-                // Bildirim mesajı ile etkinlik hakkında bilgi ekliyoruz
-                var mesaj = $"Yeni bir etkinlik oluşturuldu! \n" +
-                            $"Etkinlik Adı: {etkinlik.EtkinlikAdi} \n" +
-                           /// $"Oluşturan Kullanıcı: {etkinlik.User.UserName} \n" +
-                            $"Etkinlik Tarihi: {etkinlik.Tarih.ToString("dd/MM/yyyy")} \n" +
-                            $"Etkinlik Saati: {etkinlik.Saat.ToString(@"hh\:mm")}";
-
-                // Bildirimi kaydet
-                _context.Bildirimler.Add(bildirim);
+                _context.Bildirimler.Remove(bildirim);
                 await _context.SaveChangesAsync();
             }
-        
+        }
+
+
+
+        public async Task AddBildirimAsync(string kullaniciId, int etkinlikId, string islemTuru, bool isAdminNotification)
+        {
+            // Etkinlik bilgisi alınır
+            var etkinlik = await _context.Etkinlikler.FirstOrDefaultAsync(e => e.EtkinlikId == etkinlikId);
+            if (etkinlik == null) return;
+
+            // UserManager ile kullanıcı bilgisi alınır
+            var user = await _userManager.FindByIdAsync(etkinlik.UserId);
+            var olusturanKullanici = user != null ? user.UserName : "Bilinmiyor";
+
+            // Bildirim mesajı oluşturulur
+            var mesaj = $"Etkinlik İşlemi: {islemTuru} \n" +
+                        $"Etkinlik Adı: {etkinlik.EtkinlikAdi} \n" +
+                        $"Oluşturan Kullanıcı: {olusturanKullanici} \n" +
+                        $"Etkinlik Tarihi: {etkinlik.Tarih:dd/MM/yyyy} \n" +
+                        $"İşlem Tarihi: {DateTime.Now:dd/MM/yyyy HH:mm}";
+
+            // Bildirimi kaydet
+            var bildirim = new Bildirim
+            {
+                KullanıcıId = kullaniciId,
+                EtkinlikId = etkinlikId,
+                BildirimTarih = DateTime.Now,
+                Mesaj = mesaj,
+                IsAdminNotification = isAdminNotification // Burada isAdminNotification kullanılır
+            };
+
+            _context.Bildirimler.Add(bildirim);
+            await _context.SaveChangesAsync();
+        }
+
 
         public async Task AddBildirimAsync(string kullaniciId, int etkinlikId)
         {
@@ -64,25 +137,8 @@ namespace YAZLAB2.Services
             _context.Bildirimler.Add(bildirim);
             await _context.SaveChangesAsync();
         }
-        // Kullanıcıya ait bildirimleri listeleme
-        public async Task<List<Bildirim>> GetBildirimlerByUserIdAsync(string kullaniciId)
-        {
-            return await _context.Bildirimler
-                .Include(b => b.Etkinlik)
-                .Where(b => b.KullanıcıId == kullaniciId)
-                .OrderByDescending(b => b.BildirimTarih)
-                .ToListAsync();
-        }
 
         // Belirli bir bildirimi silme
-        public async Task DeleteBildirimAsync(int bildirimId)
-        {
-            var bildirim = await _context.Bildirimler.FindAsync(bildirimId);
-            if (bildirim != null)
-            {
-                _context.Bildirimler.Remove(bildirim);
-                await _context.SaveChangesAsync();
-            }
-        }
+
     }
 }

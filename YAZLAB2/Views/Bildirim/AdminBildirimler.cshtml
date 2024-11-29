@@ -1,0 +1,25 @@
+﻿@model List<Bildirim>
+
+@{
+    ViewData["Title"] = "Admin Bildirimleri";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mesaj</th>
+            <th>Tarih</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bildirim in Model)
+        {
+            <tr>
+                <td>@bildirim.Mesaj</td>
+                <td>@bildirim.BildirimTarih.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

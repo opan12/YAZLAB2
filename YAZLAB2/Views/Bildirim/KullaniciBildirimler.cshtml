@@ -1,0 +1,38 @@
+﻿@model List<Bildirim>
+
+@{
+    ViewData["Title"] = "Kullanıcı Bildirimleri";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center text-primary mb-4">@ViewData["Title"]</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th class="w-75">Bildirim Mesajı</th>
+                    <th>Tarih</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var bildirim in Model)
+                    {
+                        <tr>
+                            <td>@bildirim.Mesaj</td>
+                            <td>@bildirim.BildirimTarih.ToString("dd.MM.yyyy HH:mm")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="2" class="text-muted">Henüz bir bildiriminiz bulunmamaktadır.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

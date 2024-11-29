@@ -1,0 +1,146 @@
+﻿@model YAZLAB2.Models.StatisticsViewModel
+@using Newtonsoft.Json
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İstatistikler</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>İstatistikler</h1>
+
+    <h2>Yaş Grubuna Göre Kullanıcı Sayısı</h2>
+    <canvas id="ageChart" width="300" height="150"></canvas>
+
+    <h2>Cinsiyete Göre Kullanıcı Sayısı</h2>
+    <canvas id="genderChart" width="300" height="150"></canvas>
+
+    <h2>Kategoriye Göre Etkinlik Sayısı</h2>
+    <canvas id="eventChart" width="300" height="150"></canvas>
+
+    <h2>Kullanıcı Puanları</h2>
+    <canvas id="pointsChart" width="300" height="150"></canvas>
+
+    <script>
+        // Yaş grubuna göre kullanıcı sayısı
+        const ageLabels = @Html.Raw(JsonConvert.SerializeObject(Model.UserCountByAgeGroup.Keys.ToArray()));
+        const ageData = @Html.Raw(JsonConvert.SerializeObject(Model.UserCountByAgeGroup.Values.ToArray()));
+
+        const ageCtx = document.getElementById('ageChart').getContext('2d');
+        const ageChart = new Chart(ageCtx, {
+            type: 'bar',
+            data: {
+                labels: ageLabels,
+                datasets: [{
+                    label: 'Kullanıcı Sayısı',
+                    data: ageData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Cinsiyete göre kullanıcı sayısı
+        const genderLabels = @Html.Raw(JsonConvert.SerializeObject(Model.UserCountByGender.Keys.ToArray()));
+        const genderData = @Html.Raw(JsonConvert.SerializeObject(Model.UserCountByGender.Values.ToArray()));
+
+        const genderCtx = document.getElementById('genderChart').getContext('2d');
+        const genderChart = new Chart(genderCtx, {
+            type: 'pie',
+            data: {
+                labels: genderLabels,
+                datasets: [{
+                    label: 'Kullanıcı Sayısı',
+                    data: genderData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Cinsiyete Göre Kullanıcı Sayısı'
+                    }
+                }
+            }
+        });
+
+        // Kategoriye göre etkinlik sayısı
+        const eventLabels = @Html.Raw(JsonConvert.SerializeObject(Model.EventCountByCategory.Keys.ToArray()));
+        const eventData = @Html.Raw(JsonConvert.SerializeObject(Model.EventCountByCategory.Values.ToArray()));
+
+        const eventCtx = document.getElementById('eventChart').getContext('2d');
+        const eventChart = new Chart(eventCtx, {
+            type: 'bar',
+            data: {
+                labels: eventLabels,
+                datasets: [{
+                    label: 'Etkinlik Sayısı',
+                    data: eventData,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Kullanıcı puanları
+        const pointsLabels = @Html.Raw(JsonConvert.SerializeObject(Model.UserPoints.Keys.ToArray()));
+        const pointsData = @Html.Raw(JsonConvert.SerializeObject(Model.UserPoints.Values.ToArray()));
+
+        const pointsCtx = document.getElementById('pointsChart').getContext('2d');
+        const pointsChart = new Chart(pointsCtx, {
+            type: 'bar',
+            data: {
+                labels: pointsLabels,
+                datasets: [{
+                    label: 'Kullanıcı Puanları',
+                    data: pointsData,
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -17,6 +17,7 @@
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
@@ -42,7 +43,10 @@
     <None Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
     <None Include="Views\Account\ResetPassword.cshtml" />
     <None Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <None Include="Views\Bildirim\AdminBildirimler.cshtml" />
+    <None Include="Views\Bildirim\KullaniciBildirimler.cshtml" />
     <None Include="Views\Kategori\Delete.cshtml" />
+    <None Include="Views\Statistics\Index.cshtml" />
   </ItemGroup>
 
 </Project>

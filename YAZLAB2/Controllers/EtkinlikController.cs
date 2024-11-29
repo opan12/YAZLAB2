@@ -169,7 +169,7 @@ namespace Yazlab__2.Controllers
                 ModelState.AddModelError(string.Empty, "Etkinlik tarihi ve saati çakışıyor.");
                 return View(yeniEtkinlik);
             }
-            await _bildirimService.AddBildirimAsync(user.Id, yeniEtkinlik.EtkinlikId); 
+            await _bildirimService.AddBildirimAsync(user.Id, yeniEtkinlik.EtkinlikId, "Oluşturuldu", isAdminNotification: true);
 
             return RedirectToAction(nameof(Index));
         }

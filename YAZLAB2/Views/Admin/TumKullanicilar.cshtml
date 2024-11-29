@@ -43,7 +43,14 @@ else
                         <td>@user.Cinsiyet</td>
                         <td>
                             <!-- Kullanıcıyı Düzenle Butonu -->
-                            <a href="@Url.Action("KullaniciDuzenle", "Admin", new { id = user.Id })" class="btn-action btn-edit">Düzenle</a>
+                         <td>
+    <!-- Kullanıcıyı Düzenle Butonu -->
+    <a href="@Url.Action("KullaniciDuzenle", "Admin", new { id = user.Id })" class="btn-action btn-edit">Düzenle</a>
+
+    <!-- Kullanıcı Detayları Butonu -->
+    <a href="@Url.Action("KullaniciDetay", "Admin", new { id = user.Id })" class="btn-action btn-detail">Detaylar</a>
+
+   
 
                             <form asp-action="KullaniciSil" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@user.Id" />
