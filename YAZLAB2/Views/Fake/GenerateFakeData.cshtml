@@ -1,0 +1,22 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Fake Data Generation";
+}
+
+<h2>Fake Data Generation</h2>
+
+<form asp-action="GenerateFakeData" method="post">
+    <div class="form-group">
+        <label for="count">Kullanıcı Sayısı:</label>
+        <input type="number" name="count" id="count" class="form-control" value="10" min="1" />
+    </div>
+    <button type="submit" class="btn btn-primary">Fake Veri Oluştur</button>
+</form>
+
+<form asp-action="AddCategories" method="post">
+    <button type="submit" class="btn btn-secondary">Kategorileri Ekle</button>
+</form>
+
+<form asp-action="AssignRandomEvents" method="post">
+    <button type="submit" class="btn btn-success">Rastgele Etkinlik Ata</button>
+</form>

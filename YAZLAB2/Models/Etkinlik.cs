@@ -16,7 +16,9 @@ public class Etkinlik
     public TimeSpan Saat { get; set; }
     public TimeSpan EtkinlikSuresi { get; set; }
     public string Konum { get; set; }
-  //  [ForeignKey("KategoriId")]
+    //  [ForeignKey("KategoriId")]
+    public double Lat { get; set; }
+    public double Lng { get; set; }
 
     public int KategoriId { get; set; }
    // [ForeignKey("UserId")]

@@ -11,6 +11,9 @@ namespace YAZLAB2.Models
         public string Cinsiyet { get; set; }
         //public List<string> IlgiAlanlari { get; set; }
         public string TelefonNumarasi { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+
         public string ProfilFoto { get; set; }  // Fotoğrafı byte dizisi olarak saklıyoruz
     }
 }
