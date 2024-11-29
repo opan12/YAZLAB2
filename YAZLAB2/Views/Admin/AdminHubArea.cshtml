@@ -109,6 +109,9 @@
             <li><a asp-action="Raporlama"><i class="fas fa-chart-line"></i>Raporlama</a></li>
             <li><a asp-action="KategoriEkle"><i class="fas fa-plus-circle"></i>Kategori Ekle</a></li>
             <li><a href="/Kategori/Index" class="btn btn-success">Olan Kategoriler</a></li>
+            <a href="@Url.Action("DownloadUserEventReport", "Statistics")" class="download-button">
+                <i class="fas fa-download"></i> Kullanıcı Etkinlik Raporunu İndir
+            </a>
         </ul>
         <a href="/User/Login" class="logout-button"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
     </div>

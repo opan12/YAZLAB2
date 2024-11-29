@@ -23,6 +23,7 @@ builder.Services.AddScoped<MesajServisi>();
 builder.Services.AddScoped<BildirimService>();
 builder.Services.AddScoped<EtkinlikOnerisiServisi>();
 
+builder.Services.AddScoped<StatisticsService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
