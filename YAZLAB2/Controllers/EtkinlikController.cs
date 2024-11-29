@@ -156,6 +156,7 @@ namespace Yazlab__2.Controllers
             {
                 return NotFound();
             }
+            ViewData["Kategoriler"] = _context.Kategoris.ToList(); // Kategorileri yükleyin
 
             return View(etkinlik);
         }
@@ -178,20 +179,14 @@ namespace Yazlab__2.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
-            {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
-                return View(updatedEvent);
-            }
+       
 
             etkinlik.EtkinlikAdi = updatedEvent.EtkinlikAdi;
             etkinlik.Aciklama = updatedEvent.Aciklama;
             etkinlik.Tarih = updatedEvent.Tarih;
             etkinlik.Saat = updatedEvent.Saat;
             etkinlik.Konum = updatedEvent.Konum;
+            etkinlik.KategoriId = updatedEvent.KategoriId;  
             etkinlik.EtkinlikSuresi = updatedEvent.EtkinlikSuresi;
             etkinlik.EtkinlikResmi = updatedEvent.EtkinlikResmi;
 

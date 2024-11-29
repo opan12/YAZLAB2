@@ -71,12 +71,34 @@
         <input type="text" class="form-control" id="UserId" name="UserId" value="@Model.UserId" required />
     </div>
 
-    <!-- Onay Durumu (Checkbox) -->
+   
     <div class="form-group">
-        <label for="OnayDurumu">Onay Durumu:</label>
-        <input asp-for="OnayDurumu" type="checkbox" class="form-check-input" />
-        <span asp-validation-for="OnayDurumu" class="text-danger"></span>
+        <label>Kategoriler</label>
+        <div>
+            @if (ViewData["Kategoriler"] is List<YAZLAB2.Models.Kategori> kategoriler)
+            {
+                foreach (var kategori in kategoriler)
+                {
+                    <div class="form-check">
+                        <input type="checkbox"
+                               class="form-check-input kategori-checkbox"
+                               id="kategori_@kategori.KategoriId"
+                               name="KategoriId"
+                               value="@kategori.KategoriId"
+                        @(kategori.KategoriId == Model.KategoriId ? "checked" : "") />
+                        <label class="form-check-label" for="kategori_@kategori.KategoriId">
+                            @kategori.KategoriAdi
+                        </label>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Kategoriler bulunamadı.</p>
+            }
+        </div>
     </div>
+
 
     <!-- Submit Butonu -->
     <div class="form-group">

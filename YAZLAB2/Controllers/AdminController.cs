@@ -102,11 +102,7 @@ namespace YAZLAB2.Controllers
         [HttpPost]
         public async Task<IActionResult> KullaniciDuzenle(User kullanici)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(kullanici);
-            }
-
+        
             var mevcutKullanici = await _userManager.FindByIdAsync(kullanici.Id);
             if (mevcutKullanici == null)
             {
@@ -177,11 +173,6 @@ namespace YAZLAB2.Controllers
         [HttpPost]
         public async Task<IActionResult> KategoriEkle(Kategori kategori)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(kategori);
-            }
-
             var mevcutKategori = await _context.Kategoris
                 .FirstOrDefaultAsync(k => k.KategoriAdi == kategori.KategoriAdi);
 
@@ -206,17 +197,17 @@ namespace YAZLAB2.Controllers
             if (etkinlik == null)
             {
                 return NotFound();
+
             }
+            ViewData["Kategoriler"] = _context.Kategoris.ToList();
+
             return View(etkinlik);
         }
 
         [HttpPost]
         public async Task<IActionResult> EtkinlikDuzenle(Etkinlik etkinlik)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(etkinlik);
-            }
+          
 
             _context.Entry(etkinlik).State = EntityState.Modified;
             await _context.SaveChangesAsync();

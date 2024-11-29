@@ -3,115 +3,173 @@
 @{
     ViewData["Title"] = "Kayıt Ol";
 }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="path/to/your/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="width: 100%; max-width: 600px;">
+            <h3 class="text-center mb-4">@ViewData["Title"]</h3>
+            <form method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <!-- Username -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="UserName" class="form-label">Kullanıcı Adı</label>
+                        <input type="text" class="form-control" id="UserName" name="UserName" value="@Model.UserName" placeholder="Kullanıcı Adı" required />
+                    </div>
 
-<div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow p-4" style="width: 100%; max-width: 600px;">
-        <h3 class="text-center mb-4">@ViewData["Title"]</h3>
-        <form method="post" enctype="multipart/form-data">
-            <div class="row">
-                <!-- Username -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="UserName" class="form-label">Kullanıcı Adı</label>
-                    <input type="text" class="form-control" id="UserName" name="UserName" value="@Model.UserName" placeholder="Kullanıcı Adı" required />
+                    <!-- Email -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="Email" class="form-label">E-posta</label>
+                        <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" placeholder="E-posta Adresiniz" required />
+                    </div>
                 </div>
 
-                <!-- Email -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="Email" class="form-label">E-posta</label>
-                    <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" placeholder="E-posta Adresiniz" required />
-                </div>
-            </div>
+                <input type="hidden" id="Code" name="Code" value="@Model.Code">
+                <button type="button" id="sendEmailBtn" class="btn btn-primary">Onay E-posta Gönder</button>
 
-            <div class="row">
-                <!-- Ad -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="Ad" class="form-label">Ad</label>
-                    <input type="text" class="form-control" id="Ad" name="Ad" value="@Model.Ad" placeholder="Adınız" required />
+                <div class="form-group">
+                    <label for="Viewcode">Onay Kodu:</label>
+                    <input type="text" id="Viewcode" name="Viewcode" value="@Model.Viewcode" />
                 </div>
 
-                <!-- Soyad -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="Soyad" class="form-label">Soyad</label>
-                    <input type="text" class="form-control" id="Soyad" name="Soyad" value="@Model.Soyad" placeholder="Soyadınız" required />
-                </div>
-            </div>
+                <div class="row">
+                    <!-- Ad -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="Ad" class="form-label">Ad</label>
+                        <input type="text" class="form-control" id="Ad" name="Ad" value="@Model.Ad" placeholder="Adınız" required />
+                    </div>
 
-            <div class="row">
-                <!-- Telefon -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="TelefonNumarasi" class="form-label">Telefon Numarası</label>
-                    <input type="text" class="form-control" id="TelefonNumarasi" name="TelefonNumarasi" value="@Model.TelefonNumarasi" placeholder="Telefon Numaranız" required />
-                </div>
-
-                <!-- Konum -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="Konum" class="form-label">Konum</label>
-                    <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" placeholder="Konumunuz" required />
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Doğum Tarihi -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="DogumTarihi" class="form-label">Doğum Tarihi</label>
-                    <input type="date" class="form-control" id="DogumTarihi" name="DogumTarihi"
-                           value="@(Model.DogumTarihi.HasValue ? Model.DogumTarihi.Value.ToString("yyyy-MM-dd") : string.Empty)" required />
+                    <!-- Soyad -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="Soyad" class="form-label">Soyad</label>
+                        <input type="text" class="form-control" id="Soyad" name="Soyad" value="@Model.Soyad" placeholder="Soyadınız" required />
+                    </div>
                 </div>
 
-                <!-- Cinsiyet -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="Cinsiyet" class="form-label">Cinsiyet</label>
-                    <select class="form-select" id="Cinsiyet" name="Cinsiyet" required>
-                        <option value="Erkek">Erkek</option>
-                        <option value="Kadın">Kadın</option>
-                    </select>
-                </div>
-            </div>
+                <div class="row">
+                    <!-- Telefon -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="TelefonNumarasi" class="form-label">Telefon Numarası</label>
+                        <input type="text" class="form-control" id="TelefonNumarasi" name="TelefonNumarasi" value="@Model.TelefonNumarasi" placeholder="Telefon Numaranız" required />
+                    </div>
 
-            <!-- İlgi Alanları -->
-            <div class="form-group mb-3">
-                <label for="IlgiAlanlari" class="form-label">İlgi Alanları</label>
-                <div>
-                    @foreach (var kategori in Model.Kategoriler)
-                    {
-                        <div class="form-check">
-                            <input type="checkbox"
-                                   class="form-check-input"
-                                   id="kategori_@kategori.Value"
-                                   name="IlgiAlanlari"
-                                   value="@kategori.Value"
-                            @if (Model.IlgiAlanlari != null && Model.IlgiAlanlari.Contains(int.Parse(kategori.Value)))
-                            {
-                                @:checked
-                            } />
-                            <label class="form-check-label" for="kategori_@kategori.Value">
-                                @kategori.Text
-                            </label>
-                        </div>
-                    }
-                </div>
-            </div>
-
-
-            <div class="row">
-                <!-- Profil Fotoğrafı -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="ProfilFoto" class="form-label">Profil Fotoğrafı</label>
-                    <input type="text" class="form-control" id="ProfilFoto" name="ProfilFoto" value="@Model.ProfilFoto" placeholder="Profil Fotoğrafı URL'si" />
+                    <!-- Konum -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="Konum" class="form-label">Konum</label>
+                        <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" placeholder="Konumunuz" required />
+                    </div>
                 </div>
 
-                <!-- Şifre -->
-                <div class="form-group col-md-6 mb-3">
-                    <label for="Şifre" class="form-label">Şifre</label>
-                    <input type="password" class="form-control" id="Şifre" name="Şifre" placeholder="Şifreniz" required />
-                </div>
-            </div>
+                <div class="row">
+                    <!-- Doğum Tarihi -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="DogumTarihi" class="form-label">Doğum Tarihi</label>
+                        <input type="date" class="form-control" id="DogumTarihi" name="DogumTarihi"
+                               value="@(Model.DogumTarihi.HasValue ? Model.DogumTarihi.Value.ToString("yyyy-MM-dd") : string.Empty)" required />
+                    </div>
 
-            <!-- Submit Button -->
-            <div class="d-grid gap-2 mt-3">
-                <button type="submit" class="btn btn-primary">Kayıt Ol</button>
-                <a href="/User/Login" class="btn btn-secondary">Zaten bir hesabınız var mı? Giriş Yap</a>
-            </div>
-        </form>
+                    <!-- Cinsiyet -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="Cinsiyet" class="form-label">Cinsiyet</label>
+                        <select class="form-select" id="Cinsiyet" name="Cinsiyet" required>
+                            <option value="Erkek">Erkek</option>
+                            <option value="Kadın">Kadın</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- İlgi Alanları -->
+                <div class="form-group mb-3">
+                    <label for="IlgiAlanlari" class="form-label">İlgi Alanları</label>
+                    <div>
+                        @foreach (var kategori in Model.Kategoriler)
+                        {
+                            <div class="form-check">
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="kategori_@kategori.Value"
+                                       name="IlgiAlanlari"
+                                       value="@kategori.Value"
+                                @if (Model.IlgiAlanlari != null && Model.IlgiAlanlari.Contains(int.Parse(kategori.Value)))
+                                {
+                                    @:checked
+                                } />
+                                <label class="form-check-label" for="kategori_@kategori.Value">
+                                    @kategori.Text
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Profil Fotoğrafı -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="ProfilFoto" class="form-label">Profil Fotoğrafı</label>
+                        <input type="text" class="form-control" id="ProfilFoto" name="ProfilFoto" value="@Model.ProfilFoto" placeholder="Profil Fotoğrafı URL'si" />
+                    </div>
+
+                    <!-- Şifre -->
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="Şifre" class="form-label">Şifre</label>
+                        <input type="password" class="form-control" id="Şifre" name="Şifre" placeholder="Şifreniz" required />
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2 mt-3">
+                    <button type="submit" id="signupButton" class="btn btn-primary" disabled>Kayıt Ol</button>
+                    <a href="/User/Login" class="btn btn-secondary">Zaten bir hesabınız var mı? Giriş Yap</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+
+    <script>
+        $(document).ready(function () {
+            // Disable signup button initially
+            $('#signupButton').prop('disabled', true);
+
+            // Validate code input
+            $('#Viewcode').on('input', function () {
+                validateCode();
+            });
+
+            function validateCode() {
+                var code = $('#Code').val();
+                var viewcode = $('#Viewcode').val();
+                $('#signupButton').prop('disabled', viewcode !== code);
+            }
+
+            // Send email button click
+            $('#sendEmailBtn').click(function () {
+                var email = $('#Email').val();
+                var code = $('#Code').val();
+
+                if (email) {
+                    $.ajax({
+                        url: '/User/SendEmail',
+                        type: 'POST',
+                        data: { email: email, code: code },
+                        success: function (response) {
+                            alert('E-posta adresinize onay kodu gönderildi!');
+                        },
+                        error: function () {
+                            alert('E-posta gönderilirken hata oluştu.');
+                        }
+                    });
+                } else {
+                    alert('Lütfen bir e-posta adresi girin.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

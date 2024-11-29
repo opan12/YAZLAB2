@@ -16,6 +16,9 @@ namespace YAZLAB2.Models
         public List<int> IlgiAlanlari { get; set; }  // KategoriId listesi
         public string Email { get; set; }
         public List<SelectListItem> Kategoriler { get; set; }
+        public int Viewcode { get; set; }
+        public int Code { get; set; }
+
 
 
     }

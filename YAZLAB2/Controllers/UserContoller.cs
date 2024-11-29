@@ -14,15 +14,17 @@ public class UserController : Controller
     private readonly SignInManager<User> _signInManager;
     private readonly ApplicationDbContext _context;
     private readonly EtkinlikOnerisiServisi _etkinlikOnerisiServisi;
+    private readonly EmailService _emailService;
 
 
-    public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, EtkinlikOnerisiServisi etkinlikOnerisiServisi
+    public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, EtkinlikOnerisiServisi etkinlikOnerisiServisi,EmailService emailService
 )
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _context = context;
         _etkinlikOnerisiServisi = etkinlikOnerisiServisi;
+        _emailService = emailService;
 
     }
     [HttpGet]
@@ -114,8 +116,19 @@ public class UserController : Controller
         {
             Kategoriler = kategoriList
         };
+        Random random = new Random();
+        int randomNumber = random.Next(100000, 1000000);
+        model.Code = randomNumber;
 
         return View(model);
+    }
+    [HttpPost]
+    public IActionResult SendEmail(string email, string code)
+    {
+
+        _emailService.SendConfirmationEmail(email, code);
+
+        return Json(new { success = true });
     }
 
     [HttpGet("Etkinlikler")]
@@ -124,10 +137,15 @@ public class UserController : Controller
         var events = await _context.Etkinlikler.ToListAsync(); 
         return Ok(events);  
     }
-
+    private string GenerateConfirmationCode()
+    {
+        var random = new Random();
+        return random.Next(100000, 999999).ToString(); // 6 haneli rastgele sayı
+    }
     [HttpPost]
     public async Task<IActionResult> Register(UserRegisterModel model)
     {
+     
         var user = new User
         {
             UserName = model.UserName,
@@ -142,9 +160,11 @@ public class UserController : Controller
         };
 
         var result = await _userManager.CreateAsync(user, model.Şifre);
-
+       
+        
         if (result.Succeeded)
         {
+
             await _userManager.AddToRoleAsync(user, "User");
 
             if (model.IlgiAlanlari != null && model.IlgiAlanlari.Any())
