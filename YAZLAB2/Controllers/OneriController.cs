@@ -36,6 +36,51 @@ namespace Yazlab__2.Controllers
         }
         public async Task<List<Etkinlik>> OneriGetir(string kullaniciId)
         {
+            // Kullanıcının ilgi alanlarına ait kategori ID'lerini al
+            var ilgiAlanıKategoriler = await _context.IlgiAlanları
+                .Where(i => i.KullanıcıId == kullaniciId)
+                .Select(i => i.KategoriId)
+                .ToListAsync();
+
+            // Kullanıcının katıldığı etkinliklerden elde edilen kategori ID'lerini al
+            var katilimciKategoriler = await _context.Katilimcis
+                .Where(k => k.KullanıcıId == kullaniciId)
+                .Join(
+                    _context.Etkinlikler,
+                    katilimci => katilimci.EtkinlikID,
+                    etkinlik => etkinlik.EtkinlikId,
+                    (katilimci, etkinlik) => etkinlik.KategoriId
+                )
+                .Distinct()
+                .ToListAsync();
+
+            // İlgi alanları ve katıldığı etkinlik kategorilerini birleştir
+            var tumKategoriler = ilgiAlanıKategoriler
+                .Union(katilimciKategoriler)
+                .Distinct()
+                .ToList();
+
+            // Kullanıcının daha önce katıldığı etkinlik ID'lerini al
+            var katildigiEtkinlikIds = await _context.Katilimcis
+                .Where(k => k.KullanıcıId == kullaniciId)
+                .Select(k => k.EtkinlikID)
+                .ToListAsync();
+
+            // İlgi alanlarına ve kategorilere göre önerilen etkinlikleri filtrele
+            var oneriEtkinlikler = await _context.Etkinlikler
+                .AsNoTracking()
+                .Where(e =>
+                    tumKategoriler.Contains(e.KategoriId) && // İlgi alanına veya katıldığı kategorilere uygun etkinlik
+                    !katildigiEtkinlikIds.Contains(e.EtkinlikId) && // Daha önce katılmadığı etkinlik
+                    e.OnayDurumu == true) // Onaylanmış etkinlikler
+                .ToListAsync();
+
+            return oneriEtkinlikler;
+        }
+
+        /*
+        public async Task<List<Etkinlik>> OneriGetir(string kullaniciId)
+        {
             var tumKategoriler = await _context.IlgiAlanları
                 .Where(i => i.KullanıcıId == kullaniciId)
                 .Select(i => i.KategoriId)
@@ -67,6 +112,7 @@ namespace Yazlab__2.Controllers
 
             return oneriEtkinlikler;
         }
+        */
 
     }
 }

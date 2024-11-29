@@ -14,6 +14,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom Styles -->
     <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+
         body {
             background-color: #f8f9fa;
         }
@@ -35,7 +40,7 @@
             object-fit: cover;
         }
 
-        back-button {
+        .back-button {
             position: absolute;
             top: 10px;
             left: 10px;
@@ -48,9 +53,9 @@
             transition: background-color 0.3s;
         }
 
-        .back-button:hover {
-            background-color: #5a6268;
-        }
+            .back-button:hover {
+                background-color: #5a6268;
+            }
 
         .detail-label {
             font-weight: bold;
@@ -58,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -88,18 +94,25 @@
                         </div>
                         <div class="mb-3">
                             <p class="detail-label">Saat:</p>
-                            <p>@Model.Saat</p> 
+                            <p>@Model.Saat</p>
                         </div>
                         <div class="mb-3">
                             <p class="detail-label">Konum:</p>
                             <p>@Model.Konum</p>
                         </div>
+
+                        <!-- Add the map container here -->
+                        <div id="map"></div>
+
                         <div class="text-center">
                             <form asp-action="Katil" method="post" asp-route-etkinlikId="@Model.EtkinlikId" style="display: inline-block;">
                                 <button type="submit" class="btn btn-primary">Etkinliğe Katıl</button>
                             </form>
+                            <a href="@Url.Action("Rota", new { etkinlikId = Model.EtkinlikId })" class="btn btn-secondary">Rota Oluştur</a>
                             <a href="@Url.Action("EtkinlikMesajlari", "Mesaj", new { etkinlikId = Model.EtkinlikId })" class="btn btn-secondary">Yorumlara Git</a>
                         </div>
+
+
                         @if (TempData["Success"] != null)
                         {
                             <div class="alert alert-success">
@@ -122,5 +135,35 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Mapbox JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2VseWlsIiwiYSI6ImNsdjUyN2d1ZTBkY28yamxidXRxYm1tNnUifQ.Uqy4MfIj3drA__4mvRldfw'; // Replace with your Mapbox token
+
+        var etkinlikLocation = {
+            Lat: @Html.Raw(Json.Serialize(Model.Lat)),
+            Lng: @Html.Raw(Json.Serialize(Model.Lng))
+        };
+
+        var etkinlikLat = parseFloat(etkinlikLocation.Lat);
+        var etkinlikLng = parseFloat(etkinlikLocation.Lng);
+
+        if (!isNaN(etkinlikLat) && !isNaN(etkinlikLng) && etkinlikLat !== 0 && etkinlikLng !== 0) {
+            var map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v11',
+                    center: [etkinlikLng, etkinlikLat],
+                    zoom: 12
+                });
+
+                new mapboxgl.Marker()
+                    .setLngLat([etkinlikLng, etkinlikLat])
+                    .setPopup(new mapboxgl.Popup().setText('Kullanıcının Konumu'))
+                    .addTo(map);
+        }
+    </script>
+
 </body>
 </html>

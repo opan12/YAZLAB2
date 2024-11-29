@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = "Rota Hesaplama";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+
+        #info {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Rota Hesaplama</h2>
+        <div id="map"></div>
+        <div id="info">
+            <p>Mesafe: <span id="distance"></span> km</p>
+            <p>Araba: <span id="car-time"></span> saat</p>
+            <p>Bisiklet: <span id="bike-time"></span> saat</p>
+            <p>Yürüyüş: <span id="walk-time"></span> saat</p>
+        </div>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2VseWlsIiwiYSI6ImNsdjUyN2d1ZTBkY28yamxidXRxYm1tNnUifQ.Uqy4MfIj3drA__4mvRldfw'; // Mapbox Token
+
+        // Backend'den gelen koordinat bilgilerini al
+        const userLat = parseFloat(@Html.Raw(Json.Serialize(ViewData["UserLat"])));
+        const userLng = parseFloat(@Html.Raw(Json.Serialize(ViewData["UserLng"])));
+        const etkinlikLat = parseFloat(@Html.Raw(Json.Serialize(ViewData["EtkinlikLat"])));
+        const etkinlikLng = parseFloat(@Html.Raw(Json.Serialize(ViewData["EtkinlikLng"])));
+
+        // Haritayı oluştur
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [userLng, userLat],
+            zoom: 12
+        });
+
+        // Kullanıcı başlangıç noktası için marker ekle
+        new mapboxgl.Marker({ color: 'blue' })
+            .setLngLat([userLng, userLat])
+            .setPopup(new mapboxgl.Popup().setText("Başlangıç Noktası: Kullanıcı")) // Pop-up ekle
+            .addTo(map);
+
+        // Etkinlik başlangıç noktası için marker ekle
+        new mapboxgl.Marker({ color: 'red' })
+            .setLngLat([etkinlikLng, etkinlikLat])
+            .setPopup(new mapboxgl.Popup().setText("Hedef Noktası: Etkinlik")) // Pop-up ekle
+            .addTo(map);
+
+        // Directions API URL'sini oluştur
+        const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${userLng},${userLat};${etkinlikLng},${etkinlikLat}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+        // Fetch ile rota bilgisini al
+        fetch(directionsUrl)
+            .then(response => response.json())
+            .then(data => {
+                const route = data.routes[0].geometry;
+                const distance = (data.routes[0].distance / 1000).toFixed(2); // Metreyi km'ye çevir
+                const duration = data.routes[0].duration / 3600; // Saniyeyi saate çevir
+                const bikeTime = (distance / 15).toFixed(2); // Ortalama bisiklet hızı 15 km/s
+                const walkTime = (distance / 5).toFixed(2); // Ortalama yürüyüş hızı 5 km/s
+
+                // Bilgileri HTML'de göster
+                document.getElementById("distance").innerText = distance;
+                document.getElementById("car-time").innerText = duration.toFixed(2);
+                document.getElementById("bike-time").innerText = bikeTime;
+                document.getElementById("walk-time").innerText = walkTime;
+
+                map.on('load', () => {
+                    // Rota için veri kaynağı ekle
+                    map.addSource('route', {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            geometry: route
+                        }
+                    });
+
+                    // Rota için katman ekle
+                    map.addLayer({
+                        id: 'route',
+                        type: 'line',
+                        source: 'route',
+                        paint: {
+                            'line-color': '#3887be',
+                            'line-width': 5,
+                            'line-opacity': 0.75
+                        }
+                    });
+                });
+            })
+            .catch(err => console.error('Rota alınırken hata oluştu:', err));
+    </script>
+</body>
+</html>

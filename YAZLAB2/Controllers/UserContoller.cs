@@ -276,11 +276,63 @@ public class UserController : Controller
             DogumTarihi = user.DogumTarihi,
             Cinsiyet = user.Cinsiyet,
             //IlgiAlanlari = ilgiAlanlari,
+            Lat = user.Lat, // Kullanıcı Latitude bilgisi
+            Lng = user.Lng,  // Kullanıcı Longitude bilgisi
             ProfilFoto = user.ProfilFoto,
             UserName = user.UserName
         };
+        // Kullanıcının konumuna yakın etkinlikleri al
+        var nearbyEvents = await GetNearbyEventsAsync(user.Lat, user.Lng);
+        model.NearbyEvents = nearbyEvents;
 
-        return View(model); 
+        return View(model);
+    }
+    public async Task<List<NearbyEventViewModel>> GetNearbyEventsAsync(double userLat, double userLng)
+    {
+        var nearbyEvents = new List<NearbyEventViewModel>();
+
+        // Etkinlikleri al
+        var events = await _context.Etkinlikler.ToListAsync();
+
+        foreach (var eventItem in events)
+        {
+            double eventLat = eventItem.Lat; // Etkinlik koordinatları
+            double eventLng = eventItem.Lng;
+
+            // Mesafe hesaplama (Haversine Formula)
+            double distance = CalculateDistance(userLat, userLng, eventLat, eventLng);
+
+            // 10 km içinde olan etkinlikleri al
+            if (distance <= 100)
+            {
+                nearbyEvents.Add(new NearbyEventViewModel
+                {
+                    EventName = eventItem.EtkinlikAdi,  // Etkinlik adı
+                    Location = eventItem.Konum,         // Etkinlik yeri
+                    Distance = distance                  // Mesafe
+                });
+            }
+        }
+
+        return nearbyEvents;
+    }
+
+    private double CalculateDistance(double lat1, double lng1, double lat2, double lng2)
+    {
+        var R = 6371; // Dünya yarıçapı (km cinsinden)
+        var dLat = ToRadians(lat2 - lat1);
+        var dLng = ToRadians(lng2 - lng1);
+        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
+                Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        var distance = R * c; // Mesafe (km cinsinden)
+        return distance;
+    }
+
+    private double ToRadians(double degree)
+    {
+        return degree * Math.PI / 180;
     }
 
     [HttpGet]

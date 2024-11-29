@@ -36,6 +36,20 @@
         <a href="@Url.Action("UpdateUser", "User")" class="button profile-update-button">Profili Güncelle</a>
         <a href="@Url.Action("ForgotPassword", "Account")" class="button password-update-button">Şifre Yenile</a>
     </div>
+    <div id="map" style="width: 100%; height: 400px; border-radius: 12px; margin-bottom: 20px;"></div>
+    <div class="nearby-events">
+        <h3>Yakınlardaki Etkinlikler</h3>
+        <ul>
+            @foreach (var eventItem in Model.NearbyEvents)
+            {
+                <li>
+                    <strong>@eventItem.EventName</strong><br />
+                    @eventItem.Location<br />
+                    @eventItem.Distance km uzaklıkta
+                </li>
+            }
+        </ul>
+    </div>
     @if (ViewBag.SuccessMessage != null)
     {
         <div class="alert alert-success">
@@ -61,8 +75,58 @@
     </div>
 
 </div>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2VseWlsIiwiYSI6ImNsdjUyN2d1ZTBkY28yamxidXRxYm1tNnUifQ.Uqy4MfIj3drA__4mvRldfw';
+
+    var userLocation = {
+        Lat: @Html.Raw(Json.Serialize(Model.Lat)),
+        Lng: @Html.Raw(Json.Serialize(Model.Lng))
+    };
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get user's location from the model
+        var userLat = parseFloat(userLocation.Lat);
+        var userLng = parseFloat(userLocation.Lng);
+
+        console.log('Parsed Lat:', userLat, 'Parsed Lng:', userLng); // Debug log to check values
+
+        // Check for valid coordinates
+        if (!isNaN(userLat) && !isNaN(userLng) && userLat !== 0 && userLng !== 0) {
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [userLng, userLat],
+                zoom: 12
+            });
+
+            new mapboxgl.Marker()
+                .setLngLat([userLng, userLat])
+                .setPopup(new mapboxgl.Popup().setText('Kullanıcının Konumu'))
+                .addTo(map);
+
+            // Update the location message
+            document.getElementById('location-message').textContent = 'Konum bilgisi mevcut.';
+        } else {
+            console.error('Geçerli bir konum bilgisi yok: Lat ve Lng sıfır veya NaN.');
+
+            // Update the location message for invalid coordinates
+            document.getElementById('location-message').textContent = 'Geçerli bir konum bilgisi yok.';
+        }
+    });
+</script>
 
 <style>
+    #map {
+        width: 100%;
+        height: 400px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
     .profile-container {
         margin: 20px auto;
         max-width: 800px;

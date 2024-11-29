@@ -16,6 +16,40 @@
         <a href="/User/Login" class="btn btn-danger">Çıkış Yap</a>
     </div>
 </div>
+<!-- Recommended Events Section -->
+<div class="container mt-4">
+    <h2 class="mb-4">Önerilen Etkinlikler</h2>
+    <div class="row">
+        @foreach (var oneri in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <!-- Event Image -->
+                        @if (!string.IsNullOrEmpty(oneri.EtkinlikResmi))
+                        {
+                            <img src="@Url.Content(oneri.EtkinlikResmi)" class="card-img-top" alt="Etkinlik Resmi" style="height: 200px; object-fit: cover;">
+                        }
+                        <!-- Event Name -->
+                        <h5 class="card-title">@oneri.EtkinlikAdi</h5>
+
+                        <!-- Event Date and Time -->
+                        <p class="card-text text-muted">
+                            <strong>Tarih:</strong> @oneri.Tarih.ToString("dd/MM/yyyy") <br>
+                            <strong>Saat:</strong> @oneri.Saat
+                        </p>
+
+                        <!-- Details Button -->
+                        <a href="@Url.Action("Details", "Etkinlik", new { id = oneri.EtkinlikId })" class="btn btn-outline-primary btn-sm">
+                            Detaylara Git
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
 <!-- Bildirim alanı -->
 <div id="notificationArea" style="position: fixed; top: 0; right: 0; width: 300px; z-index: 1000;">
     <h4>Bildirimler</h4>

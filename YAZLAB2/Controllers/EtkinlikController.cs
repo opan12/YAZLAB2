@@ -60,7 +60,29 @@ namespace Yazlab__2.Controllers
 
             return View(userCreatedEvents); 
         }
+        [HttpGet]
+        public async Task<IActionResult> Rota(int etkinlikId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
+            var etkinlik = await _context.Etkinlikler.FindAsync(etkinlikId);
+            if (etkinlik == null)
+            {
+                return NotFound("Etkinlik bulunamadı.");
+            }
+
+            // ViewData'ya veritabanından alınan koordinatları yerleştirin
+            ViewData["UserLat"] = user.Lat;
+            ViewData["UserLng"] = user.Lng;
+            ViewData["EtkinlikLat"] = etkinlik.Lat;
+            ViewData["EtkinlikLng"] = etkinlik.Lng;
+
+            return View();
+        }
         public async Task<IActionResult> Details(int id)
         {
             var etkinlik = await _context.Etkinlikler.FindAsync(id);
@@ -68,6 +90,16 @@ namespace Yazlab__2.Controllers
             {
                 return NotFound();
             }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            ViewData["UserLat"] = user.Lat;
+            ViewData["UserLng"] = user.Lng;
+            ViewData["EtkinlikLat"] = etkinlik.Lat;
+            ViewData["EtkinlikLng"] = etkinlik.Lng;
 
             return View(etkinlik);
         }

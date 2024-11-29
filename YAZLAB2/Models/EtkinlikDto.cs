@@ -12,6 +12,8 @@ namespace YAZLAB2.Models
         public TimeSpan Saat { get; set; }
         public TimeSpan EtkinlikSuresi { get; set; }
         public string Konum { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
         public string Kategori { get; set; }
         public string KatilimDurumu { get; set; }
        // public string EtkinlikResmi { get; set; }
