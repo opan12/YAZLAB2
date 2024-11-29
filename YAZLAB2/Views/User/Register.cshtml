@@ -16,18 +16,20 @@
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow p-4" style="width: 100%; max-width: 600px;">
             <h3 class="text-center mb-4">@ViewData["Title"]</h3>
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="signupForm">
                 <div class="row">
                     <!-- Username -->
                     <div class="form-group col-md-6 mb-3">
                         <label for="UserName" class="form-label">Kullanıcı Adı</label>
                         <input type="text" class="form-control" id="UserName" name="UserName" value="@Model.UserName" placeholder="Kullanıcı Adı" required />
+                        <div class="text-danger" id="userNameError" style="display: none;">Kullanıcı adı boş olamaz.</div>
                     </div>
 
                     <!-- Email -->
                     <div class="form-group col-md-6 mb-3">
                         <label for="Email" class="form-label">E-posta</label>
                         <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" placeholder="E-posta Adresiniz" required />
+                        <div class="text-danger" id="emailError" style="display: none;">Geçerli bir e-posta adresi girin.</div>
                     </div>
                 </div>
 
@@ -37,6 +39,7 @@
                 <div class="form-group">
                     <label for="Viewcode">Onay Kodu:</label>
                     <input type="text" id="Viewcode" name="Viewcode" value="@Model.Viewcode" />
+                    <div class="text-danger" id="viewcodeError" style="display: none;">Onay kodu yanlış.</div>
                 </div>
 
                 <div class="row">
@@ -44,12 +47,14 @@
                     <div class="form-group col-md-6 mb-3">
                         <label for="Ad" class="form-label">Ad</label>
                         <input type="text" class="form-control" id="Ad" name="Ad" value="@Model.Ad" placeholder="Adınız" required />
+                        <div class="text-danger" id="adError" style="display: none;">Ad alanı boş olamaz.</div>
                     </div>
 
                     <!-- Soyad -->
                     <div class="form-group col-md-6 mb-3">
                         <label for="Soyad" class="form-label">Soyad</label>
                         <input type="text" class="form-control" id="Soyad" name="Soyad" value="@Model.Soyad" placeholder="Soyadınız" required />
+                        <div class="text-danger" id="soyadError" style="display: none;">Soyad alanı boş olamaz.</div>
                     </div>
                 </div>
 
@@ -58,12 +63,14 @@
                     <div class="form-group col-md-6 mb-3">
                         <label for="TelefonNumarasi" class="form-label">Telefon Numarası</label>
                         <input type="text" class="form-control" id="TelefonNumarasi" name="TelefonNumarasi" value="@Model.TelefonNumarasi" placeholder="Telefon Numaranız" required />
+                        <div class="text-danger" id="telefonError" style="display: none;">Telefon numarası boş olamaz.</div>
                     </div>
 
                     <!-- Konum -->
                     <div class="form-group col-md-6 mb-3">
                         <label for="Konum" class="form-label">Konum</label>
                         <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" placeholder="Konumunuz" required />
+                        <div class="text-danger" id="konumError" style="display: none;">Konum alanı boş olamaz.</div>
                     </div>
                 </div>
 
@@ -73,6 +80,7 @@
                         <label for="DogumTarihi" class="form-label">Doğum Tarihi</label>
                         <input type="date" class="form-control" id="DogumTarihi" name="DogumTarihi"
                                value="@(Model.DogumTarihi.HasValue ? Model.DogumTarihi.Value.ToString("yyyy-MM-dd") : string.Empty)" required />
+                        <div class="text-danger" id="dogumTarihiError" style="display: none;">Doğum tarihi boş olamaz.</div>
                     </div>
 
                     <!-- Cinsiyet -->
@@ -114,12 +122,14 @@
                     <div class="form-group col-md-6 mb-3">
                         <label for="ProfilFoto" class="form-label">Profil Fotoğrafı</label>
                         <input type="text" class="form-control" id="ProfilFoto" name="ProfilFoto" value="@Model.ProfilFoto" placeholder="Profil Fotoğrafı URL'si" />
+                        <div class="text-danger" id="profilFotoError" style="display: none;">Profil fotoğrafı URL'si geçerli değil.</div>
                     </div>
 
                     <!-- Şifre -->
                     <div class="form-group col-md-6 mb-3">
                         <label for="Şifre" class="form-label">Şifre</label>
                         <input type="password" class="form-control" id="Şifre" name="Şifre" placeholder="Şifreniz" required />
+                        <div class="text-danger" id="sifreError" style="display: none;">Şifre boş olamaz.</div>
                     </div>
                 </div>
 
@@ -142,33 +152,100 @@
                 validateCode();
             });
 
+            // Validate all fields on input
+            $('input, select').on('input change', function () {
+                validateFields();
+            });
+
             function validateCode() {
                 var code = $('#Code').val();
                 var viewcode = $('#Viewcode').val();
                 $('#signupButton').prop('disabled', viewcode !== code);
             }
 
-            // Send email button click
-            $('#sendEmailBtn').click(function () {
-                var email = $('#Email').val();
-                var code = $('#Code').val();
+            function validateFields() {
+                var isValid = true;
 
-                if (email) {
-                    $.ajax({
-                        url: '/User/SendEmail',
-                        type: 'POST',
-                        data: { email: email, code: code },
-                        success: function (response) {
-                            alert('E-posta adresinize onay kodu gönderildi!');
-                        },
-                        error: function () {
-                            alert('E-posta gönderilirken hata oluştu.');
-                        }
-                    });
+                // Validate Username
+                if ($('#UserName').val().trim() === '') {
+                    $('#userNameError').show();
+                    isValid = false;
                 } else {
-                    alert('Lütfen bir e-posta adresi girin.');
+                    $('#userNameError').hide();
                 }
-            });
+
+                // Validate Email
+                if ($('#Email').val().trim() === '') {
+                    $('#emailError').show();
+                    isValid = false;
+                } else {
+                    $('#emailError').hide();
+                }
+
+                // Validate Ad
+                if ($('#Ad').val().trim() === '') {
+                    $('#adError').show();
+                    isValid = false;
+                } else {
+                    $('#adError').hide();
+                }
+
+                // Validate Soyad
+                if ($('#Soyad').val().trim() === '') {
+                    $('#soyadError').show();
+                    isValid = false;
+                } else {
+                    $('#soyadError').hide();
+                }
+
+                // Validate Telefon
+                if ($('#TelefonNumarasi').val().trim() === '') {
+                    $('#telefonError').show();
+                    isValid = false;
+                } else {
+                    $('#telefonError').hide();
+                }
+
+                // Validate Konum
+                if ($('#Konum').val().trim() === '') {
+                    $('#konumError').show();
+                    isValid = false;
+                } else {
+                    $('#konumError').hide();
+                }
+
+                // Validate Doğum Tarihi
+                if ($('#DogumTarihi').val().trim() === '') {
+                    $('#dogumTarihiError').show();
+                    isValid = false;
+                } else {
+                    $('#dogumTarihiError').hide();
+                }
+
+                // Validate Profil Fotoğrafı (if needed)
+                var profilFoto = $('#ProfilFoto').val().trim();
+                if (profilFoto && !isValidUrl(profilFoto)) {
+                    $('#profilFotoError').show();
+                    isValid = false;
+                } else {
+                    $('#profilFotoError').hide();
+                }
+
+                // Validate Şifre
+                if ($('#Şifre').val().trim() === '') {
+                    $('#sifreError').show();
+                    isValid = false;
+                } else {
+                    $('#sifreError').hide();
+                }
+
+                $('#signupButton').prop('disabled', !isValid);
+            }
+
+            function isValidUrl(string) {
+                var res = string.match(/(http|https):\/\/[^\s]+/g);
+                return (res !== null);
+            }
         });
     </script>
 </body>
