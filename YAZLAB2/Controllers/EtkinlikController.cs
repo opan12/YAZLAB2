@@ -9,7 +9,9 @@ using Yazlab__2.Service;
 using YAZLAB2.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using YAZLAB2.Services;
-
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
 
 
 namespace Yazlab__2.Controllers
@@ -83,17 +85,13 @@ namespace Yazlab__2.Controllers
                 .Select(k => k.EtkinlikID)
                 .ToListAsync();
 
-            var kullaniciIlgiAlani = await _context.IlgiAlanları
-                .Where(k => k.KullanıcıId == user.Id)
-                .Select(k => k.KategoriId)
-                .ToListAsync();
-
             if (kullaniciEtkinlikleri.Contains(etkinlikId))
             {
                 TempData["Error"] = "Bu etkinliğe zaten katıldınız.";
                 return RedirectToAction("Details", new { id = etkinlikId });
             }
 
+            // Katılım kaydını ekle
             var katilimci = new Katilimci
             {
                 KullanıcıId = user.Id,
@@ -103,8 +101,39 @@ namespace Yazlab__2.Controllers
             _context.Katilimcis.Add(katilimci);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Etkinliğe başarıyla katıldınız."; 
-            return RedirectToAction("Details", new { id = etkinlikId });  
+            // Belge oluşturma
+            var etkinlik = await _context.Etkinlikler.FindAsync(etkinlikId); // Etkinlik bilgilerini al
+            if (etkinlik == null)
+            {
+                TempData["Error"] = "Etkinlik bilgileri alınamadı.";
+                return RedirectToAction("Details", new { id = etkinlikId });
+            }
+
+            using var pdfStream = GenerateParticipationDocument(user, etkinlik); // Belgeyi oluştur
+
+            // Başarı mesajı
+            TempData["Success"] = "Etkinliğe başarıyla katıldınız.";
+
+            return File(pdfStream.ToArray(), "application/pdf", "katilim_belgesi.pdf");
+        }
+
+        private MemoryStream GenerateParticipationDocument(User user, Etkinlik etkinlik)
+        {
+            var stream = new MemoryStream();
+            var writer = new PdfWriter(stream);
+            var pdf = new PdfDocument(writer);
+            var document = new Document(pdf);
+
+            // Belge içeriğini ekleyin
+            document.Add(new Paragraph("Katılım Belgesi").SetFontSize(20));
+            document.Add(new Paragraph($"Kullanıcı Adı: {user.UserName}"));
+            document.Add(new Paragraph($"Etkinlik Adı: {etkinlik.EtkinlikAdi}"));
+            document.Add(new Paragraph($"Tarih: {etkinlik.Tarih.ToShortDateString()}"));
+            document.Add(new Paragraph($"Saat: {etkinlik.Saat}"));
+
+            document.Close();
+
+            return stream;
         }
 
         [HttpGet]
