@@ -1,64 +1,119 @@
-﻿
-@{
-    ViewData["Title"] = "KullaniciDuzenle";
+﻿@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
 }
 
-<h1>Kullanıcı Düzenle</h1>
-
-<form method="post" asp-action="KullaniciDuzenle" asp-route-id="@Model.Id">
-    <div class="form-group">
-        <label for="Ad">Ad</label>
-        <input type="text" id="Ad" name="Ad" value="@Model.Ad" class="form-control" required />
-    </div>
-    
-    <div class="form-group">
-        <label for="Soyad">Soyad</label>
-        <input type="text" id="Soyad" name="Soyad" value="@Model.Soyad" class="form-control" required />
-    </div>
-    
-    <div class="form-group">
-        <label for="Email">Email</label>
-        <input type="email" id="Email" name="Email" value="@Model.Email" class="form-control" required />
-    </div>
-    
-    <div class="form-group">
-        <label for="UserName">Kullanıcı Adı</label>
-        <input type="text" id="UserName" name="UserName" value="@Model.UserName" class="form-control" required />
+<div class="container mt-5">
+    <!-- Başlık -->
+    <div class="text-center mb-4">
+        <h1 class="text-primary fw-bold"><i class="fas fa-user-edit"></i> Kullanıcı Düzenle</h1>
     </div>
 
-    <div class="form-group">
-        <label for="TelefonNumarasi">Telefon Numarası</label>
-        <input type="text" id="TelefonNumarasi" name="TelefonNumarasi" value="@Model.TelefonNumarasi" class="form-control" />
-    </div>
-    
-    <div class="form-group">
-        <label for="Konum">Konum</label>
-        <input type="text" id="Konum" name="Konum" value="@Model.Konum" class="form-control" />
-    </div>
-    
-    <div class="form-group">
-        <label for="DogumTarihi">Doğum Tarihi</label>
-        <input type="date" id="DogumTarihi" name="DogumTarihi" value="@Model.DogumTarihi?.ToString("yyyy-MM-dd")" class="form-control" />
-    </div>
-    
-    <div class="form-group col-md-6 mb-3">
-        <label for="Cinsiyet" class="form-label">Cinsiyet</label>
-        <select class="form-select" id="Cinsiyet" name="Cinsiyet" required>
-            <option value="Erkek">Erkek</option>
-            <option value="Kadın">Kadın</option>
-            <option value="Diğer">Diğer</option>
-        </select>
-    </div>
+    <!-- Form Kart -->
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h5 class="mb-0">Kullanıcı Bilgilerini Güncelle</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="KullaniciDuzenle" asp-route-id="@Model.Id">
+                <div class="row">
+                    <!-- Ad ve Soyad -->
+                    <div class="col-md-6 mb-3">
+                        <label for="Ad" class="form-label">Ad</label>
+                        <input type="text" id="Ad" name="Ad" value="@Model.Ad" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="Soyad" class="form-label">Soyad</label>
+                        <input type="text" id="Soyad" name="Soyad" value="@Model.Soyad" class="form-control" required />
+                    </div>
+                </div>
 
+                <div class="row">
+                    <!-- Email ve Kullanıcı Adı -->
+                    <div class="col-md-6 mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" id="Email" name="Email" value="@Model.Email" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="UserName" class="form-label">Kullanıcı Adı</label>
+                        <input type="text" id="UserName" name="UserName" value="@Model.UserName" class="form-control" required />
+                    </div>
+                </div>
 
+                <div class="row">
+                    <!-- Telefon Numarası ve Konum -->
+                    <div class="col-md-6 mb-3">
+                        <label for="TelefonNumarasi" class="form-label">Telefon Numarası</label>
+                        <input type="text" id="TelefonNumarasi" name="TelefonNumarasi" value="@Model.TelefonNumarasi" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="Konum" class="form-label">Konum</label>
+                        <input type="text" id="Konum" name="Konum" value="@Model.Konum" class="form-control" />
+                    </div>
+                </div>
 
-    <div class="form-group">
-        <label for="ProfilFoto">Profil Fotoğrafı</label>
-        <input type="url" id="ProfilFoto" name="ProfilFoto" value="@Model.ProfilFoto" class="form-control" />
+                <div class="row">
+                    <!-- Doğum Tarihi ve Cinsiyet -->
+                    <div class="col-md-6 mb-3">
+                        <label for="DogumTarihi" class="form-label">Doğum Tarihi</label>
+                        <input type="date" id="DogumTarihi" name="DogumTarihi" value="@Model.DogumTarihi?.ToString("yyyy-MM-dd")" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="Cinsiyet" class="form-label">Cinsiyet</label>
+                        <select class="form-select" id="Cinsiyet" name="Cinsiyet" required>
+                            <option value="Erkek">Erkek</option>
+                            <option value="Kadın">Kadın</option>
+                            <option value="Diğer">Diğer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Profil Fotoğrafı -->
+                <div class="mb-3">
+                    <label for="ProfilFoto" class="form-label">Profil Fotoğrafı URL</label>
+                    <input type="url" id="ProfilFoto" name="ProfilFoto" value="@Model.ProfilFoto" class="form-control" />
+                </div>
+
+                <!-- Butonlar -->
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn btn-primary shadow-sm">
+                        <i class="fas fa-save"></i> Güncelle
+                    </button>
+                    <a href="/Admin/TumKullanicilar" class="btn btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left"></i> Geri
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
-    <button type="submit" class="btn btn-primary">Güncelle</button>
+<!-- Stil -->
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Poppins', sans-serif;
+    }
 
-    <!-- Back Button -->
-    <a href="/Admin/TumKullanicilar" class="btn btn-secondary" style="margin-left: 10px;">Geri</a>
-</form>
+    h1, .card-header h5 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+    }
+
+    .card-header {
+        font-size: 1.2rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .btn-secondary:hover {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+</style>

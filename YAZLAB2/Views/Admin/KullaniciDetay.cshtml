@@ -1,43 +1,104 @@
 ﻿@model YAZLAB2.Models.KullaniciEtkinlikViewModel
 
+<!-- Geri Butonu -->
+<div class="mb-4">
+    <a href="/Admin/TumKullanicilar" class="btn btn-secondary btn-sm">
+        <i class="fa fa-arrow-left"></i> Geri
+    </a>
+</div>
 <div class="container mt-5">
-    <h2 class="text-center mb-4">@Model.User.Ad @Model.User.Soyad</h2>
+    <h2 class="text-center mb-4 text-primary fw-bold">@Model.User.Ad @Model.User.Soyad</h2>
 
     <div class="row">
-        <div class="col-md-6">
-            <h3 class="mb-3">Katıldığı Etkinlikler:</h3>
-            <ul class="list-group">
-                @if (Model.KatildigiEtkinlikler != null && Model.KatildigiEtkinlikler.Any())
-                {
-                    foreach (var etkinlik in Model.KatildigiEtkinlikler)
+        <!-- Katıldığı Etkinlikler -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Katıldığı Etkinlikler</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model.KatildigiEtkinlikler != null && Model.KatildigiEtkinlikler.Any())
                     {
-                        <li class="list-group-item">@etkinlik.EtkinlikAdi</li>
+                        <ul class="list-group">
+                            @foreach (var etkinlik in Model.KatildigiEtkinlikler)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @etkinlik.EtkinlikAdi
+                                    <span class="badge bg-success rounded-pill">Katılınan</span>
+                                </li>
+                            }
+                        </ul>
                     }
-                }
-                else
-                {
-                    <li class="list-group-item">Katıldığı etkinlik yok.</li>
-                }
-            </ul>
+                    else
+                    {
+                        <p class="text-muted">Katıldığı etkinlik yok.</p>
+                    }
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <h3 class="mb-3">Düzenlediği Etkinlikler:</h3>
-            <ul class="list-group">
-                @if (Model.DuzenledigiEtkinlikler != null && Model.DuzenledigiEtkinlikler.Any())
-                {
-                    foreach (var etkinlik in Model.DuzenledigiEtkinlikler)
+
+        <!-- Düzenlediği Etkinlikler -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">Düzenlediği Etkinlikler</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model.DuzenledigiEtkinlikler != null && Model.DuzenledigiEtkinlikler.Any())
                     {
-                        <li class="list-group-item">@etkinlik.EtkinlikAdi</li>
+                        <ul class="list-group">
+                            @foreach (var etkinlik in Model.DuzenledigiEtkinlikler)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @etkinlik.EtkinlikAdi
+                                    <span class="badge bg-warning text-dark rounded-pill">Düzenleyen</span>
+                                </li>
+                            }
+                        </ul>
                     }
-                }
-                else
-                {
-                    <li class="list-group-item">Düzenlediği etkinlik yok.</li>
-                }
-            </ul>
+                    else
+                    {
+                        <p class="text-muted">Düzenlediği etkinlik yok.</p>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Stil -->
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .card {
+        border-radius: 10px;
+    }
+
+    .card-header {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .list-group-item {
+        font-size: 1.1rem;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.4em 0.7em;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .text-muted {
+        font-style: italic;
+    }
+</style>
+
+<!-- Bootstrap JS ve jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>

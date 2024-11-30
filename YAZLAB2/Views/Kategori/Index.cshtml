@@ -4,32 +4,120 @@
     ViewData["Title"] = "Kategoriler";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container mt-5">
+    <!-- Geri Butonu -->
+    <div class="mb-4">
+        <a href="@Url.Action("AdminHubArea", "Admin")" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Geri Dön
+        </a>
+    </div>
 
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-primary">Yeni Kategori Ekle</a>
-</p>
+    <!-- Sayfa Başlığı -->
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Etkinlik Adı</th>
-            <th>İşlemler</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var kategori in Model)
-        {
-            <tr>
-                <td>@kategori.KategoriAdi</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = kategori.KategoriId })" class="btn btn-warning">Düzenle</a>
-                    <form asp-action="Delete" method="post" style="display:inline;">
-                        <input type="hidden" name="id" value="@kategori.KategoriId" />
-                        <button type="submit" class="btn btn-danger">Sil</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Yeni Kategori Ekle Butonu -->
+    <div class="mb-4">
+        <a href="@Url.Action("Create")" class="btn btn-primary btn-lg">
+            <i class="fa fa-plus-circle"></i> Yeni Kategori Ekle
+        </a>
+    </div>
+
+    <!-- Kategoriler Tablosu -->
+    <div class="table-responsive shadow-lg rounded-lg bg-white">
+        <table class="table table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Etkinlik Adı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var kategori in Model)
+                {
+                    <tr>
+                        <td>@kategori.KategoriAdi</td>
+                        <td>
+                            <!-- Düzenle Butonu -->
+                            <a href="@Url.Action("Edit", new { id = kategori.KategoriId })" class="btn btn-warning btn-sm">
+                                <i class="fa fa-edit"></i> Düzenle
+                            </a>
+
+                            <!-- Sil Butonu -->
+                            <form asp-action="Delete" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@kategori.KategoriId" />
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Sil
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Stil -->
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+        max-width: 900px;
+    }
+
+    .table {
+        border-radius: 10px;
+    }
+
+    .btn {
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        padding: 8px 15px;
+    }
+
+    .btn-lg {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+    }
+
+    .btn-sm {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+    }
+
+    .table-dark {
+        background-color: #343a40;
+    }
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .rounded-lg {
+        border-radius: 15px;
+    }
+
+    .bg-white {
+        background-color: #fff;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .fa {
+        margin-right: 5px;
+    }
+</style>
+
+<!-- Bootstrap JS ve jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>

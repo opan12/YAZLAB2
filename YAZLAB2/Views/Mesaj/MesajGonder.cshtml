@@ -2,17 +2,92 @@
     ViewData["Title"] = "Mesaj Gönder";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Yeni Mesaj Gönder</h2>
-    <form id="mesajGonderForm" method="post" action="/Mesaj/MesajGonder">
-        <div class="form-group">
-            <label for="aliciUsername">Alıcı Kullanıcı Adı:</label>
-            <input type="text" id="aliciUsername" name="aliciUsername" class="form-control" required />
+<div class="container mt-5">
+    <!-- Geri Butonu -->
+    <div class="mb-4">
+        <a href="/Admin/AdminHubArea" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Geri Dön
+        </a>
+    </div>
+
+    <!-- Sayfa Başlığı -->
+    <h2 class="text-center mb-4 text-primary">Yeni Mesaj Gönder</h2>
+
+    <!-- Mesaj Gönderme Formu -->
+    <form id="mesajGonderForm" method="post" action="/Mesaj/MesajGonder" class="shadow-lg p-4 rounded bg-light">
+        <div class="form-group mb-3">
+            <label for="aliciUsername" class="form-label">Alıcı Kullanıcı Adı:</label>
+            <input type="text" id="aliciUsername" name="aliciUsername" class="form-control" placeholder="Kullanıcı adı girin" required />
         </div>
-        <div class="form-group">
-            <label for="mesajMetni">Mesaj Metni:</label>
-            <textarea id="mesajMetni" name="mesajMetni" class="form-control" required></textarea>
+        <div class="form-group mb-4">
+            <label for="mesajMetni" class="form-label">Mesaj Metni:</label>
+            <textarea id="mesajMetni" name="mesajMetni" class="form-control" rows="5" placeholder="Mesajınızı yazın" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Mesaj Gönder</button>
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="fa fa-paper-plane"></i> Mesaj Gönder
+        </button>
     </form>
 </div>
+
+<!-- Stil -->
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .form-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+    }
+
+    .btn-secondary {
+        font-size: 1rem;
+        border-radius: 50px;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .bg-light {
+        background-color: #fff;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    i {
+        margin-right: 5px;
+    }
+
+    /* Geri butonunun stilini özelleştir */
+    .btn-sm {
+        padding: 8px 15px;
+        font-size: 1rem;
+    }
+</style>
+
+<!-- Bootstrap JS ve jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
