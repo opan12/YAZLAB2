@@ -150,8 +150,14 @@ namespace Yazlab__2.Controllers
             {
                 // Alternatif etkinlik öner
                 var alternatifEtkinlikler = await _context.Etkinlikler
-                    .Where(e => e.Tarih == etkinlikTarihi && e.Saat != etkinlikSaati && e.Konum == etkinlik.Konum && e.OnayDurumu == true)
-                    .ToListAsync();
+           .Where(e =>
+               e.Tarih == etkinlik.Tarih &&
+               e.KategoriId == etkinlik.KategoriId &&
+               e.Konum == etkinlik.Konum &&
+               e.EtkinlikId != etkinlikId)
+           .ToListAsync();
+
+
 
                 if (alternatifEtkinlikler.Any())
                 {
