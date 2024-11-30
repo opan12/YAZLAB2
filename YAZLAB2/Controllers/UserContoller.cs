@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using YAZLAB2.Service;
+using Newtonsoft.Json.Linq;
 
 
 public class UserController : Controller
@@ -37,21 +38,32 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
+        var kategoriler = _context.Kategoris.ToList();
+
+        // Kullanılacak model
         var model = new UserProfileViewModel
         {
             Ad = user.Ad,
             Soyad = user.Soyad,
             Email = user.Email,
             TelefonNumarasi = user.TelefonNumarasi,
-            Konum = user.Konum,
             DogumTarihi = user.DogumTarihi,
-            Cinsiyet = user.Cinsiyet,
             ProfilFoto = user.ProfilFoto,
-            UserName = user.UserName
+            Konum = user.Konum,
+            Cinsiyet = user.Cinsiyet,
+            UserName = user.UserName,
+            // Kategoriler ekleniyor
+            Kategoriler = kategoriler.Select(k => new SelectListItem
+            {
+                Value = k.KategoriId.ToString(),
+                Text = k.KategoriAdi,
+                Selected = false // Kullanıcının mevcut ilgi alanlarıyla eşleştirilebilir
+            }).ToList()
         };
 
         return View(model);
     }
+
     [HttpPost]
     [Authorize(Roles = "User")]
     public async Task<IActionResult> UpdateUser(UserProfileViewModel model)
@@ -62,6 +74,15 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
+        // Tüm kategorileri al
+        var kategoriler = await _context.Kategoris.ToListAsync();
+
+        // Kullanıcının mevcut ilgi alanlarını al
+        var mevcutIlgiAlanlari = await _context.IlgiAlanları
+            .Where(ia => ia.KullanıcıId == user.Id)
+            .ToListAsync();
+
+        // Kullanıcının diğer bilgilerini güncelle
         user.Ad = model.Ad;
         user.Soyad = model.Soyad;
         user.Email = model.Email;
@@ -75,22 +96,27 @@ public class UserController : Controller
 
         if (result.Succeeded)
         {
-            TempData["SuccessMessage"] = "Profil başarıyla güncellendi.";
+            // İlgi alanlarını güncelle
+            // Önce mevcut ilgi alanlarını temizle
+            _context.IlgiAlanları.RemoveRange(mevcutIlgiAlanlari);
 
-            var updatedModel = new UserProfileViewModel
+            // Yeni ilgi alanlarını ekle
+            if (model.IlgiAlanlari != null)
             {
-                Ad = user.Ad,
-                Soyad = user.Soyad,
-                Email = user.Email,
-                TelefonNumarasi = user.TelefonNumarasi,
-                Konum = user.Konum,
-                DogumTarihi = user.DogumTarihi,
-                Cinsiyet = user.Cinsiyet,
-                ProfilFoto = user.ProfilFoto,
-                UserName = user.UserName
-            };
+                foreach (var kategoriId in model.IlgiAlanlari)
+                {
+                    _context.IlgiAlanları.Add(new IlgiAlanı
+                    {
+                        KullanıcıId = user.Id,
+                        KategoriId = kategoriId
+                    });
+                }
+            }
 
-            return View("Profile", updatedModel);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Profil başarıyla güncellendi.";
+            return RedirectToAction("Profile");
         }
 
         foreach (var error in result.Errors)
@@ -98,8 +124,17 @@ public class UserController : Controller
             ModelState.AddModelError(string.Empty, error.Description);
         }
 
+        // Kategoriler ve seçili ilgi alanlarını yeniden yükle
+        model.Kategoriler = kategoriler.Select(k => new SelectListItem
+        {
+            Value = k.KategoriId.ToString(),
+            Text = k.KategoriAdi,
+            Selected = model.IlgiAlanlari != null && model.IlgiAlanlari.Contains(k.KategoriId)
+        }).ToList();
+
         return View(model);
     }
+
 
     [HttpGet]
     public IActionResult Register()
@@ -145,7 +180,11 @@ public class UserController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(UserRegisterModel model)
     {
-     
+       
+
+        // Konumdan koordinat almak için Mapbox API'yi çağır
+        var (latitude, longitude) = await GetCoordinatesAsync(model.Konum);
+
         var user = new User
         {
             UserName = model.UserName,
@@ -156,15 +195,15 @@ public class UserController : Controller
             Konum = model.Konum,
             DogumTarihi = model.DogumTarihi,
             Cinsiyet = model.Cinsiyet,
-            ProfilFoto = model.ProfilFoto
+            ProfilFoto = model.ProfilFoto,
+            Lat = latitude,
+            Lng = longitude
         };
 
         var result = await _userManager.CreateAsync(user, model.Şifre);
-       
-        
+
         if (result.Succeeded)
         {
-
             await _userManager.AddToRoleAsync(user, "User");
 
             if (model.IlgiAlanlari != null && model.IlgiAlanlari.Any())
@@ -172,15 +211,14 @@ public class UserController : Controller
                 var ilgiAlanlarıListesi = model.IlgiAlanlari
                     .Select(kategoriId => new IlgiAlanı
                     {
-                        KullanıcıId = user.Id, 
-                        KategoriId = kategoriId 
+                        KullanıcıId = user.Id,
+                        KategoriId = kategoriId
                     })
                     .ToList();
 
                 await _context.IlgiAlanları.AddRangeAsync(ilgiAlanlarıListesi);
                 await _context.SaveChangesAsync();
             }
-
             return RedirectToAction("Login");
         }
 
@@ -191,7 +229,35 @@ public class UserController : Controller
 
         return View(model);
     }
-    
+
+    // Mapbox API ile koordinatları almak için yardımcı metod
+    private async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string location)
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            string accessToken = "pk.eyJ1Ijoic2VseWlsIiwiYSI6ImNsdjUyN2d1ZTBkY28yamxidXRxYm1tNnUifQ.Uqy4MfIj3drA__4mvRldfw"; // Mapbox Access Token'ınızı buraya ekleyin.
+            string url = $"https://api.mapbox.com/geocoding/v5/mapbox.places/{Uri.EscapeDataString(location)}.json?access_token={accessToken}";
+
+            HttpResponseMessage response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                var data = JObject.Parse(json);
+
+                var coordinates = data["features"]?[0]?["geometry"]?["coordinates"];
+                if (coordinates != null)
+                {
+                    double longitude = (double)coordinates[0];
+                    double latitude = (double)coordinates[1];
+                    return (latitude, longitude);
+                }
+            }
+
+            throw new Exception("Konum koordinatlara dönüştürülemedi.");
+        }
+    }
+
     public async Task<IActionResult> UserHubArea()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -249,7 +315,6 @@ public class UserController : Controller
         await _signInManager.SignOutAsync();
         return RedirectToAction("Login");
     }
-
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
@@ -259,13 +324,21 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
-        // Fetch user's interests (if any)
-        /*var ilgiAlanlari = await _context.IlgiAlanları
+        // Kullanıcının ilgi alanlarını al
+        var ilgiAlanlari = await _context.IlgiAlanları
             .Where(ia => ia.KullanıcıId == user.Id)
-            .Include(ia => ia.Kategori)
-            .Select(ia => ia.Kategori.KategoriAdi)
+            .Select(ia => ia.KategoriId) // Sadece KategoriId'yi al
             .ToListAsync();
-        */
+
+        // Kategorileri al
+        var kategoriler = await _context.Kategoris.ToListAsync();
+
+        var kategoriList = kategoriler.Select(k => new SelectListItem
+        {
+            Value = k.KategoriId.ToString(),
+            Text = k.KategoriAdi
+        }).ToList();
+
         var model = new YAZLAB2.Models.UserProfileViewModel
         {
             Ad = user.Ad,
@@ -275,18 +348,23 @@ public class UserController : Controller
             Konum = user.Konum,
             DogumTarihi = user.DogumTarihi,
             Cinsiyet = user.Cinsiyet,
-            //IlgiAlanlari = ilgiAlanlari,
-            Lat = user.Lat, // Kullanıcı Latitude bilgisi
-            Lng = user.Lng,  // Kullanıcı Longitude bilgisi
+            IlgiAlanlari = ilgiAlanlari, // KategoriId listesini kullan
+            Kategoriler = kategoriList, // Kullanıcının ilgi alanı kategorileri
+            Lat = user.Lat,
+            Lng = user.Lng,
             ProfilFoto = user.ProfilFoto,
             UserName = user.UserName
         };
+
         // Kullanıcının konumuna yakın etkinlikleri al
         var nearbyEvents = await GetNearbyEventsAsync(user.Lat, user.Lng);
         model.NearbyEvents = nearbyEvents;
 
         return View(model);
     }
+
+
+
     public async Task<List<NearbyEventViewModel>> GetNearbyEventsAsync(double userLat, double userLng)
     {
         var nearbyEvents = new List<NearbyEventViewModel>();

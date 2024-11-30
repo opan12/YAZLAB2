@@ -1,0 +1,19 @@
+﻿@model IEnumerable<YAZLAB2.Models.Mesaj>
+
+<h2>Etkinlik Mesajları</h2>
+
+@if (Model.Any())
+{
+    foreach (var mesaj in Model)
+    {
+        <div>
+            <strong>@mesaj.GondericiID</strong> // Burada gönderici kullanıcı adını almanız gerekebilir
+            <p>@mesaj.MesajMetni</p>
+            <small>@mesaj.GonderimZamani.ToString("g")</small>
+        </div>
+    }
+}
+else
+{
+    <p>Bu etkinlik için herhangi bir mesaj yok.</p>
+}

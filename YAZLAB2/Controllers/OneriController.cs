@@ -36,14 +36,8 @@ namespace Yazlab__2.Controllers
         }
         public async Task<List<Etkinlik>> OneriGetir(string kullaniciId)
         {
-            // Kullanıcının ilgi alanlarına ait kategori ID'lerini al
-            var ilgiAlanıKategoriler = await _context.IlgiAlanları
-                .Where(i => i.KullanıcıId == kullaniciId)
-                .Select(i => i.KategoriId)
-                .ToListAsync();
-
-            // Kullanıcının katıldığı etkinliklerden elde edilen kategori ID'lerini al
-            var katilimciKategoriler = await _context.Katilimcis
+            // Kullanıcının katıldığı etkinlik kategorilerinin katılım sayısını hesapla
+            var kategoriKatilimSayilari = await _context.Katilimcis
                 .Where(k => k.KullanıcıId == kullaniciId)
                 .Join(
                     _context.Etkinlikler,
@@ -51,14 +45,15 @@ namespace Yazlab__2.Controllers
                     etkinlik => etkinlik.EtkinlikId,
                     (katilimci, etkinlik) => etkinlik.KategoriId
                 )
-                .Distinct()
-                .ToListAsync();
+                .GroupBy(kategoriId => kategoriId)
+                .Select(g => new { KategoriId = g.Key, KatilimSayisi = g.Count() })
+                .ToDictionaryAsync(x => x.KategoriId, x => x.KatilimSayisi);
 
-            // İlgi alanları ve katıldığı etkinlik kategorilerini birleştir
-            var tumKategoriler = ilgiAlanıKategoriler
-                .Union(katilimciKategoriler)
-                .Distinct()
-                .ToList();
+            // İlgi alanlarına göre kategorileri al
+            var ilgiAlanıKategoriler = await _context.IlgiAlanları
+                .Where(i => i.KullanıcıId == kullaniciId)
+                .Select(i => i.KategoriId)
+                .ToListAsync();
 
             // Kullanıcının daha önce katıldığı etkinlik ID'lerini al
             var katildigiEtkinlikIds = await _context.Katilimcis
@@ -66,16 +61,22 @@ namespace Yazlab__2.Controllers
                 .Select(k => k.EtkinlikID)
                 .ToListAsync();
 
-            // İlgi alanlarına ve kategorilere göre önerilen etkinlikleri filtrele
+            // Öneri listesini oluştur
             var oneriEtkinlikler = await _context.Etkinlikler
                 .AsNoTracking()
                 .Where(e =>
-                    tumKategoriler.Contains(e.KategoriId) && // İlgi alanına veya katıldığı kategorilere uygun etkinlik
-                    !katildigiEtkinlikIds.Contains(e.EtkinlikId) && // Daha önce katılmadığı etkinlik
-                    e.OnayDurumu == true) // Onaylanmış etkinlikler
+                    (ilgiAlanıKategoriler.Contains(e.KategoriId) || kategoriKatilimSayilari.ContainsKey(e.KategoriId)) &&
+                    !katildigiEtkinlikIds.Contains(e.EtkinlikId) &&
+                    e.OnayDurumu == true)
                 .ToListAsync();
 
-            return oneriEtkinlikler;
+            // Etkinlikleri daha çok katıldığı kategorilere göre önceliklendir
+            var siralanmisEtkinlikler = oneriEtkinlikler
+                .OrderByDescending(e => kategoriKatilimSayilari.ContainsKey(e.KategoriId) ? kategoriKatilimSayilari[e.KategoriId] : 0) // Katılım sayısına göre sıralama
+                .ThenBy(e => e.Tarih) // İkinci kriter olarak tarih sıralaması
+                .ToList();
+
+            return siralanmisEtkinlikler;
         }
 
         /*

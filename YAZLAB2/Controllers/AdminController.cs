@@ -25,6 +25,7 @@ namespace YAZLAB2.Controllers
             _userManager = userManager;
             _bildirimService = bildirimService;
 
+
         }
         [AllowAnonymous]
         public async Task<JsonResult> AdminRegister()
@@ -79,6 +80,36 @@ namespace YAZLAB2.Controllers
             return View(users);
         }
         */
+
+        public async Task<IActionResult> Mesaj(int id)
+        {
+            var etkinlik = await _context.Etkinlikler.FindAsync(id);
+            if (etkinlik == null)
+            {
+                return NotFound();
+            }
+
+            var mesajlar = await _context.Mesajlar
+                .Where(m => m.EtkinlikId == id)
+                .OrderByDescending(m => m.GonderimZamani)
+                .ToListAsync();
+
+            ViewData["Mesajlar"] = mesajlar; // Mesajları view'a gönder
+
+            return View(etkinlik);
+        }
+        [HttpPost]
+        public async Task<IActionResult> MesajSil(int mesajId)
+        {
+            var mesaj = await _context.Mesajlar.FindAsync(mesajId);
+            if (mesaj != null)
+            {
+                _context.Mesajlar.Remove(mesaj);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Detay", new { id = mesaj.EtkinlikId });
+        }
+
         public async Task<IActionResult> TumKullanicilar()
         {
             var users = await _userManager.Users
@@ -126,7 +157,7 @@ namespace YAZLAB2.Controllers
 
             return View(detayModel);
         }
-    
+
 
         // Kullanıcı Düzenle
         [HttpGet]
@@ -143,7 +174,7 @@ namespace YAZLAB2.Controllers
         [HttpPost]
         public async Task<IActionResult> KullaniciDuzenle(User kullanici)
         {
-        
+
             var mevcutKullanici = await _userManager.FindByIdAsync(kullanici.Id);
             if (mevcutKullanici == null)
             {
@@ -226,9 +257,9 @@ namespace YAZLAB2.Controllers
         public async Task<IActionResult> TumEtkinlikler()
         {
             var etkinlikler = await _context.Etkinlikler.ToListAsync();
-        
 
-           
+
+
             return View(etkinlikler);
         }
 
@@ -329,9 +360,13 @@ namespace YAZLAB2.Controllers
             TempData["Message"] = "Etkinlik başarıyla silindi.";
             return RedirectToAction("TumEtkinlikler");
         }
+    
 
-        // Etkinlik Onayla
-        [HttpPost]
+
+
+
+    // Etkinlik Onayla
+    [HttpPost]
         public async Task<IActionResult> EtkinlikOnayla(int id)
         {
             var etkinlik = await _context.Etkinlikler.FindAsync(id);

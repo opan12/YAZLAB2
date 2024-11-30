@@ -46,6 +46,7 @@
     <None Include="Views\Bildirim\AdminBildirimler.cshtml" />
     <None Include="Views\Bildirim\KullaniciBildirimler.cshtml" />
     <None Include="Views\Kategori\Delete.cshtml" />
+    <None Include="Views\Puan\Index.cshtml" />
     <None Include="Views\Statistics\Index.cshtml" />
   </ItemGroup>
 

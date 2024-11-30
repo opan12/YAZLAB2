@@ -60,6 +60,9 @@ else
                                 <a href="@Url.Action("Detay", new { id = etkinlik.EtkinlikId })" class="btn btn-sm btn-info">
                                     <i class="fas fa-info-circle"></i> Detay
                                 </a>
+                                <a href="@Url.Action("Mesaj", new { id = etkinlik.EtkinlikId })" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Mesajlar
+                                </a>
 
                                 <!-- Sil Butonu - Modal'ı açacak buton -->
                                 <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">

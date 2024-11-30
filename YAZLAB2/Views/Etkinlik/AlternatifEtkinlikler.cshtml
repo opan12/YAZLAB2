@@ -1,0 +1,21 @@
+﻿@model List<YAZLAB2.Models.Etkinlik>
+
+<h2>Alternatif Etkinlikler</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <ul>
+        @foreach (var etkinlik in Model)
+        {
+            <li>
+                <strong>@etkinlik.EtkinlikAdi</strong> - @etkinlik.Tarih.ToShortDateString() @etkinlik.Saat
+                <br />
+                <a asp-action="Katil" asp-route-etkinlikId="@etkinlik.EtkinlikId">Katıl</a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Alternatif etkinlik bulunmamaktadır.</p>
+}

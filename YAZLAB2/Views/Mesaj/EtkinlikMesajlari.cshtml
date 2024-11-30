@@ -24,6 +24,21 @@
                         <span class="text-muted">@mesaj.GonderimZamani.ToString("dd/MM/yyyy HH:mm")</span>
                     </div>
                     <div>@mesaj.MesajMetni</div>
+
+                    <!-- Cevapla Butonu -->
+                    <button class="btn btn-link reply-button" style="padding: 0; margin-left: 10px;">Cevapla</button>
+
+                    <!-- Yanıt Formu, başlangıçta gizli -->
+                    <div class="reply-form mt-2 d-none" style="width: 100%;">
+                        <form asp-action="EtkinlikMesajEkle" method="post">
+                            <input type="hidden" name="etkinlikId" value="@etkinlikId" />
+                            <input type="hidden" name="parentMesajId" value="@mesaj.ParentMesajId" />
+                            <div class="mb-3">
+                                <textarea name="mesajMetni" required class="form-control" rows="2" placeholder="Cevabınızı yazın..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Cevapla</button>
+                        </form>
+                    </div>
                 </li>
             }
         </ul>
@@ -51,6 +66,21 @@ else
     <a href="@Url.Action("Details", "Etkinlik", new { id = etkinlikId })" class="btn btn-secondary">Ana Sayfaya Dön</a>
 </div>
 
+<!-- Scripts -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const replyButtons = document.querySelectorAll(".reply-button");
+
+        replyButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const replyForm = button.closest('.list-group-item').querySelector(".reply-form");
+                if (replyForm) {
+                    replyForm.classList.toggle("d-none"); // Yanıt formunu göster veya gizle
+                }
+            });
+        });
+    });
+</script>
 
 <!-- Styles -->
 <style>

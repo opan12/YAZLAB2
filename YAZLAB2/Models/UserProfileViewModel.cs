@@ -1,4 +1,6 @@
-﻿namespace YAZLAB2.Models
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace YAZLAB2.Models
 {
     public class UserProfileViewModel
     {
@@ -11,10 +13,13 @@
         public double Lat { get; set; }
         public double Lng { get; set; }
         public string Konum { get; set; }
-        public List<string> IlgiAlanlari { get; set; }
+        public List<int> IlgiAlanlari { get; set; } // Bu özellik ilgi alanlarını tutar
         public string Cinsiyet { get; set; }
         public string UserName { get; set; }
         public List<NearbyEventViewModel> NearbyEvents { get; set; } // Kullanıcının yakınındaki etkinlikler
+
+        // Kategoriler özelliği eklendi
+        public List<SelectListItem> Kategoriler { get; set; } // Kullanıcının ilgi alanı kategorileri
     }
 
     public class NearbyEventViewModel
@@ -23,4 +28,7 @@
         public string Location { get; set; }   // Etkinlik yeri
         public double Distance { get; set; }   // Mesafe
     }
+
+    // Kategori modelini burada tanımlayın
+   
 }

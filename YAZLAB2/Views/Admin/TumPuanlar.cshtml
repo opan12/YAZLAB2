@@ -1,0 +1,36 @@
+﻿@model List<YAZLAB2.Models.Puan>
+
+@{
+    ViewData["Title"] = "Tüm Kullanıcıların Puanları";
+}
+
+<h1>Tüm Kullanıcıların Puanları</h1>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Kullanıcı ID</th>
+                    <th>Puan</th>
+                    <th>Kazanılan Tarih</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var puan in Model)
+                {
+                    <tr>
+                        <td>@puan.KullaniciID</td>
+                        <td>@puan.PuanDegeri</td>
+                        <td>@puan.KazanilanTarih.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>Henüz hiçbir kullanıcı puan kazanmamış.</p>
+}

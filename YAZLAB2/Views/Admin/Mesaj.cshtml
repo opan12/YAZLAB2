@@ -1,0 +1,41 @@
+﻿<h2>Etkinlik Mesajları</h2>
+
+@if (ViewData["Mesajlar"] != null && ((List<YAZLAB2.Models.Mesaj>)ViewData["Mesajlar"]).Any())
+{
+    var mesajlar = (List<YAZLAB2.Models.Mesaj>)ViewData["Mesajlar"];
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Gönderen</th>
+                    <th>Mesaj</th>
+                    <th>Tarih</th>
+                    <th>Sil</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var mesaj in mesajlar)
+                {
+                    <tr>
+                        <td>@mesaj.GondericiID</td>
+                        <td>@mesaj.MesajMetni</td>
+                        <td>@mesaj.GonderimZamani.ToString("g")</td>
+                        <td>
+                            <!-- Mesaj Sil Formu -->
+                            <form asp-action="MesajSil" method="post" style="display:inline;">
+                                <input type="hidden" name="mesajId" value="@mesaj.MesajID" />
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Sil
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>Bu etkinlik için henüz mesaj yok.</p>
+}

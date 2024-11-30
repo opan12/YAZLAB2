@@ -38,7 +38,7 @@ namespace YAZLAB2.Controllers
 
         // Etkinliğe yeni mesaj ekleme
         [HttpPost]
-        public async Task<IActionResult> EtkinlikMesajEkle(int etkinlikId, string mesajMetni)
+        public async Task<IActionResult> EtkinlikMesajEkle(int etkinlikId, string mesajMetni, int? parentMesajId)
         {
             if (string.IsNullOrEmpty(mesajMetni))
             {
@@ -51,7 +51,8 @@ namespace YAZLAB2.Controllers
                 AliciID = null,  // Eğer mesaj bireysel değilse, alıcı bilgisi null olabilir
                 MesajMetni = mesajMetni,
                 GonderimZamani = DateTime.Now,
-                EtkinlikId = etkinlikId
+                EtkinlikId = etkinlikId,
+                ParentMesajId = parentMesajId // Eğer bir cevapsa, burada ayarlanır
             };
 
             _context.Mesajlar.Add(yeniMesaj);

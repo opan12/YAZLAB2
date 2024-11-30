@@ -12,6 +12,7 @@ using YAZLAB2.Services;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using Newtonsoft.Json.Linq;
 
 
 namespace Yazlab__2.Controllers
@@ -112,14 +113,51 @@ namespace Yazlab__2.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            var etkinlik = await _context.Etkinlikler.FindAsync(etkinlikId);
+            if (etkinlik == null)
+            {
+                TempData["Error"] = "Etkinlik bulunamadı.";
+                return RedirectToAction("Index"); // Geri dönmek için uygun bir sayfa
+            }
+
+            // Kullanıcının daha önce katıldığı etkinliklerin tarih ve saatlerini al
             var kullaniciEtkinlikleri = await _context.Katilimcis
                 .Where(k => k.KullanıcıId == user.Id)
-                .Select(k => k.EtkinlikID)
+                .Join(_context.Etkinlikler,
+                      katilimci => katilimci.EtkinlikID,
+                      etkinlik => etkinlik.EtkinlikId,
+                      (katilimci, etkinlik) => new
+                      {
+                          etkinlik.Tarih,
+                          etkinlik.Saat,
+                          etkinlik.Konum
+                      })
                 .ToListAsync();
 
-            if (kullaniciEtkinlikleri.Contains(etkinlikId))
+            // Seçilen etkinliğin tarih ve saat bilgilerini al
+            var etkinlikTarihi = etkinlik.Tarih;
+            var etkinlikSaati = etkinlik.Saat;
+
+            // Çakışma kontrolü
+            var cakismaVarMi = kullaniciEtkinlikleri.Any(k =>
+                k.Tarih == etkinlikTarihi &&
+                k.Saat == etkinlikSaati &&
+                k.Konum == etkinlik.Konum); // Aynı gün, saat ve konumda etkinlik varsa
+
+            if (cakismaVarMi)
             {
-                TempData["Error"] = "Bu etkinliğe zaten katıldınız.";
+                // Alternatif etkinlik öner
+                var alternatifEtkinlikler = await _context.Etkinlikler
+                    .Where(e => e.Tarih == etkinlikTarihi && e.Saat != etkinlikSaati && e.Konum == etkinlik.Konum && e.OnayDurumu == true)
+                    .ToListAsync();
+
+                if (alternatifEtkinlikler.Any())
+                {
+                    TempData["Warning"] = "Bu etkinliğe katılımınız çakışma yaratıyor. Aşağıdaki alternatif etkinlikleri değerlendirebilirsiniz.";
+                    return View("AlternatifEtkinlikler", alternatifEtkinlikler); // Alternatif etkinlikler için yeni bir görünüm döndür
+                }
+
+                TempData["Error"] = "Bu etkinliğe katıldığınız için başka bir etkinlikte çakışma yaşanıyor.";
                 return RedirectToAction("Details", new { id = etkinlikId });
             }
 
@@ -134,13 +172,6 @@ namespace Yazlab__2.Controllers
             await _context.SaveChangesAsync();
 
             // Belge oluşturma
-            var etkinlik = await _context.Etkinlikler.FindAsync(etkinlikId); // Etkinlik bilgilerini al
-            if (etkinlik == null)
-            {
-                TempData["Error"] = "Etkinlik bilgileri alınamadı.";
-                return RedirectToAction("Details", new { id = etkinlikId });
-            }
-
             using var pdfStream = GenerateParticipationDocument(user, etkinlik); // Belgeyi oluştur
 
             // Başarı mesajı
@@ -148,6 +179,7 @@ namespace Yazlab__2.Controllers
 
             return File(pdfStream.ToArray(), "application/pdf", "katilim_belgesi.pdf");
         }
+
 
         private MemoryStream GenerateParticipationDocument(User user, Etkinlik etkinlik)
         {
@@ -166,6 +198,34 @@ namespace Yazlab__2.Controllers
             document.Close();
 
             return stream;
+        }
+
+        [HttpGet]
+        private async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string location)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string accessToken = "pk.eyJ1Ijoic2VseWlsIiwiYSI6ImNsdjUyN2d1ZTBkY28yamxidXRxYm1tNnUifQ.Uqy4MfIj3drA__4mvRldfw"; // Mapbox Access Token
+                string url = $"https://api.mapbox.com/geocoding/v5/mapbox.places/{Uri.EscapeDataString(location)}.json?access_token={accessToken}";
+
+                HttpResponseMessage response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    var data = JObject.Parse(json);
+
+                    var coordinates = data["features"]?[0]?["geometry"]?["coordinates"];
+                    if (coordinates != null)
+                    {
+                        double longitude = (double)coordinates[0];
+                        double latitude = (double)coordinates[1];
+                        return (latitude, longitude);
+                    }
+                }
+
+                throw new Exception("Konum koordinatlara dönüştürülemedi.");
+            }
         }
 
         [HttpGet]
@@ -192,6 +252,24 @@ namespace Yazlab__2.Controllers
 
             yeniEtkinlik.UserId = user.Id;
             yeniEtkinlik.OnayDurumu = false;
+
+            // Fetch coordinates for the location provided
+            if (!string.IsNullOrWhiteSpace(yeniEtkinlik.Konum))
+            {
+                try
+                {
+                    var (latitude, longitude) = await GetCoordinatesAsync(yeniEtkinlik.Konum);
+                    yeniEtkinlik.Lat = latitude;
+                    yeniEtkinlik.Lng = longitude;
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Konum koordinatları alınırken hata oluştu: " + ex.Message);
+                    var kategoriler = await _context.Kategoris.ToListAsync();
+                    ViewData["Kategoriler"] = kategoriler;
+                    return View(yeniEtkinlik);
+                }
+            }
 
             var result = await _etkinlikService.CreateEtkinlik(yeniEtkinlik);
             if (!result)
@@ -223,6 +301,7 @@ namespace Yazlab__2.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Etkinlik updatedEvent)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -234,23 +313,38 @@ namespace Yazlab__2.Controllers
             var etkinlik = await _context.Etkinlikler
                 .FirstOrDefaultAsync(e => e.EtkinlikId == updatedEvent.EtkinlikId && e.UserId == user.Id);
 
-
             if (etkinlik == null)
             {
                 return NotFound();
             }
-
-       
 
             etkinlik.EtkinlikAdi = updatedEvent.EtkinlikAdi;
             etkinlik.Aciklama = updatedEvent.Aciklama;
             etkinlik.Tarih = updatedEvent.Tarih;
             etkinlik.Saat = updatedEvent.Saat;
             etkinlik.Konum = updatedEvent.Konum;
-            etkinlik.KategoriId = updatedEvent.KategoriId;  
+            etkinlik.KategoriId = updatedEvent.KategoriId;
             etkinlik.EtkinlikSuresi = updatedEvent.EtkinlikSuresi;
             etkinlik.EtkinlikResmi = updatedEvent.EtkinlikResmi;
 
+            // Konum koordinatlarını alma işlemi
+            if (!string.IsNullOrWhiteSpace(updatedEvent.Konum))
+            {
+                try
+                {
+                    var (latitude, longitude) = await GetCoordinatesAsync(updatedEvent.Konum);
+                    etkinlik.Lat = latitude;
+                    etkinlik.Lng = longitude;
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Konum koordinatları alınırken hata oluştu: " + ex.Message);
+                    ViewData["Kategoriler"] = await _context.Kategoris.ToListAsync();
+                    return View(updatedEvent);
+                }
+            }
+
+            // Etkinliği güncelleme işlemi
             try
             {
                 _context.Etkinlikler.Update(etkinlik);
@@ -259,9 +353,11 @@ namespace Yazlab__2.Controllers
             catch (DbUpdateException ex)
             {
                 ModelState.AddModelError("", "Veritabanı hatası: " + ex.Message);
+                ViewData["Kategoriler"] = await _context.Kategoris.ToListAsync();
                 return View(updatedEvent);
             }
 
+            // Başarılı güncelleme sonrası detay sayfasına yönlendirme
             return RedirectToAction("Details", new { id = etkinlik.EtkinlikId });
         }
 

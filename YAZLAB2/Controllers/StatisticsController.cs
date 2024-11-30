@@ -76,7 +76,7 @@ public class StatisticsController : Controller
 
             // Tablo oluştur
             var table = new Table(UnitValue.CreatePercentArray(new float[] { 1, 1, 1, 1 })).UseAllAvailableWidth();
-            table.AddHeaderCell("Kullanıcı Adı"); // Kullanıcı ID başlığı
+            table.AddHeaderCell("Kullanıcı Adı");
             table.AddHeaderCell("Oluşturulan Etkinlik Sayısı");
             table.AddHeaderCell("Kategori ID");
             table.AddHeaderCell("Katıldığı Etkinlik Sayısı");
@@ -84,10 +84,16 @@ public class StatisticsController : Controller
             // Rapor verilerini tabloya ekle
             foreach (var report in reports)
             {
-                table.AddCell(report.KullaniciAdı); // Kullanıcı ID yerine kullanıcı adı ekle
-                table.AddCell(report.OluşturulanEtkinlikSayisi.ToString());
-                table.AddCell(report.KategoriId.ToString() ?? "N/A"); // Kategori ID için null kontrolü
-                table.AddCell(report.KatıldığıEtkinlikSayisi.ToString());
+                // Null kontrolleri
+                string kullaniciAdi = report.KullaniciAdı ?? "Belirtilmedi";
+                string olusturulanEtkinlikSayisi = report.OluşturulanEtkinlikSayisi.ToString();
+                string kategoriId = report.KategoriId.ToString() ?? "N/A";
+                string katildigiEtkinlikSayisi = report.KatıldığıEtkinlikSayisi.ToString();
+
+                table.AddCell(kullaniciAdi);
+                table.AddCell(olusturulanEtkinlikSayisi);
+                table.AddCell(kategoriId);
+                table.AddCell(katildigiEtkinlikSayisi);
             }
 
             // Tabloyu belgeye ekle
