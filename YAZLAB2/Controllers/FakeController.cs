@@ -39,74 +39,7 @@ public class FakeController : Controller
 {
     // İstanbul
     ("Kadıköy", 40.9939, 29.1043),
-    ("Üsküdar", 41.0245, 29.0250),
-    ("Beşiktaş", 41.0438, 29.0027),
-    ("Beyoğlu", 41.0329, 28.9770),
-    ("Maltepe", 40.9834, 29.1143),
-    ("Esenyurt", 41.0382, 28.6093),
-    // Ankara
-    ("Çankaya", 39.9334, 32.8597),
-    ("Keçiören", 39.9932, 32.8636),
-    ("Mamak", 39.9985, 32.8306),
-    ("Sincan", 39.8220, 32.6593),
-    ("Etimesgut", 39.9358, 32.5845),
-    // İzmir
-    ("Konak", 38.4192, 27.1287),
-    ("Karşıyaka", 38.4423, 27.1188),
-    ("Bornova", 38.4197, 27.2153),
-    ("Buca", 38.4195, 27.1449),
-    ("Çiğli", 38.5095, 27.0225),
-    // Bursa
-    ("Osmangazi", 40.1826, 29.0662),
-    ("Nilüfer", 40.2103, 29.0574),
-    ("Gemlik", 40.4330, 29.0937),
-    ("İnegöl", 40.1013, 29.5087),
-    // Antalya
-    ("Muradpaşa", 36.8957, 30.6952),
-    ("Kepez", 36.9564, 30.6781),
-    ("Antalya", 36.8841, 30.7056),
-    ("Alanya", 36.5434, 31.9995),
-    // Adana
-    ("Seyhan", 37.0018, 35.3213),
-    ("Yüreğir", 37.0082, 35.2691),
-    ("Çukurova", 37.0224, 35.3244),
-    // Kayseri
-    ("Kocasinan", 38.7539, 35.4660),
-    ("Melikgazi", 38.7331, 35.4821),
-    ("Talas", 38.6910, 35.4507),
-    // Gaziantep
-    ("Şahinbey", 37.0670, 37.3764),
-    ("Oğuzeli", 37.0842, 37.2172),
-    ("Nizip", 37.1337, 37.0128),
-    // Samsun
-    ("İlkadım", 41.2865, 36.3355),
-    ("Atakum", 41.3255, 36.2964),
-    ("Canik", 41.3095, 36.2828),
-    // Trabzon
-    ("Ortahisar", 41.0027, 39.7166),
-    ("Akçaabat", 40.6063, 39.5404),
-    ("Sürmene", 40.8606, 39.6600),
-    // Diyarbakır
-    ("Sur", 37.9172, 40.2184),
-    ("Yenişehir", 37.9140, 40.2260),
-    ("Bağlar", 37.9087, 40.2311),
-    // Konya
-    ("Selçuklu", 37.8656, 32.4770),
-    ("Meram", 37.9170, 32.4851),
-    ("Karatay", 37.8706, 32.4840),
-    // Eskişehir
-    ("Tepebaşı", 39.7767, 30.5274),
-    ("Odunpazarı", 39.7692, 30.5176),
-    // Kocaeli
-    ("İzmit", 40.7402, 29.9402),
-    ("Başiskele", 40.7230, 29.8456),
-    ("Gölcük", 40.6826, 29.8743),
-    // Diğer İllere Ait İlçeler
-    ("Çanakkale Merkez", 40.1553, 26.4065),
-    ("Bodrum", 37.0337, 27.4292),
-    ("Marmaris", 36.8531, 28.2766),
-    ("Fethiye", 36.6206, 29.1249),
-    ("Kuşadası", 37.8625, 27.2671),
+    
     // ...
 };
 
@@ -114,74 +47,8 @@ public class FakeController : Controller
         var selectedDistricts = new List<string>
 {
      "Kadıköy",
-    "Üsküdar",
-    "Beşiktaş",
-    "Beyoğlu",
-    "Maltepe",
-    "Esenyurt",
-    // Ankara
-    "Çankaya",
-    "Keçiören",
-    "Mamak",
-    "Sincan",
-    "Etimesgut",
-    // İzmir
-    "Konak",
-    "Karşıyaka",
-    "Bornova",
-    "Buca",
-    "Çiğli",
-    // Bursa
-    "Osmangazi",
-    "Nilüfer",
-    "Gemlik",
-    "İnegöl",
-    // Antalya
-    "Muradpaşa",
-    "Kepez",
-    "Antalya",
-    "Alanya",
-    // Adana
-    "Seyhan",
-    "Yüreğir",
-    "Çukurova",
-    // Kayseri
-    "Kocasinan",
-    "Melikgazi",
-    "Talas",
-    // Gaziantep
-    "Şahinbey",
-    "Oğuzeli",
-    "Nizip",
-    // Samsun
-    "İlkadım",
-    "Atakum",
-    "Canik",
-    // Trabzon
-    "Ortahisar",
-    "Akçaabat",
-    "Sürmene",
-    // Diyarbakır
-    "Sur",
-    "Yenişehir",
-    "Bağlar",
-    // Konya
-    "Selçuklu",
-    "Meram",
-    "Karatay",
-    // Eskişehir
-    "Tepebaşı",
-    "Odunpazarı",
-    // Kocaeli
-    "İzmit",
-    "Başiskele",
-    "Gölcük",
-    // Diğer İllere Ait İlçeler
-    "Çanakkale Merkez",
-    "Bodrum",
-    "Marmaris",
-    "Fethiye",
-    "Kuşadası",
+
+
     // Diğer ilçeleri de buraya ekleyebilirsiniz
 };
 
@@ -244,29 +111,72 @@ public class FakeController : Controller
     }
 
 
-
-
-    private async Task CreateRandomInterestAreasForUser(User user)
+  
+    public async Task CreateRandomInterestAreasForUser(User user)
     {
-        var faker = new Faker("tr");
-        var ilgiAlanları = new List<IlgiAlanı>();
+        // Varsayılan kategoriler
+        var defaultCategories = new List<Kategori>
+    {
+        new Kategori { KategoriAdi = "Spor" },
+        new Kategori { KategoriAdi = "Sanat" },
+        new Kategori { KategoriAdi = "Teknoloji" },
+        new Kategori { KategoriAdi = "Müzik" },
+        new Kategori { KategoriAdi = "Eğitim" }
+    };
 
-        // Kategori ID'lerini rastgele seçmek için bir örnek (1-10 arasında)
-        for (int i = 0; i < 5; i++)
+        // Eksik kategorileri veritabanına ekle
+        foreach (var category in defaultCategories)
         {
-            var kategoriId = faker.Random.Int(1, 10); // Kategorilerinizin ID'leri 1-10 arasında olduğunu varsayıyoruz
-            ilgiAlanları.Add(new IlgiAlanı
+            if (!_context.Kategoris.Any(k => k.KategoriAdi == category.KategoriAdi))
+            {
+                _context.Kategoris.Add(category);
+            }
+        }
+        await _context.SaveChangesAsync();
+
+        // Tüm kategorileri veritabanından çek
+        var allCategories = await _context.Kategoris.ToListAsync();
+
+        // Kullanıcıya rastgele 3 ilgi alanı ata
+        var randomCategories = allCategories.OrderBy(c => Guid.NewGuid()).Take(3).ToList();
+
+        foreach (var category in randomCategories)
+        {
+            // İlgi alanını oluştur
+            var interest = new IlgiAlanı
             {
                 KullanıcıId = user.Id,
-                KategoriId = kategoriId
-            });
+                KategoriId = category.KategoriId
+            };
+
+            _context.IlgiAlanları.Add(interest);
         }
 
-        await _context.IlgiAlanları.AddRangeAsync(ilgiAlanları);
+        // Veritabanına kaydet
         await _context.SaveChangesAsync();
     }
 
-    private async Task CreateRandomEventsForUser(User user)
+
+    //private async Task CreateRandomInterestAreasForUser(User user)
+    //{
+    //    var allCategories = await _context.Kategoris.ToListAsync();
+    //    var randomCategories = allCategories.OrderBy(c => Guid.NewGuid()).Take(3).ToList();
+
+    //    foreach (var category in randomCategories)
+    //    {
+    //        var interest = new IlgiAlanı
+    //        {
+    //            KullanıcıId = user.Id,
+    //            KategoriId = category.KategoriId
+    //        };
+
+    //        _context.IlgiAlanları.Add(interest);
+    //    }
+
+    //    await _context.SaveChangesAsync();
+    //}
+
+    public async Task CreateRandomEventsForUser(User user)
     {
         var faker = new Faker("tr");
         var etkinlikler = new List<Etkinlik>();
@@ -312,30 +222,37 @@ public class FakeController : Controller
             var eventNamesForCategory = etkinlikAdlariDict.GetValueOrDefault(interestArea.KategoriId);
             if (eventNamesForCategory == null) continue; // Eğer kategori ID'sine uygun etkinlik adı yoksa devam et
 
-            for (int i = 0; i < 5; i++)
-            {
-                etkinlikler.Add(new Etkinlik
+           
+                for (int i = 0; i < 5; i++)
                 {
-                    EtkinlikAdi = faker.PickRandom(eventNamesForCategory), // Kategoriye özel etkinlik adı seç
-                    Aciklama = faker.PickRandom(etkinlikAciklamalari),
-                    Tarih = faker.Date.Future(30),
-                    EtkinlikSuresi = TimeSpan.FromHours(faker.Random.Int(1, 6)),
-                    Konum = user.Konum,
-                    Lat = user.Lat, // Kullanıcının lat değeri
-                    Lng = user.Lng, // Kullanıcının lng değeri
-                    KategoriId = interestArea.KategoriId, // İlgi alanından kategori ID'sini kullan
-                    OnayDurumu = true,
-                    EtkinlikResmi = faker.Image.PicsumUrl(),
-                    UserId = user.Id
-                });
-            }
-        }
+                    var yeniEtkinlik = new Etkinlik
+                    {
+                        EtkinlikAdi = faker.PickRandom(eventNamesForCategory), // Kategoriye özel etkinlik adı seç
+                        Aciklama = faker.PickRandom(etkinlikAciklamalari),
+                        Tarih = faker.Date.Future(30),
+                        EtkinlikSuresi = TimeSpan.FromHours(faker.Random.Int(1, 6)),
+                        Konum = user.Konum,
+                        Lat = user.Lat, // Kullanıcının lat değeri
+                        Lng = user.Lng, // Kullanıcının lng değeri
+                        KategoriId = interestArea.KategoriId, // İlgi alanından kategori ID'sini kullan
+                        OnayDurumu = true,
+                        EtkinlikResmi = faker.Image.PicsumUrl(),
+                        UserId = user.Id
+                    };
 
-        _context.Etkinlikler.AddRange(etkinlikler);
+                    etkinlikler.Add(yeniEtkinlik);
+
+                    // Her etkinlik için yorum oluştur
+                    await CreateRandomCommentsForEvent(yeniEtkinlik);
+                }
+            }
+
+            _context.Etkinlikler.AddRange(etkinlikler);
         await _context.SaveChangesAsync();
+
     }
 
-    private async Task AddParticipantForInterest(User user)
+    public async Task AddParticipantForInterest(User user)
     {
         var faker = new Faker("tr");
 
@@ -374,8 +291,10 @@ public class FakeController : Controller
 
         await _context.SaveChangesAsync();
     }
-    public List<Puan> GenerateFakePuan(List<User> users)
+    public async Task<List<Puan>> GenerateFakePuan()
     {
+        // Kullanıcıları veritabanından al
+        var users = await _context.Users.ToListAsync(); // Kullanıcıları veritabanından al
         var fakePuans = new List<Puan>();
 
         // Kullanıcı listesi üzerinden döngü
@@ -383,15 +302,63 @@ public class FakeController : Controller
         {
             fakePuans.Add(new Puan
             {
-                KullaniciID = user.Id, // Kullanıcı ID'sini al
-                PuanDegeri = 130,      // Her kullanıcıya 130 puan ata
-                KazanilanTarih = DateTime.Now // Şu anki tarihi ata
+                KullaniciID = user.Id,         // Kullanıcı ID'sini al
+                PuanDegeri = 130, // Rastgele bir puan ata
+                KazanilanTarih = DateTime.Now   // Şu anki tarihi ata
             });
         }
 
+        // Puanları veritabanına kaydetmek isterseniz:
+        await _context.Puanlar.AddRangeAsync(fakePuans);
+        await _context.SaveChangesAsync();
+
         return fakePuans;
     }
+    private readonly string[] _yorumMetinleri = new[]
+{
+    "Bu etkinlik gerçekten harikaydı! Herkese tavsiye ederim.",
+    "Etkinliğin organizasyonu çok iyiydi, tebrikler!",
+    "Katıldığım en güzel etkinliklerden biriydi.",
+    "Etkinlikte daha fazla aktivite olabilirdi.",
+    "Umarım bu etkinlik gelecek yıl da yapılır!",
+    "Bu etkinlikte tanıştığım insanlar harikaydı!",
+    "Ellerinize sağlık, çok eğlendik.",
+    "Fikirler çok güzeldi ama daha iyi bir planlama yapılabilirdi.",
+    "Güzel bir etkinlikti ama biraz daha ilgi çekici olabilirdi.",
+    "Her şey mükemmeldi, tekrar bekleriz!"
+};
+    [HttpPost("CreateRandomCommentsForEvent")]
+    public async Task<IActionResult> CreateRandomCommentsForEvent(Etkinlik etkinlik)
+    {
+    
+   
+        var faker = new Faker("tr");
+        var yorumlar = new List<Mesaj>();
+        var users = await _userManager.Users.ToListAsync(); // Tüm kullanıcıları al
 
+        for (int i = 0; i < 3; i++) // Her etkinlik için 3 yorum
+        {
+            if (users.Count > 0)
+            {
+                var randomUser = faker.PickRandom(users);
+                var yeniYorum = new Mesaj
+                {
+                    GondericiID = randomUser.Id,
+                    EtkinlikId = etkinlik.EtkinlikId,
+                    MesajMetni = faker.PickRandom(_yorumMetinleri), // Rastgele bir yorum metni seç
+                    GonderimZamani = DateTime.Now
+                };
+
+                yorumlar.Add(yeniYorum);
+            }
+        }
+
+        _context.Mesajlar.AddRange(yorumlar);
+        await _context.SaveChangesAsync();
+        return RedirectToAction("GenerateFakeData", "Fake"); // Yeniden aynı sayfaya yönlendir
+
+
+    }
     public async Task<IActionResult> GenerateFakeKatilimciData(int count = 10)
     {
         var faker = new Faker("tr");
