@@ -24,15 +24,17 @@ namespace Yazlab__2.Controllers
         private readonly UserManager<User> _userManager;
         private readonly EtkinlikService _etkinlikService;
         private readonly BildirimService _bildirimService;
+        private readonly PuanHesaplayiciService _puanHesaplayiciService;
 
 
-        public EtkinlikController(ApplicationDbContext context, UserManager<User> userManager, EtkinlikService etkinlikService, BildirimService bildirimService)
+
+        public EtkinlikController(ApplicationDbContext context, UserManager<User> userManager, EtkinlikService etkinlikService, BildirimService bildirimService, PuanHesaplayiciService puanHesaplayiciService)
         {
             _context = context;
             _userManager = userManager;
             _etkinlikService = etkinlikService;
             _bildirimService = bildirimService;
-
+                        _puanHesaplayiciService = puanHesaplayiciService;
         }
 
         public async Task<IActionResult> Index()
@@ -169,7 +171,10 @@ namespace Yazlab__2.Controllers
             };
 
             _context.Katilimcis.Add(katilimci);
-            await _context.SaveChangesAsync();
+
+            int toplamPuan = await _puanHesaplayiciService.HesaplaToplamPuan(user.Id);
+            await _puanHesaplayiciService.KaydetPuan(user.Id, toplamPuan); // Puanı kaydet
+
 
             // Belge oluşturma
             using var pdfStream = GenerateParticipationDocument(user, etkinlik); // Belgeyi oluştur
@@ -279,6 +284,9 @@ namespace Yazlab__2.Controllers
                 ModelState.AddModelError(string.Empty, "Etkinlik tarihi ve saati çakışıyor.");
                 return View(yeniEtkinlik);
             }
+
+            int olusturmaPuan = await _puanHesaplayiciService.HesaplaOlusturmaPuan(user.Id);
+            await _puanHesaplayiciService.KaydetPuan(user.Id, olusturmaPuan); // Puanı kaydet
             await _bildirimService.AddBildirimAsync(user.Id, yeniEtkinlik.EtkinlikId, "Oluşturuldu", isAdminNotification: true);
 
             return RedirectToAction(nameof(Index));
@@ -375,7 +383,8 @@ namespace Yazlab__2.Controllers
 
             _context.Etkinlikler.Remove(etkinlik);
             await _context.SaveChangesAsync();
-
+            int olusturmaPuan = await _puanHesaplayiciService.HesaplaOlusturmaPuan(user.Id);
+    await _puanHesaplayiciService.KaydetPuan(user.Id, -olusturmaPuan); 
             TempData["Success"] = "Etkinlik başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }

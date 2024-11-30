@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using YAZLAB2.Data;
+using iText.Commons.Actions.Contexts;
 
 namespace Yazlab__2.Service
 {
@@ -20,19 +21,26 @@ namespace Yazlab__2.Service
         }
 
         // Katılım Puanı Hesaplama
-        private async Task<int> HesaplaKatilimPuan(string userId)
+        public async Task<int> HesaplaKatilimPuan(string userId)
         {
             // Kullanıcının katıldığı etkinlikleri alıyoruz
             var katildigiEtkinlikler = await _context.Katilimcis
                 .Where(k => k.KullanıcıId == userId)
                 .ToListAsync();
 
+            // Eğer kullanıcı ilk kez katılıyorsa 20 puan verelim
+            if (katildigiEtkinlikler.Count == 1)
+            {
+                return 20; // İlk etkinliğe katılan kullanıcılara özel puan
+            }
+
             // Katıldıkları her etkinlik için 10 puan veriyoruz
             return katildigiEtkinlikler.Count * 10;
         }
 
+
         // Etkinlik Oluşturma Puanı Hesaplama
-        private async Task<int> HesaplaOlusturmaPuan(string userId)
+        public async Task<int> HesaplaOlusturmaPuan(string userId)
         {
             // Kullanıcının oluşturduğu etkinlikleri alıyoruz
             var olusturduguEtkinlikler = await _context.Etkinlikler
@@ -44,7 +52,7 @@ namespace Yazlab__2.Service
         }
 
         // Bonus Puan Hesaplama (Örneğin, etkinlik türüne veya başka kriterlere göre bonus verilebilir)
-        private async Task<int> HesaplaBonusPuan(string userId)
+        public async Task<int> HesaplaBonusPuan(string userId)
         {
             // Örnek: Kullanıcının etkinliklerinde belirli bir kategoriden bonus puan verelim
             var bonusPuan = await _context.Etkinlikler
@@ -64,6 +72,21 @@ namespace Yazlab__2.Service
 
             // Toplam puanı döndür
             return katilimPuan + olusturmaPuan + bonusPuan;
+        }
+
+
+        public async Task KaydetPuan(string userId, int puanDegeri) // public erişim düzeyi
+        {
+            var yeniPuan = new Puan
+            {
+                KullaniciID = userId,
+                PuanDegeri = puanDegeri,
+                KazanilanTarih = DateTime.Now // Puanın kazanıldığı tarihi şu an olarak ayarlıyoruz
+            };
+
+            // Puanı veritabanına ekliyoruz
+            await _context.Puanlar.AddAsync(yeniPuan);
+            await _context.SaveChangesAsync(); // Değişiklikleri kaydediyoruz
         }
     }
 }

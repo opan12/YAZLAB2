@@ -291,8 +291,25 @@ public class FakeController : Controller
 
         await _context.SaveChangesAsync();
     }
-    // Katılımcı verilerini oluşturma metodu
-    public async Task<IActionResult> GenerateFakeKatilimciData(int count = 10)
+    public List<Puan> GenerateFakePuan(List<User> users)
+    {
+        var fakePuans = new List<Puan>();
+
+        // Kullanıcı listesi üzerinden döngü
+        foreach (var user in users)
+        {
+            fakePuans.Add(new Puan
+            {
+                KullaniciID = user.Id, // Kullanıcı ID'sini al
+                PuanDegeri = 130,      // Her kullanıcıya 130 puan ata
+                KazanilanTarih = DateTime.Now // Şu anki tarihi ata
+            });
+        }
+
+        return fakePuans;
+    }
+
+public async Task<IActionResult> GenerateFakeKatilimciData(int count = 10)
     {
         var faker = new Faker("tr");
         var katilimcilar = new List<Katilimci>();
