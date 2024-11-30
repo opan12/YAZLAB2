@@ -17,7 +17,6 @@ public class UserController : Controller
     private readonly EtkinlikOnerisiServisi _etkinlikOnerisiServisi;
     private readonly EmailService _emailService;
 
-
     public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, EtkinlikOnerisiServisi etkinlikOnerisiServisi,EmailService emailService
 )
     {
@@ -28,6 +27,7 @@ public class UserController : Controller
         _emailService = emailService;
 
     }
+
     [HttpGet]
     [Authorize(Roles = "User")]
     public async Task<IActionResult> UpdateUser()
@@ -40,7 +40,6 @@ public class UserController : Controller
 
         var kategoriler = _context.Kategoris.ToList();
 
-        // Kullanılacak model
         var model = new UserProfileViewModel
         {
             Ad = user.Ad,
@@ -52,12 +51,12 @@ public class UserController : Controller
             Konum = user.Konum,
             Cinsiyet = user.Cinsiyet,
             UserName = user.UserName,
-            // Kategoriler ekleniyor
+            
             Kategoriler = kategoriler.Select(k => new SelectListItem
             {
                 Value = k.KategoriId.ToString(),
                 Text = k.KategoriAdi,
-                Selected = false // Kullanıcının mevcut ilgi alanlarıyla eşleştirilebilir
+                Selected = false 
             }).ToList()
         };
 
@@ -74,15 +73,12 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
-        // Tüm kategorileri al
         var kategoriler = await _context.Kategoris.ToListAsync();
 
-        // Kullanıcının mevcut ilgi alanlarını al
         var mevcutIlgiAlanlari = await _context.IlgiAlanları
             .Where(ia => ia.KullanıcıId == user.Id)
             .ToListAsync();
 
-        // Kullanıcının diğer bilgilerini güncelle
         user.Ad = model.Ad;
         user.Soyad = model.Soyad;
         user.Email = model.Email;
@@ -96,11 +92,8 @@ public class UserController : Controller
 
         if (result.Succeeded)
         {
-            // İlgi alanlarını güncelle
-            // Önce mevcut ilgi alanlarını temizle
             _context.IlgiAlanları.RemoveRange(mevcutIlgiAlanlari);
 
-            // Yeni ilgi alanlarını ekle
             if (model.IlgiAlanlari != null)
             {
                 foreach (var kategoriId in model.IlgiAlanlari)
@@ -124,7 +117,6 @@ public class UserController : Controller
             ModelState.AddModelError(string.Empty, error.Description);
         }
 
-        // Kategoriler ve seçili ilgi alanlarını yeniden yükle
         model.Kategoriler = kategoriler.Select(k => new SelectListItem
         {
             Value = k.KategoriId.ToString(),
@@ -134,7 +126,6 @@ public class UserController : Controller
 
         return View(model);
     }
-
 
     [HttpGet]
     public IActionResult Register()
@@ -157,6 +148,7 @@ public class UserController : Controller
 
         return View(model);
     }
+
     [HttpPost]
     public IActionResult SendEmail(string email, string code)
     {
@@ -175,14 +167,12 @@ public class UserController : Controller
     private string GenerateConfirmationCode()
     {
         var random = new Random();
-        return random.Next(100000, 999999).ToString(); // 6 haneli rastgele sayı
+        return random.Next(100000, 999999).ToString(); 
     }
+
     [HttpPost]
     public async Task<IActionResult> Register(UserRegisterModel model)
     {
-       
-
-        // Konumdan koordinat almak için Mapbox API'yi çağır
         var (latitude, longitude) = await GetCoordinatesAsync(model.Konum);
 
         var user = new User
@@ -230,7 +220,6 @@ public class UserController : Controller
         return View(model);
     }
 
-    // Mapbox API ile koordinatları almak için yardımcı metod
     private async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string location)
     {
         using (HttpClient client = new HttpClient())
@@ -257,7 +246,6 @@ public class UserController : Controller
             throw new Exception("Konum koordinatlara dönüştürülemedi.");
         }
     }
-
     public async Task<IActionResult> UserHubArea()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -315,6 +303,7 @@ public class UserController : Controller
         await _signInManager.SignOutAsync();
         return RedirectToAction("Login");
     }
+
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
@@ -324,13 +313,11 @@ public class UserController : Controller
             return RedirectToAction("Login");
         }
 
-        // Kullanıcının ilgi alanlarını al
         var ilgiAlanlari = await _context.IlgiAlanları
             .Where(ia => ia.KullanıcıId == user.Id)
-            .Select(ia => ia.KategoriId) // Sadece KategoriId'yi al
+            .Select(ia => ia.KategoriId) 
             .ToListAsync();
 
-        // Kategorileri al
         var kategoriler = await _context.Kategoris.ToListAsync();
 
         var kategoriList = kategoriler.Select(k => new SelectListItem
@@ -348,15 +335,14 @@ public class UserController : Controller
             Konum = user.Konum,
             DogumTarihi = user.DogumTarihi,
             Cinsiyet = user.Cinsiyet,
-            IlgiAlanlari = ilgiAlanlari, // KategoriId listesini kullan
-            Kategoriler = kategoriList, // Kullanıcının ilgi alanı kategorileri
+            IlgiAlanlari = ilgiAlanlari, 
+            Kategoriler = kategoriList, 
             Lat = user.Lat,
             Lng = user.Lng,
             ProfilFoto = user.ProfilFoto,
             UserName = user.UserName
         };
 
-        // Kullanıcının konumuna yakın etkinlikleri al
         var nearbyEvents = await GetNearbyEventsAsync(user.Lat, user.Lng);
         model.NearbyEvents = nearbyEvents;
 
@@ -364,30 +350,28 @@ public class UserController : Controller
     }
 
 
-
     public async Task<List<NearbyEventViewModel>> GetNearbyEventsAsync(double userLat, double userLng)
     {
         var nearbyEvents = new List<NearbyEventViewModel>();
 
-        // Etkinlikleri al
         var events = await _context.Etkinlikler.ToListAsync();
 
         foreach (var eventItem in events)
         {
-            double eventLat = eventItem.Lat; // Etkinlik koordinatları
+            double eventLat = eventItem.Lat; 
             double eventLng = eventItem.Lng;
 
-            // Mesafe hesaplama (Haversine Formula)
             double distance = CalculateDistance(userLat, userLng, eventLat, eventLng);
-
-            // 10 km içinde olan etkinlikleri al
+            
             if (distance <= 100)
             {
                 nearbyEvents.Add(new NearbyEventViewModel
                 {
-                    EventName = eventItem.EtkinlikAdi,  // Etkinlik adı
-                    Location = eventItem.Konum,         // Etkinlik yeri
-                    Distance = distance                  // Mesafe
+                    EventName = eventItem.EtkinlikAdi,  
+                    Location = eventItem.Konum,         
+                    Distance = distance,
+                    Lat = eventLat,
+                    Lng = eventLng                 
                 });
             }
         }
@@ -404,7 +388,7 @@ public class UserController : Controller
                 Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
                 Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
         var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-        var distance = R * c; // Mesafe (km cinsinden)
+        var distance = R * c; 
         return distance;
     }
 

@@ -13,22 +13,19 @@ namespace YAZLAB2.Models
         public double Lat { get; set; }
         public double Lng { get; set; }
         public string Konum { get; set; }
-        public List<int> IlgiAlanlari { get; set; } // Bu özellik ilgi alanlarını tutar
+        public List<int> IlgiAlanlari { get; set; } 
         public string Cinsiyet { get; set; }
         public string UserName { get; set; }
-        public List<NearbyEventViewModel> NearbyEvents { get; set; } // Kullanıcının yakınındaki etkinlikler
-
-        // Kategoriler özelliği eklendi
-        public List<SelectListItem> Kategoriler { get; set; } // Kullanıcının ilgi alanı kategorileri
+        public List<NearbyEventViewModel> NearbyEvents { get; set; }
+        public List<SelectListItem> Kategoriler { get; set; } 
     }
 
     public class NearbyEventViewModel
     {
-        public string EventName { get; set; }  // Etkinlik adı
-        public string Location { get; set; }   // Etkinlik yeri
-        public double Distance { get; set; }   // Mesafe
-    }
-
-    // Kategori modelini burada tanımlayın
-   
+        public string EventName { get; set; }  
+        public string Location { get; set; } 
+        public double Distance { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+    }  
 }
