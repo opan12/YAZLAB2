@@ -24,7 +24,10 @@
                 <td>@kategori.KategoriAdi</td>
                 <td>
                     <a href="@Url.Action("Edit", new { id = kategori.KategoriId })" class="btn btn-warning">Düzenle</a>
-                    <a href="@Url.Action("Delete", new { id = kategori.KategoriId })" class="btn btn-danger">Sil</a>
+                    <form asp-action="Delete" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@kategori.KategoriId" />
+                        <button type="submit" class="btn btn-danger">Sil</button>
+                    </form>
                 </td>
             </tr>
         }
