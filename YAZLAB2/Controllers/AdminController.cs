@@ -395,6 +395,11 @@ namespace YAZLAB2.Controllers
             TempData["Message"] = "Etkinlik onaylandı.";
             return RedirectToAction("TumEtkinlikler");
         }
+        public async Task<IActionResult> TumPuanlar()
+        {
+            var puanlar = await _context.Puanlar.ToListAsync();
+            return View(puanlar);
+        }
 
         // Etkinlik Reddet
         [HttpPost]
