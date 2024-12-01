@@ -3,17 +3,8 @@
 }
 
 <div class="container mt-5">
-    <!-- Geri Butonu -->
-    <div class="mb-4">
-        <a href="/Admin/AdminHubArea" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-left"></i> Geri Dön
-        </a>
-    </div>
-
-    <!-- Sayfa Başlığı -->
     <h2 class="text-center mb-4 text-primary">Yeni Mesaj Gönder</h2>
 
-    <!-- Mesaj Gönderme Formu -->
     <form id="mesajGonderForm" method="post" action="/Mesaj/MesajGonder" class="shadow-lg p-4 rounded bg-light">
         <div class="form-group mb-3">
             <label for="aliciUsername" class="form-label">Alıcı Kullanıcı Adı:</label>
@@ -29,7 +20,6 @@
     </form>
 </div>
 
-<!-- Stil -->
 <style>
     body {
         background-color: #f8f9fa;
@@ -81,13 +71,7 @@
         margin-right: 5px;
     }
 
-    /* Geri butonunun stilini özelleştir */
-    .btn-sm {
-        padding: 8px 15px;
-        font-size: 1rem;
-    }
 </style>
 
-<!-- Bootstrap JS ve jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
