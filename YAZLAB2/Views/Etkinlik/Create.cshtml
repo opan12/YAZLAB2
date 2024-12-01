@@ -50,7 +50,6 @@
     <a href="@Url.Action("Index")" class="btn btn-secondary">Geri</a>
 </form>
 
-<!-- Toast Notification -->
 <div class="toast" id="toast" data-autohide="true" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
     <div class="toast-header">
         <strong class="mr-auto">Bildirim</strong>
@@ -77,14 +76,12 @@
         var konum = document.getElementById("Konum").value;
         var kategoriId = document.getElementById("KategoriId").value;
 
-        // Boş alan kontrolü
         if (!etkinlikAdi || !aciklama || !tarih || !saat || !etkinlikSuresi || !konum || !kategoriId) {
             alert("Lütfen tüm alanları doldurun.");
-            return false; // Form gönderimini engelle
+            return false; 
         }
 
-        // Etkinlik başarıyla eklendiğinde toast göster
         $('#toast').toast('show');
-        return true; // Formun gönderilmesine izin ver
+        return true; 
     }
 </script>

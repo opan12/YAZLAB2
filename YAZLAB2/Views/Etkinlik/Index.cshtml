@@ -6,7 +6,7 @@
 
 <body style="background: linear-gradient(to right, #5a3f91, #007bff);">
     <div class="container mt-5" style="background: white; padding: 30px; border-radius: 10px;">
-        <!-- Geri Butonu -->
+        
         <div class="mb-4">
             <a href="@Url.Action("UserHubArea", "User", new { Username = User.Identity.Name })"
                class="btn btn-secondary shadow-sm">
@@ -14,7 +14,6 @@
             </a>
         </div>
 
-        <!-- Başlık ve Yeni Etkinlik Oluştur -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary">@ViewData["Title"]</h2>
             <a href="@Url.Action("Create")" class="btn btn-success shadow-sm">
@@ -59,7 +58,7 @@
                                            class="btn btn-warning btn-sm shadow-sm">
                                             <i class="bi bi-pencil-square"></i> Düzenle
                                         </a>
-                                        <!-- Silme Butonu - Modal'ı açacak buton -->
+                                      
                                         <button type="button" class="btn btn-danger btn-sm"
                                                 data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">
                                             <i class="bi bi-trash"></i> Sil
@@ -68,7 +67,6 @@
                                 </td>
                             </tr>
 
-                            <!-- Silme Modalı -->
                             <div class="modal fade" id="deleteModal-@etkinlik.EtkinlikId" tabindex="-1" aria-labelledby="deleteModalLabel-@etkinlik.EtkinlikId" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -81,7 +79,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                                            <!-- Silme formu -->
+                                            
                                             <form asp-action="Delete" method="post" style="display:inline;">
                                                 <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
                                                 <button type="submit" class="btn btn-danger">Evet, Sil</button>
@@ -96,7 +94,6 @@
             </table>
         </div>
 
-        <!-- Kartlar -->
         <div class="mt-5">
             <h3 class="text-primary">Katıldığım Etkinlikler</h3>
             <div class="row">
@@ -133,7 +130,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5 JavaScript ve Popper.js dosyalarını doğru şekilde yüklediğimizden emin olalım -->
     <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">

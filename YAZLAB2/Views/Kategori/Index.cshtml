@@ -5,24 +5,20 @@
 }
 
 <div class="container mt-5">
-    <!-- Geri Butonu -->
     <div class="mb-4">
         <a href="@Url.Action("AdminHubArea", "Admin")" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> Geri Dön
         </a>
     </div>
 
-    <!-- Sayfa Başlığı -->
     <h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
-    <!-- Yeni Kategori Ekle Butonu -->
     <div class="mb-4">
         <a href="@Url.Action("Create")" class="btn btn-primary btn-lg">
             <i class="fa fa-plus-circle"></i> Yeni Kategori Ekle
         </a>
     </div>
 
-    <!-- Kategoriler Tablosu -->
     <div class="table-responsive shadow-lg rounded-lg bg-white">
         <table class="table table-hover align-middle text-center">
             <thead class="table-dark">
@@ -37,12 +33,10 @@
                     <tr>
                         <td>@kategori.KategoriAdi</td>
                         <td>
-                            <!-- Düzenle Butonu -->
                             <a href="@Url.Action("Edit", new { id = kategori.KategoriId })" class="btn btn-warning btn-sm">
                                 <i class="fa fa-edit"></i> Düzenle
                             </a>
 
-                            <!-- Sil Butonu -->
                             <form asp-action="Delete" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@kategori.KategoriId" />
                                 <button type="submit" class="btn btn-danger btn-sm">
@@ -57,7 +51,6 @@
     </div>
 </div>
 
-<!-- Stil -->
 <style>
     body {
         background-color: #f8f9fa;
@@ -118,6 +111,5 @@
     }
 </style>
 
-<!-- Bootstrap JS ve jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>

@@ -13,13 +13,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(to right, #5a3f91, #007bff 100%);
+            color: white;
         }
 
         .page-title {
             margin: 20px 0;
             text-align: center;
-            color: #333;
+            color: white;
         }
 
         .back-button {
@@ -32,9 +33,20 @@
             color: #6c757d;
         }
 
-        .table thead th {
-            vertical-align: middle;
+        .table {
+            background-color: white; 
+            border-radius: 8px; 
         }
+
+            .table thead th {
+                margin-bottom: 0 !important;
+                background-color: #f8f9fa; 
+                color: #333; 
+            }
+
+            .table tbody tr {
+                background-color: white;
+            }
 
         .badge {
             font-size: 0.9rem;
@@ -43,13 +55,22 @@
         .modal-title {
             font-weight: bold;
         }
+
+        .table td, .table th {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1; 
+        }
     </style>
+
 </head>
 <body>
     <div class="container my-4">
         <h1 class="page-title">Tüm Etkinlikler</h1>
 
-        <!-- Back Button -->
         <a href="@Url.Action("AdminHubArea", "Admin")" class="btn btn-primary back-button">
             <i class="fas fa-arrow-left"></i> Geri
         </a>
@@ -81,7 +102,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
-                                        <!-- Onayla Butonu -->
+                                       
                                         <form asp-action="EtkinlikOnayla" method="post">
                                             <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
                                             <button type="submit" class="btn btn-sm btn-success">
@@ -89,7 +110,6 @@
                                             </button>
                                         </form>
 
-                                        <!-- Reddet Butonu -->
                                         <form asp-action="EtkinlikReddet" method="post">
                                             <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
                                             <button type="submit" class="btn btn-sm btn-danger">
@@ -97,22 +117,18 @@
                                             </button>
                                         </form>
 
-                                        <!-- Güncelle Butonu -->
                                         <a href="@Url.Action("EtkinlikDuzenle", new { id = etkinlik.EtkinlikId })" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i> Güncelle
                                         </a>
 
-                                        <!-- Detay Butonu -->
                                         <a href="@Url.Action("Detay", new { id = etkinlik.EtkinlikId })" class="btn btn-sm btn-info">
                                             <i class="fas fa-info-circle"></i> Detay
                                         </a>
 
-                                        <!-- Mesajlar Butonu -->
                                         <a href="@Url.Action("Mesaj", new { id = etkinlik.EtkinlikId })" class="btn btn-sm btn-secondary">
                                             <i class="fas fa-envelope"></i> Mesajlar
                                         </a>
 
-                                        <!-- Sil Butonu -->
                                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">
                                             <i class="fas fa-trash-alt"></i> Sil
                                         </button>
@@ -120,7 +136,6 @@
                                 </td>
                             </tr>
 
-                            <!-- Silme Modalı -->
                             <div class="modal fade" id="deleteModal-@etkinlik.EtkinlikId" tabindex="-1" aria-labelledby="deleteModalLabel-@etkinlik.EtkinlikId" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">

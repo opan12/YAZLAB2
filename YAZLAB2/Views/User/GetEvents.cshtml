@@ -22,7 +22,6 @@
 
 @section Scripts {
     <script>
-        // Function to handle joining an event
         async function joinEvent(etkinlikId) {
             const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
             if (!isLoggedIn) {
@@ -35,7 +34,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem("token")}` // Assuming the token is stored in localStorage
+                    'Authorization': `Bearer ${localStorage.getItem("token")}` 
                 }
             });
 

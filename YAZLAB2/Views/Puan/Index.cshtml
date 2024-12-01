@@ -3,7 +3,11 @@
 @{
     ViewData["Title"] = "Toplam Puan";
 }
-
+<header class="top-left-header">
+    <a href="@Url.Action("UserHubArea", "User", new { Username = Model.UserName })" class="button back-to-home-button">
+        <i class="bi bi-arrow-left"></i> Geri
+    </a>
+</header>
 <h1>Toplam Puan</h1>
 
 @if (TempData["Error"] != null)
@@ -14,7 +18,7 @@
 }
 
 <div class="puan-container">
-    <h3>Toplam Puan: @ViewBag.ToplamPuan</h3> <!-- ViewBag ile gönderilen toplam puanı gösteriyoruz -->
+    <h3>Toplam Puan: @ViewBag.ToplamPuan</h3> 
 </div>
 
 <style>
@@ -30,6 +34,19 @@
             margin-bottom: 10px;
         }
 
+    .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
     .alert {
         margin-bottom: 20px;
         padding: 10px;

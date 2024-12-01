@@ -17,10 +17,8 @@
 </div>
 
 <form asp-action="Delete" method="post">
-    <!-- Gizli alan: EtkinlikId -->
     <input type="hidden" name="id" value="@Model.EtkinlikId" />
 
-    <!-- Onay Butonları -->
     <button type="submit" class="btn btn-danger">Evet, Sil</button>
     <a href="@Url.Action("Index")" class="btn btn-secondary">İptal</a>
 </form>

@@ -5,12 +5,10 @@
     var etkinlikId = ViewData["EtkinlikId"];
 }
 
-<!-- Page Header -->
 <div class="page-header">
     <h2>@ViewData["Title"]</h2>
 </div>
 
-<!-- Message List -->
 @if (Model.Any())
 {
     <div class="message-list">
@@ -24,10 +22,8 @@
                     </div>
                     <div>@mesaj.MesajMetni</div>
 
-                    <!-- Cevapla Butonu -->
                     <button class="btn btn-link reply-button" style="padding: 0; margin-left: 10px;">Cevapla</button>
 
-                    <!-- Yanıt Formu, başlangıçta gizli -->
                     <div class="reply-form mt-2 d-none" style="width: 100%;">
                         <form asp-action="EtkinlikMesajEkle" method="post">
                             <input type="hidden" name="etkinlikId" value="@etkinlikId" />
@@ -48,7 +44,6 @@ else
     <div class="alert alert-info">Henüz mesaj bulunmamaktadır.</div>
 }
 
-<!-- New Message Form -->
 <div class="message-form mt-4">
     <h3>Yeni Mesaj Ekle</h3>
     <form asp-action="EtkinlikMesajEkle" method="post">
@@ -60,12 +55,10 @@ else
     </form>
 </div>
 
-<!-- Navigation Button -->
 <div class="mt-4">
     <a href="@Url.Action("Details", "Etkinlik", new { id = etkinlikId })" class="btn btn-secondary">Geri</a>
 </div>
 
-<!-- Scripts -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const replyButtons = document.querySelectorAll(".reply-button");
@@ -81,7 +74,6 @@ else
     });
 </script>
 
-<!-- Styles -->
 <style>
     .page-header {
         text-align: center;

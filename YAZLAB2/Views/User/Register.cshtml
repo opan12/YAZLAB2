@@ -12,12 +12,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body style="background-color: #f8f9fa;">
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px; background-color: #ffffff; border-radius: 12px;">
             <h3 class="text-center text-primary mb-4">@ViewData["Title"]</h3>
             <form method="post" enctype="multipart/form-data">
-                <!-- Kullanıcı Bilgileri -->
+                
                 <div class="row">
                     <div class="form-group col-md-6 mb-3">
                         <label for="UserName" class="form-label">Kullanıcı Adı</label>
@@ -29,7 +30,6 @@
                     </div>
                 </div>
 
-                <!-- Onay Kodu -->
                 <input type="hidden" id="Code" name="Code" value="@Model.Code">
                 <div class="mb-3">
                     <button type="button" id="sendEmailBtn" class="btn btn-outline-primary w-100 rounded-pill">Onay E-posta Gönder</button>
@@ -39,7 +39,6 @@
                     <input type="text" class="form-control rounded-pill" id="Viewcode" name="Viewcode" value="@Model.Viewcode" placeholder="Onay Kodunu Girin" />
                 </div>
 
-                <!-- Ad ve Soyad -->
                 <div class="row">
                     <div class="form-group col-md-6 mb-3">
                         <label for="Ad" class="form-label">Ad</label>
@@ -51,7 +50,6 @@
                     </div>
                 </div>
 
-                <!-- Telefon ve Konum -->
                 <div class="row">
                     <div class="form-group col-md-6 mb-3">
                         <label for="TelefonNumarasi" class="form-label">Telefon Numarası</label>
@@ -63,7 +61,6 @@
                     </div>
                 </div>
 
-                <!-- Doğum Tarihi ve Cinsiyet -->
                 <div class="row">
                     <div class="form-group col-md-6 mb-3">
                         <label for="DogumTarihi" class="form-label">Doğum Tarihi</label>
@@ -79,7 +76,6 @@
                     </div>
                 </div>
 
-                <!-- İlgi Alanları -->
                 <div class="form-group mb-3">
                     <label for="IlgiAlanlari" class="form-label">İlgi Alanları</label>
                     <div>
@@ -103,7 +99,6 @@
                     </div>
                 </div>
 
-                <!-- Profil Fotoğrafı ve Şifre -->
                 <div class="row">
                     <div class="form-group col-md-6 mb-3">
                         <label for="ProfilFoto" class="form-label">Profil Fotoğrafı</label>
@@ -115,7 +110,6 @@
                     </div>
                 </div>
 
-                <!-- Kayıt Ol Butonu -->
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" id="signupButton" class="btn btn-success rounded-pill" disabled>Kayıt Ol</button>
                     <a href="/User/Login" class="btn btn-outline-secondary rounded-pill">Zaten bir hesabınız var mı? Giriş Yap</a>

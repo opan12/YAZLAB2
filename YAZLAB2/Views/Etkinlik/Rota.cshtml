@@ -11,10 +11,10 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- FontAwesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> 
     <style>
         body {
-            background-color: #6f42c1; /* Mavi mor arka plan */
+            background: linear-gradient(to right, #5a3f91, #007bff 100%);
             color: white;
         }
 
@@ -40,12 +40,6 @@
             margin-top: 50px;
         }
 
-        .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 1; /* Butonun üstte görünmesini sağlar */
-        }
     </style>
 </head>
 <body>
@@ -61,15 +55,13 @@
     </div>
 
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1Ijoic2VseWlsIiwiYSI6ImNsdjUyN2d1ZTBkY28yamxidXRxYm1tNnUifQ.Uqy4MfIj3drA__4mvRldfw'; // Mapbox Token
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2VseWlsIiwiYSI6ImNsdjUyN2d1ZTBkY28yamxidXRxYm1tNnUifQ.Uqy4MfIj3drA__4mvRldfw'; 
 
-        // Backend'den gelen koordinat bilgilerini al
         const userLat = parseFloat(@Html.Raw(Json.Serialize(ViewData["UserLat"])));
         const userLng = parseFloat(@Html.Raw(Json.Serialize(ViewData["UserLng"])));
         const etkinlikLat = parseFloat(@Html.Raw(Json.Serialize(ViewData["EtkinlikLat"])));
         const etkinlikLng = parseFloat(@Html.Raw(Json.Serialize(ViewData["EtkinlikLng"])));
 
-        // Haritayı oluştur
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
@@ -77,39 +69,33 @@
             zoom: 6
         });
 
-        // Kullanıcı başlangıç noktası için marker ekle
         new mapboxgl.Marker({ color: 'blue' })
             .setLngLat([userLng, userLat])
-            .setPopup(new mapboxgl.Popup().setText("Başlangıç Noktası: Kullanıcı")) // Pop-up ekle
+            .setPopup(new mapboxgl.Popup().setText("Başlangıç Noktası: Kullanıcı")) 
             .addTo(map);
 
-        // Etkinlik başlangıç noktası için marker ekle
         new mapboxgl.Marker({ color: 'red' })
             .setLngLat([etkinlikLng, etkinlikLat])
-            .setPopup(new mapboxgl.Popup().setText("Hedef Noktası: Etkinlik")) // Pop-up ekle
+            .setPopup(new mapboxgl.Popup().setText("Hedef Noktası: Etkinlik")) 
             .addTo(map);
 
-        // Directions API URL'sini oluştur
         const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${userLng},${userLat};${etkinlikLng},${etkinlikLat}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
-        // Fetch ile rota bilgisini al
         fetch(directionsUrl)
             .then(response => response.json())
             .then(data => {
                 const route = data.routes[0].geometry;
-                const distance = (data.routes[0].distance / 1000).toFixed(2); // Metreyi km'ye çevir
-                const duration = data.routes[0].duration / 3600; // Saniyeyi saate çevir
-                const bikeTime = (distance / 15).toFixed(2); // Ortalama bisiklet hızı 15 km/s
-                const walkTime = (distance / 5).toFixed(2); // Ortalama yürüyüş hızı 5 km/s
+                const distance = (data.routes[0].distance / 1000).toFixed(2); 
+                const duration = data.routes[0].duration / 3600; 
+                const bikeTime = (distance / 15).toFixed(2); 
+                const walkTime = (distance / 5).toFixed(2); 
 
-                // Bilgileri HTML'de göster
                 document.getElementById("distance").innerText = distance;
                 document.getElementById("car-time").innerText = duration.toFixed(2);
                 document.getElementById("bike-time").innerText = bikeTime;
                 document.getElementById("walk-time").innerText = walkTime;
 
                 map.on('load', () => {
-                    // Rota için veri kaynağı ekle
                     map.addSource('route', {
                         type: 'geojson',
                         data: {
@@ -118,7 +104,6 @@
                         }
                     });
 
-                    // Rota için katman ekle
                     map.addLayer({
                         id: 'route',
                         type: 'line',

@@ -3,12 +3,10 @@
 }
 
 <div class="container mt-5">
-    <!-- Başlık -->
     <div class="text-center mb-4">
         <h1 class="text-primary fw-bold"><i class="fas fa-user-edit"></i> Kullanıcı Düzenle</h1>
     </div>
 
-    <!-- Form Kart -->
     <div class="card shadow-lg border-0">
         <div class="card-header bg-primary text-white text-center">
             <h5 class="mb-0">Kullanıcı Bilgilerini Güncelle</h5>
@@ -16,7 +14,6 @@
         <div class="card-body">
             <form method="post" asp-action="KullaniciDuzenle" asp-route-id="@Model.Id">
                 <div class="row">
-                    <!-- Ad ve Soyad -->
                     <div class="col-md-6 mb-3">
                         <label for="Ad" class="form-label">Ad</label>
                         <input type="text" id="Ad" name="Ad" value="@Model.Ad" class="form-control" required />
@@ -28,7 +25,6 @@
                 </div>
 
                 <div class="row">
-                    <!-- Email ve Kullanıcı Adı -->
                     <div class="col-md-6 mb-3">
                         <label for="Email" class="form-label">Email</label>
                         <input type="email" id="Email" name="Email" value="@Model.Email" class="form-control" required />
@@ -40,7 +36,6 @@
                 </div>
 
                 <div class="row">
-                    <!-- Telefon Numarası ve Konum -->
                     <div class="col-md-6 mb-3">
                         <label for="TelefonNumarasi" class="form-label">Telefon Numarası</label>
                         <input type="text" id="TelefonNumarasi" name="TelefonNumarasi" value="@Model.TelefonNumarasi" class="form-control" />
@@ -52,7 +47,6 @@
                 </div>
 
                 <div class="row">
-                    <!-- Doğum Tarihi ve Cinsiyet -->
                     <div class="col-md-6 mb-3">
                         <label for="DogumTarihi" class="form-label">Doğum Tarihi</label>
                         <input type="date" id="DogumTarihi" name="DogumTarihi" value="@Model.DogumTarihi?.ToString("yyyy-MM-dd")" class="form-control" />
@@ -67,13 +61,11 @@
                     </div>
                 </div>
 
-                <!-- Profil Fotoğrafı -->
                 <div class="mb-3">
                     <label for="ProfilFoto" class="form-label">Profil Fotoğrafı URL</label>
                     <input type="url" id="ProfilFoto" name="ProfilFoto" value="@Model.ProfilFoto" class="form-control" />
                 </div>
 
-                <!-- Butonlar -->
                 <div class="d-flex justify-content-end gap-2">
                     <button type="submit" class="btn btn-primary shadow-sm">
                         <i class="fas fa-save"></i> Güncelle
@@ -87,10 +79,9 @@
     </div>
 </div>
 
-<!-- Stil -->
 <style>
     body {
-        background-color: #f8f9fa;
+        background: linear-gradient(to right, #5a3f91, #007bff 100%);
         font-family: 'Poppins', sans-serif;
     }
 

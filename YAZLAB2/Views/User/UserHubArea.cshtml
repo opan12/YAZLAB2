@@ -7,50 +7,40 @@
     <h1 class="display-6 text-primary">Hoşgeldin, <strong>@User.Identity.Name!</strong></h1>
     <div class="btn-group">
 
-        <!-- Etkinliklerim -->
         <a href="/Etkinlik/Index" class="btn btn-outline-primary">
             <i class="bi bi-calendar-event"></i> Etkinliklerim
         </a>
 
-        <!-- Puanım -->
         <a href="/Puan/Index" class="btn btn-outline-info">
             <i class="bi bi-trophy"></i> Puanım
         </a>
 
-        <!-- Bildirimler -->
-        <a href="/Bildirim/KullaniciBildirimler" class="btn btn-danger">
+        <a href="/Bildirim/KullaniciBildirimler" class="btn btn-outline-warning">
             <i class="bi bi-bell"></i> Bildirimler
         </a>
-        <a href="/Mesaj/MesajGonder" class="btn btn-danger">Mesaj Gönder</a>
-        <a href="/Mesaj/Mesajlarim" class="btn btn-danger">Mesajlarım</a>
-        <a href="/Mesaj/GonderilenMesajlar" class="btn btn-danger">Gönderilen Mesajlar</a>
 
-        <!-- Dropdown Menüsü -->
-        <div class="dropdown">
-            <button class="btn btn-danger dropdown-toggle" type="button" id="mesajMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-envelope"></i> Mesaj
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="mesajMenuButton">
-                <li><a class="dropdown-item" href="/Mesaj/MesajGonder"><i class="btn btn-danger"></i> Mesaj Gönder</a></li>
-                <li><a class="dropdown-item" href="/Mesaj/Mesajlarim"><i class="btn btn-danger"></i> Mesajlarım</a></li>
-                <li><a class="dropdown-item" href="/Mesaj/GonderilenMesajlar"><i class="btn btn-danger"></i> Gönderilen Mesajlar</a></li>
-            </ul>
-        </div>
+        <a href="/Mesaj/MesajGonder" class="btn btn-outline-success">
+            <i class="bi bi-chat-dots"></i> Mesaj Gönder
+        </a>
 
-        <!-- Profilim -->
+        <a href="/Mesaj/Mesajlarim" class="btn btn-outline-warning">
+            <i class="bi bi-inbox"></i> Mesajlarım
+        </a>
+
+        <a href="/Mesaj/GonderilenMesajlar" class="btn btn-outline-info">
+            <i class="bi bi-send"></i> Gönderilen Mesajlar
+        </a>
+
         <a href="/User/Profile" class="btn btn-outline-secondary">
             <i class="bi bi-person-circle"></i> Profilim
         </a>
 
-        <!-- Çıkış Yap -->
         <a href="/User/Login" class="btn btn-outline-danger">
             <i class="bi bi-box-arrow-right"></i> Çıkış Yap
         </a>
     </div>
 </div>
 
-
-<!-- Recommended Events Section -->
 <div class="container mt-5">
     <h2 class="mb-4 text-center">Önerilen Etkinlikler</h2>
     <div class="row g-4">
@@ -58,20 +48,16 @@
         {
             <div class="col-lg-4">
                 <div class="card shadow-sm h-100">
-                    <!-- Event Image -->
                     @if (!string.IsNullOrEmpty(oneri.EtkinlikResmi))
                     {
                         <img src="@Url.Content(oneri.EtkinlikResmi)" class="card-img-top" alt="Etkinlik Resmi" style="height: 200px; object-fit: cover; border-radius: 0.25rem;">
                     }
                     <div class="card-body">
-                        <!-- Event Name -->
                         <h5 class="card-title text-primary">@oneri.EtkinlikAdi</h5>
-                        <!-- Event Date and Time -->
                         <p class="card-text">
                             <strong>Tarih:</strong> @oneri.Tarih.ToString("dd/MM/yyyy") <br>
                             <strong>Saat:</strong> @oneri.Saat
                         </p>
-                        <!-- Details Button -->
                         <a href="@Url.Action("Details", "Etkinlik", new { id = oneri.EtkinlikId })" class="btn btn-primary btn-sm w-100">
                             Detaylara Git
                         </a>
@@ -82,23 +68,16 @@
     </div>
 </div>
 
-<!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<!-- SignalR Script -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft.aspnet.signalr-core/3.1.21/signalr.min.js"></script>
+
 <script>
-    // SignalR bağlantısını oluştur
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/notificationHub")  // Hub URL'si
+        .withUrl("/notificationHub")
         .build();
 
-    // Bildirim alındığında çalışacak fonksiyon
     connection.on("ReceiveNotification", function (message) {
         const notifications = document.getElementById("notifications");
         const newNotification = document.createElement("div");
@@ -106,13 +85,11 @@
         newNotification.classList.add("alert", "alert-primary", "p-2", "mb-2");
         notifications.appendChild(newNotification);
 
-        // Bildirimi belirli bir süre sonra kaldır
         setTimeout(() => {
             notifications.removeChild(newNotification);
-        }, 5000); // 5 saniye sonra kaldır
+        }, 5000); 
     });
 
-    // Bağlantıyı başlat
     connection.start().catch(function (err) {
         return console.error(err.toString());
     });
@@ -120,7 +97,7 @@
 
 <style>
     body {
-        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        background: linear-gradient(to right, #5a3f91, #007bff 100%);
         color: white;
     }
 
@@ -138,15 +115,15 @@
     }
 
     .dropdown-menu {
-        display: none; /* Varsayılan olarak gizli */
+        display: none;
         position: absolute;
-        background-color: #fff; /* Açıldığında beyaz renk */
+        background-color: #fff; 
         border: 1px solid rgba(0, 0, 0, 0.15);
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
 
     .dropdown.show .dropdown-menu {
-        display: block; /* Dropdown açıldığında görünür */
+        display: block; 
     }
 
 </style>

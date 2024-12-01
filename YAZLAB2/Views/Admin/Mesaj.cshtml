@@ -25,7 +25,6 @@
                         <td>@mesaj.MesajMetni</td>
                         <td>@mesaj.GonderimZamani.ToString("g")</td>
                         <td>
-                            <!-- Mesaj Sil Formu -->
                             <form asp-action="MesajSil" method="post" style="display:inline;">
                                 <input type="hidden" name="mesajId" value="@mesaj.MesajID" />
                                 <button type="submit" class="btn btn-danger btn-sm">
