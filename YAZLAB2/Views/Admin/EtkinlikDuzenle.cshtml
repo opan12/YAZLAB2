@@ -3,99 +3,114 @@
     ViewData["Title"] = "Etkinlik Düzenle";
 }
 
-<h1 class="text-center mb-5">@ViewData["Title"]</h1>
+<h1>@ViewData["Title"]</h1>
 
 <!-- Etkinlik Düzenle Formu -->
-<div class="card shadow-lg p-4">
-    <form asp-action="EtkinlikDuzenle" method="post">
-        <input type="hidden" name="EtkinlikId" value="@Model.EtkinlikId" />
+<form asp-action="EtkinlikDuzenle" method="post">
+    <!-- Gizli input, EtkinlikId'yi göndermek için -->
+    <input type="hidden" name="EtkinlikId" value="@Model.EtkinlikId" />
 
-        <!-- Etkinlik Adı -->
-        <div class="mb-4">
-            <label for="EtkinlikAdi" class="form-label">Etkinlik Adı:</label>
-            <input type="text" class="form-control" id="EtkinlikAdi" name="EtkinlikAdi" value="@Model.EtkinlikAdi" required />
-            <span asp-validation-for="EtkinlikAdi" class="text-danger"></span>
-        </div>
+    <!-- Etkinlik Adı -->
+    <div class="form-group">
+        <label for="EtkinlikAdi">Etkinlik Adı:</label>
+        <input type="text" class="form-control" id="EtkinlikAdi" name="EtkinlikAdi" value="@Model.EtkinlikAdi" required />
+        <span asp-validation-for="EtkinlikAdi" class="text-danger"></span>
+    </div>
 
-        <!-- Açıklama -->
-        <div class="mb-4">
-            <label for="Aciklama" class="form-label">Açıklama:</label>
-            <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3">@Model.Aciklama</textarea>
-            <span asp-validation-for="Aciklama" class="text-danger"></span>
-        </div>
+    <!-- Açıklama -->
+    <div class="form-group">
+        <label for="Aciklama">Açıklama:</label>
+        <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3">@Model.Aciklama</textarea>
+        <span asp-validation-for="Aciklama" class="text-danger"></span>
+    </div>
 
-        <!-- Tarih -->
-        <div class="mb-4">
-            <label for="Tarih" class="form-label">Tarih:</label>
-            <input type="date" class="form-control" id="Tarih" name="Tarih" value="@Model.Tarih.ToString("yyyy-MM-dd")" required />
-            <span asp-validation-for="Tarih" class="text-danger"></span>
-        </div>
+    <!-- Tarih -->
+    <div class="form-group">
+        <label for="Tarih">Tarih:</label>
+        <input type="date" class="form-control" id="Tarih" name="Tarih" value="@Model.Tarih.ToString("yyyy-MM-dd")" required />
+        <span asp-validation-for="Tarih" class="text-danger"></span>
+    </div>
 
-        <!-- Saat -->
-        <div class="mb-4">
-            <label for="Saat" class="form-label">Saat:</label>
-            <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString("hh\\:mm")" required />
-        </div>
+    <!-- Saat -->
+    <div class="form-group">
+        <label for="Saat">Saat</label>
+        <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString("hh\\:mm")" required />
+    </div>
 
-        <!-- Etkinlik Süresi -->
-        <div class="mb-4">
-            <label for="EtkinlikSuresi" class="form-label">Etkinlik Süresi:</label>
-            <input type="time" class="form-control" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi.ToString("hh\\:mm")" required />
-        </div>
+    <!-- Etkinlik Süresi -->
+    <div class="form-group">
+        <label for="EtkinlikSuresi">Etkinlik Süresi</label>
+        <input type="time" class="form-control" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi.ToString("hh\\:mm")" required />
+    </div>
 
-        <!-- Konum -->
-        <div class="mb-4">
-            <label for="Konum" class="form-label">Konum:</label>
-            <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" required />
-            <span asp-validation-for="Konum" class="text-danger"></span>
-        </div>
 
-        <!-- Etkinlik Resmi -->
-        <div class="mb-4">
-            <label for="EtkinlikResmi" class="form-label">Etkinlik Resmi (URL):</label>
-            <input type="text" class="form-control" id="EtkinlikResmi" name="EtkinlikResmi" value="@Model.EtkinlikResmi" />
-            <span asp-validation-for="EtkinlikResmi" class="text-danger"></span>
-            @if (!string.IsNullOrEmpty(Model.EtkinlikResmi))
+    <!-- Konum -->
+    <div class="form-group">
+        <label for="Konum">Konum:</label>
+        <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" required />
+        <span asp-validation-for="Konum" class="text-danger"></span>
+    </div>
+
+
+    <!-- Etkinlik Resmi -->
+    <div class="form-group">
+        <label for="EtkinlikResmi">Etkinlik Resmi (URL):</label>
+        <input type="text" class="form-control" id="EtkinlikResmi" name="EtkinlikResmi" value="@Model.EtkinlikResmi" />
+        <span asp-validation-for="EtkinlikResmi" class="text-danger"></span>
+        @if (!string.IsNullOrEmpty(Model.EtkinlikResmi))
+        {
+            <div>
+                <img src="@Url.Content(Model.EtkinlikResmi)" alt="Etkinlik Resmi" style="max-width: 200px; margin-top: 10px;" />
+            </div>
+        }
+    </div>
+
+    <!-- Kullanıcı ID -->
+    <div class="form-group">
+        <label for="UserId">Kullanıcı ID</label>
+        <input type="text" class="form-control" id="UserId" name="UserId" value="@Model.UserId" required />
+    </div>
+
+
+    <div class="form-group">
+        <label>Kategoriler</label>
+        <div>
+            @if (ViewData["Kategoriler"] is List<YAZLAB2.Models.Kategori> kategoriler)
             {
-                <div class="mt-3">
-                    <img src="@Url.Content(Model.EtkinlikResmi)" alt="Etkinlik Resmi" class="img-fluid" style="max-width: 250px;" />
-                </div>
+                foreach (var kategori in kategoriler)
+                {
+                    <div class="form-check">
+                        <input type="checkbox"
+                               class="form-check-input kategori-checkbox"
+                               id="kategori_@kategori.KategoriId"
+                               name="KategoriId"
+                               value="@kategori.KategoriId"
+                        @(kategori.KategoriId == Model.KategoriId ? "checked" : "") />
+                        <label class="form-check-label" for="kategori_@kategori.KategoriId">
+                            @kategori.KategoriAdi
+                        </label>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Kategoriler bulunamadı.</p>
             }
         </div>
+    </div>
 
-        <!-- Kategoriler -->
-        <div class="mb-4">
-            <label class="form-label">Kategoriler</label>
-            <div>
-                @if (ViewData["Kategoriler"] is List<YAZLAB2.Models.Kategori> kategoriler)
-                {
-                    foreach (var kategori in kategoriler)
-                    {
-                        <div class="form-check">
-                            <input type="checkbox"
-                                   class="form-check-input"
-                                   id="kategori_@kategori.KategoriId"
-                                   name="KategoriId"
-                                   value="@kategori.KategoriId"
-                            @(kategori.KategoriId == Model.KategoriId ? "checked" : "") />
-                            <label class="form-check-label" for="kategori_@kategori.KategoriId">
-                                @kategori.KategoriAdi
-                            </label>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <p>Kategoriler bulunamadı.</p>
-                }
-            </div>
-        </div>
 
-        <!-- Buttons -->
-        <div class="d-flex justify-content-between">
-            <a href="javascript:history.back()" class="btn btn-outline-secondary">Geri</a>
-            <button type="submit" class="btn btn-primary">Kaydet</button>
-            <a href="@Url.Action("TumEtkinlikler")" class="btn btn-secondary">İptal</a>
-        </div>
-    </form>
-</div>
+    <!-- Submit Butonu -->
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a href="@Url.Action("TumEtkinlikler")" class="btn btn-secondary">İptal</a>
+    </div>
+</form>
+
+
+<!-- Validasyon script'leri -->
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
