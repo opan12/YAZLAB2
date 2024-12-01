@@ -199,13 +199,41 @@ namespace Yazlab__2.Controllers
             var pdf = new PdfDocument(writer);
             var document = new Document(pdf);
 
-            // Belge içeriğini ekleyin
-            document.Add(new Paragraph("Katılım Belgesi").SetFontSize(20));
-            document.Add(new Paragraph($"Kullanıcı Adı: {user.UserName}"));
-            document.Add(new Paragraph($"Etkinlik Adı: {etkinlik.EtkinlikAdi}"));
-            document.Add(new Paragraph($"Tarih: {etkinlik.Tarih.ToShortDateString()}"));
-            document.Add(new Paragraph($"Saat: {etkinlik.Saat}"));
+            // Başlık
+            var title = new Paragraph("Katılım Belgesi")
+                .SetFontSize(24)
+               
+                .SetMarginBottom(20);
 
+            // Kullanıcı bilgileri
+            var userInfo = new Paragraph($"Kullanıcı Adı: {user.UserName}")
+                .SetFontSize(12)
+                .SetMarginBottom(10);
+
+            // Etkinlik bilgileri
+            var etkinlikInfo = new Paragraph($"Etkinlik Adı: {etkinlik.EtkinlikAdi}")
+                .SetFontSize(12)
+                .SetMarginBottom(5);
+
+            var tarihInfo = new Paragraph($"Tarih: {etkinlik.Tarih.ToShortDateString()}")
+                .SetFontSize(12)
+                .SetMarginBottom(5);
+
+            var saatInfo = new Paragraph($"Saat: {etkinlik.Saat}")
+                .SetFontSize(12)
+                .SetMarginBottom(20);
+
+            // Boşluk ekleyerek düzenleme
+            document.Add(title);
+            document.Add(userInfo);
+            document.Add(etkinlikInfo);
+            document.Add(tarihInfo);
+            document.Add(saatInfo);
+
+            // İmza alanı (isteğe bağlı)
+           
+
+            // Belgeyi kapatma
             document.Close();
 
             return stream;
