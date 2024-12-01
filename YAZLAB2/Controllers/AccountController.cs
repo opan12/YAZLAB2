@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -52,7 +51,8 @@ public class AccountController : Controller
             // E-posta gönderme işlemi
             await _emailService.SendResetPasswordEmail(user.Email, callbackUrl);
             TempData["Message"] = "Şifre sıfırlama e-postası başarıyla gönderildi.";
-            TempData["MessageType"] = "success";      }
+            TempData["MessageType"] = "success";
+        }
         catch (Exception ex)
         {
             // E-posta gönderme hatası
@@ -78,15 +78,16 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return Json(new { success = false, message = "Geçersiz giriş." });
-        }
-
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
         if (user == null)
         {
             return Json(new { success = false, message = "Kullanıcı bulunamadı." });
+        }
+
+        // Şifre kontrolü
+        if (string.IsNullOrWhiteSpace(model.Şifre))
+        {
+            return Json(new { success = false, message = "Şifre alanı boş olamaz." });
         }
 
         user.PasswordHash = _passwordHasher.HashPassword(user, model.Şifre);
@@ -101,12 +102,13 @@ public class AccountController : Controller
         }
         catch (Exception ex)
         {
-            // Hata loglama
-            return Json(new { success = false, message = "Şifre güncellenirken bir hata oluştu." });
+            // Hata yönetimi
+            return Json(new { success = false, message = "Bir hata oluştu: " + ex.Message });
         }
-        return View(model);
 
+        return Json(new { success = true });
     }
+
 
     [HttpGet]
     public IActionResult ResetPasswordConfirmation()
