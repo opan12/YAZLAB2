@@ -1,4 +1,8 @@
-﻿<h2>Etkinlik Mesajları</h2>
+﻿<div class="form-group">
+    <a href="@Url.Action("TumEtkinlikler")" class="btn btn-secondary">Geri</a>
+</div>
+
+<h2>Etkinlik Mesajları</h2>
 
 @if (ViewData["Mesajlar"] != null && ((List<YAZLAB2.Models.Mesaj>)ViewData["Mesajlar"]).Any())
 {
@@ -35,6 +39,7 @@
         </table>
     </div>
 }
+
 else
 {
     <p>Bu etkinlik için henüz mesaj yok.</p>
