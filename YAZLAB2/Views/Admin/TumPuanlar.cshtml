@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Tüm Kullanıcıların Puanları";
 }
-
+<div class="form-group">
+    <a href="@Url.Action("AdminHubArea")" class="btn btn-secondary">Geri</a>
+</div>
 <h1>Tüm Kullanıcıların Puanları</h1>
 
 @if (Model.Any())
