@@ -5,6 +5,12 @@
 }
 
 <div class="container mt-4">
+    <div class="mb-4">
+        <a href="@Url.Action("UserHubArea", "User", new { Username = User.Identity.Name })"
+           class="btn btn-secondary shadow-sm">
+            <i class="bi bi-arrow-left"></i> Geri
+        </a>
+    </div>
     <h2 class="text-center text-primary mb-4">@ViewData["Title"]</h2>
 
     <div class="table-responsive">

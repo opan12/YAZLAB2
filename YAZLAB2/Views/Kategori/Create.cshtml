@@ -1,103 +1,12 @@
 ﻿@model YAZLAB2.Models.Kategori
-@{
-    ViewData["Title"] = "Kategori Ekle";
-}
 
-<div class="container mt-5">
-    <!-- Geri Butonu -->
-    <div class="mb-4">
-        <a href="/Kategori/Index" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-left"></i> Geri Dön
-        </a>
+<h3>Yeni Kategori Ekle</h3>
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="KategoriAdi">Kategori Adı</label>
+        <input type="text" class="form-control" id="KategoriAdi" name="KategoriAdi" placeholder="Kategori Adı" required>
     </div>
 
-    <!-- Sayfa Başlığı -->
-    <h1 class="text-center text-primary mb-4">Kategori Ekle</h1>
-
-    <!-- Kategori Ekleme Formu -->
-    <form asp-action="KategoriEkle" method="post" class="shadow-lg p-4 rounded bg-light">
-        <div class="form-group mb-3">
-            <label for="KategoriAdi" class="form-label">Kategori Adı:</label>
-            <input type="text" id="KategoriAdi" name="KategoriAdi" class="form-control" placeholder="Kategori adını girin" required />
-        </div>
-        <button type="submit" class="btn btn-primary w-100">
-            <i class="fa fa-plus-circle"></i> Ekle
-        </button>
-    </form>
-
-    <!-- Mesaj -->
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-success mt-4">
-            <strong>Başarılı!</strong> @TempData["Message"]
-        </div>
-    }
-</div>
-
-<!-- Stil -->
-<style>
-    body {
-        background-color: #f8f9fa;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .container {
-        max-width: 600px;
-    }
-
-    .form-control {
-        border-radius: 10px;
-        font-size: 1rem;
-    }
-
-    .form-label {
-        font-size: 1.1rem;
-        font-weight: 600;
-    }
-
-    .btn-primary {
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 50px;
-    }
-
-    .btn-secondary {
-        font-size: 1rem;
-        border-radius: 50px;
-    }
-
-    .shadow-lg {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .bg-light {
-        background-color: #fff;
-    }
-
-    .w-100 {
-        width: 100%;
-    }
-
-    textarea {
-        resize: none;
-    }
-
-    i {
-        margin-right: 5px;
-    }
-
-    /* Geri butonunun stilini özelleştir */
-    .btn-sm {
-        padding: 8px 15px;
-        font-size: 1rem;
-    }
-
-    .alert {
-        font-size: 1rem;
-        border-radius: 10px;
-    }
-</style>
-
-<!-- Bootstrap JS ve jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <button type="submit" class="btn btn-success">Kategori Ekle</button>
+    <a href="/Kategori/Index" class="btn btn-secondary">Geri</a>
+</form>

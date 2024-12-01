@@ -4,127 +4,137 @@
     ViewData["Title"] = "Etkinliklerim";
 }
 
-<div class="container mt-5">
-    <!-- Geri Butonu -->
-    <div class="mb-4">
-        <a href="@Url.Action("UserHubArea", "User", new { Username = User.Identity.Name })"
-           class="btn btn-secondary shadow-sm">
-            <i class="bi bi-arrow-left"></i> Geri
-        </a>
-    </div>
+<body style="background: linear-gradient(to right, #5a3f91, #007bff);">
+    <div class="container mt-5" style="background: white; padding: 30px; border-radius: 10px;">
+        <!-- Geri Butonu -->
+        <div class="mb-4">
+            <a href="@Url.Action("UserHubArea", "User", new { Username = User.Identity.Name })"
+               class="btn btn-secondary shadow-sm">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
 
-    <!-- Başlık ve Yeni Etkinlik Oluştur -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary">@ViewData["Title"]</h2>
-        <a href="@Url.Action("Create")" class="btn btn-success shadow-sm">Yeni Etkinlik Oluştur</a>
-    </div>
+        <!-- Başlık ve Yeni Etkinlik Oluştur -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary">@ViewData["Title"]</h2>
+            <a href="@Url.Action("Create")" class="btn btn-success shadow-sm">
+                <i class="bi bi-plus-circle"></i> Yeni Etkinlik Oluştur
+            </a>
+        </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover shadow-sm rounded">
-            <thead class="bg-primary text-white">
-                <tr>
-                    <th>Etkinlik Adı</th>
-                    <th>Açıklama</th>
-                    <th>Tarih</th>
-                    <th>Konum</th>
-                    <th class="text-center">İşlemler</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (!Model.Any())
-                {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover shadow-sm rounded">
+                <thead class="bg-primary text-white">
                     <tr>
-                        <td colspan="5" class="text-center text-muted">Henüz bir etkinlik eklenmemiş.</td>
+                        <th>Etkinlik Adı</th>
+                        <th>Açıklama</th>
+                        <th>Tarih</th>
+                        <th>Konum</th>
+                        <th class="text-center">İşlemler</th>
                     </tr>
-                }
-                else
-                {
-                    @foreach (var etkinlik in Model)
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
                     {
                         <tr>
-                            <td>@etkinlik.EtkinlikAdi</td>
-                            <td>@etkinlik.Aciklama</td>
-                            <td>@etkinlik.Tarih.ToString("dd/MM/yyyy")</td>
-                            <td>@etkinlik.Konum</td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a href="@Url.Action("Details", new { id = etkinlik.EtkinlikId })"
-                                       class="btn btn-info btn-sm text-white shadow-sm">Detaylar</a>
-                                    <a href="@Url.Action("Edit", new { id = etkinlik.EtkinlikId })"
-                                       class="btn btn-warning btn-sm shadow-sm">Düzenle</a>
-                                    <!-- Silme Butonu - Modal'ı açacak buton -->
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">
-                                        Sil
-                                    </button>
-                                </div>
-                            </td>
+                            <td colspan="5" class="text-center text-muted">Henüz bir etkinlik eklenmemiş.</td>
                         </tr>
+                    }
+                    else
+                    {
+                        @foreach (var etkinlik in Model)
+                        {
+                            <tr>
+                                <td>@etkinlik.EtkinlikAdi</td>
+                                <td>@etkinlik.Aciklama</td>
+                                <td>@etkinlik.Tarih.ToString("dd/MM/yyyy")</td>
+                                <td>@etkinlik.Konum</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Action("Details", new { id = etkinlik.EtkinlikId })"
+                                           class="btn btn-info btn-sm text-white shadow-sm">
+                                            <i class="bi bi-info-circle"></i> Detaylar
+                                        </a>
+                                        <a href="@Url.Action("Edit", new { id = etkinlik.EtkinlikId })"
+                                           class="btn btn-warning btn-sm shadow-sm">
+                                            <i class="bi bi-pencil-square"></i> Düzenle
+                                        </a>
+                                        <!-- Silme Butonu - Modal'ı açacak buton -->
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal-@etkinlik.EtkinlikId">
+                                            <i class="bi bi-trash"></i> Sil
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
 
-                        <!-- Silme Modalı -->
-                        <div class="modal fade" id="deleteModal-@etkinlik.EtkinlikId" tabindex="-1" aria-labelledby="deleteModalLabel-@etkinlik.EtkinlikId" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteModalLabel-@etkinlik.EtkinlikId">Etkinlik Sil</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <!-- Silme Modalı -->
+                            <div class="modal fade" id="deleteModal-@etkinlik.EtkinlikId" tabindex="-1" aria-labelledby="deleteModalLabel-@etkinlik.EtkinlikId" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel-@etkinlik.EtkinlikId">Etkinlik Sil</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>"<strong>@etkinlik.EtkinlikAdi</strong>" adlı etkinliği silmek istediğinizden emin misiniz?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                            <!-- Silme formu -->
+                                            <form asp-action="Delete" method="post" style="display:inline;">
+                                                <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
+                                                <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div class="modal-body">
-                                        <p>"<strong>@etkinlik.EtkinlikAdi</strong>" adlı etkinliği silmek istediğinizden emin misiniz?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                                        <!-- Silme formu -->
-                                        <form asp-action="Delete" method="post" style="display:inline;">
-                                            <input type="hidden" name="id" value="@etkinlik.EtkinlikId" />
-                                            <button type="submit" class="btn btn-danger">Evet, Sil</button>
-                                        </form>
-                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Kartlar -->
+        <div class="mt-5">
+            <h3 class="text-primary">Katıldığım Etkinlikler</h3>
+            <div class="row">
+                @if (ViewData["ParticipatedEvents"] is List<YAZLAB2.Models.Etkinlik> participatedEvents && participatedEvents.Any())
+                {
+                    @foreach (var etkinlik in participatedEvents)
+                    {
+                        <div class="col-md-4 col-lg-3 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <img src="@(string.IsNullOrEmpty(etkinlik.EtkinlikResmi) ? "/path/to/default/image.jpg" : etkinlik.EtkinlikResmi)"
+                                     class="card-img-top"
+                                     alt="Etkinlik Resmi">
+                                <div class="card-body">
+                                    <h5 class="card-title text-truncate">@etkinlik.EtkinlikAdi</h5>
+                                    <p class="card-text">
+                                        <strong>Tarih:</strong> @etkinlik.Tarih.ToString("dd/MM/yyyy")
+                                    </p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a href="@Url.Action("Details", new { id = etkinlik.EtkinlikId })"
+                                       class="btn btn-primary btn-sm">
+                                        <i class="bi bi-info-circle"></i> Detaylar
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     }
                 }
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Kartlar -->
-    <div class="mt-5">
-        <h3 class="text-primary">Katıldığım Etkinlikler</h3>
-        <div class="row">
-            @if (ViewData["ParticipatedEvents"] is List<YAZLAB2.Models.Etkinlik> participatedEvents && participatedEvents.Any())
-            {
-                @foreach (var etkinlik in participatedEvents)
+                else
                 {
-                    <div class="col-md-4 col-lg-3 mb-4">
-                        <div class="card shadow-sm h-100">
-                            <img src="@(string.IsNullOrEmpty(etkinlik.EtkinlikResmi) ? "/path/to/default/image.jpg" : etkinlik.EtkinlikResmi)"
-                                 class="card-img-top"
-                                 alt="Etkinlik Resmi">
-                            <div class="card-body">
-                                <h5 class="card-title text-truncate">@etkinlik.EtkinlikAdi</h5>
-                                <p class="card-text">
-                                    <strong>Tarih:</strong> @etkinlik.Tarih.ToString("dd/MM/yyyy")
-                                </p>
-                            </div>
-                            <div class="card-footer text-center">
-                                <a href="@Url.Action("Details", new { id = etkinlik.EtkinlikId })"
-                                   class="btn btn-primary btn-sm">Detaylar</a>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-12 text-center text-muted">Henüz katıldığınız bir etkinlik bulunmamaktadır.</div>
                 }
-            }
-            else
-            {
-                <div class="col-12 text-center text-muted">Henüz katıldığınız bir etkinlik bulunmamaktadır.</div>
-            }
+            </div>
         </div>
     </div>
 
-</div>
-
-<!-- Bootstrap 5 JavaScript ve Popper.js dosyalarını doğru şekilde yüklediğimizden emin olalım -->
-<script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap 5 JavaScript ve Popper.js dosyalarını doğru şekilde yüklediğimizden emin olalım -->
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</body>
