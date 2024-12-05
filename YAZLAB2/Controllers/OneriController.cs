@@ -79,41 +79,5 @@ namespace Yazlab__2.Controllers
             return siralanmisEtkinlikler;
         }
 
-        /*
-        public async Task<List<Etkinlik>> OneriGetir(string kullaniciId)
-        {
-            var tumKategoriler = await _context.IlgiAlanları
-                .Where(i => i.KullanıcıId == kullaniciId)
-                .Select(i => i.KategoriId)
-                .Union(
-                    _context.Katilimcis
-                    .Where(k => k.KullanıcıId == kullaniciId)
-                    .Join(
-                        _context.Etkinlikler,
-                        katilimci => katilimci.EtkinlikID,
-                        etkinlik => etkinlik.EtkinlikId,
-                        (katilimci, etkinlik) => etkinlik.KategoriId
-                    )
-                )
-                .Distinct()
-                .ToListAsync();
-
-            var katildigiEtkinlikIds = await _context.Katilimcis
-                .Where(k => k.KullanıcıId == kullaniciId)
-                .Select(k => k.EtkinlikID)
-                .ToListAsync();
-
-            var oneriEtkinlikler = await _context.Etkinlikler
-                .AsNoTracking()
-                .Where(e =>
-                    tumKategoriler.Contains(e.KategoriId) &&
-                    !katildigiEtkinlikIds.Contains(e.EtkinlikId) &&
-                    e.OnayDurumu == true)
-                .ToListAsync();
-
-            return oneriEtkinlikler;
-        }
-        */
-
     }
 }

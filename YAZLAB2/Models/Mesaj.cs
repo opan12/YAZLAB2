@@ -14,7 +14,7 @@
 
         public string MesajMetni { get; set; }
         public DateTime GonderimZamani { get; set; }
-        public int? ParentMesajId { get; set; } // New property for replies
+        public int? ParentMesajId { get; set; }
 
 
     }

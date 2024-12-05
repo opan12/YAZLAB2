@@ -13,21 +13,23 @@
     <button type="submit" class="btn btn-primary">Fake Veri Oluştur</button>
 </form>
 
-<form asp-action="AddCategories" method="post">
-    <button type="submit" class="btn btn-secondary">Kategorileri Ekle</button>
-</form>
-
-<form asp-action="AssignRandomEvents" method="post">
-    <button type="submit" class="btn btn-success">Rastgele Etkinlik Ata</button>
-</form>
 <form asp-action="GenerateFakePuan" method="post">
-    <button type="submit" class="btn btn-success">GenerateFakePuan Etkinlik Ata</button>
+    <button type="submit" class="btn btn-success">FakePuan Etkinlik Ata</button>
+</form>
+<form asp-action="CreateRandomCommentsForEvent" method="post">
+    <button type="submit" class="btn btn-success">yotum Etkinlik Ata</button>
 </form>
 
 
-<form asp-controller="Fake" asp-action="CreateRandomCommentsForEvent" method="post">
-    <button type="submit" class="btn btn-success">Yorumları Oluştur</button>
-</form>
+
 <form asp-controller="Fake" asp-action="GenerateFakeKatilimciData" method="post">
-    <button type="submit" class="btn btn-success">Yorumları Oluştur</button>
+    <button type="submit" class="btn btn-success">katılım Oluştur</button>
+</form>
+
+<form asp-action="CreateFakeNotifications" method="post">
+    <div class="form-group">
+        <label for="notificationCount">Bildirim Sayısı:</label>
+        <input type="number" name="count" id="notificationCount" class="form-control" value="10" min="1" />
+    </div>
+    <button type="submit" class="btn btn-warning">Fake Bildirim Oluştur</button>
 </form>

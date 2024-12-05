@@ -26,10 +26,9 @@ namespace YAZLAB2.Service
             return await _context.Etkinlikler
                 .GroupBy(e => e.KategoriId)
                 .Select(g => new { CategoryId = g.Key, Count = g.Count() })
-                .ToDictionaryAsync(g => g.CategoryId, g => g.Count); // Burada Key ve Count int olarak dönecek
+                .ToDictionaryAsync(g => g.CategoryId, g => g.Count);
         }
 
-        // Yaş dağılımını almak için bir metod
         public async Task<Dictionary<int, int>> GetUserCountByAgeGroup()
         {
             return await _context.Users
@@ -44,7 +43,7 @@ namespace YAZLAB2.Service
                 .Select(u => new
                 {
                     UserName = u.UserName,
-                    TotalPoints = _context.Puanlar.Where(p => p.KullaniciID == u.Id).Sum(p => p.PuanDegeri) // Assuming Puanlar contains a PuanDegeri property
+                    TotalPoints = _context.Puanlar.Where(p => p.KullaniciID == u.Id).Sum(p => p.PuanDegeri)
                 })
                 .ToDictionaryAsync(u => u.UserName, u => u.TotalPoints);
         }

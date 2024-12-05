@@ -8,7 +8,7 @@
         public int EtkinlikId { get; set; }
         public DateTime BildirimTarih { get; set; }
         public string Mesaj { get; set; }
-        public bool IsAdminNotification { get; set; } // Bu özelliği ekleyin
+        public bool IsAdminNotification { get; set; } 
 
     }
 

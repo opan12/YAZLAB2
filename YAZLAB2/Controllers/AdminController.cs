@@ -64,23 +64,6 @@ namespace YAZLAB2.Controllers
             return View("AdminHubArea"); // Doğru görünüm adı
         }
 
-        /*
-        // Kullanıcıları Listele
-        public async Task<IActionResult> TumKullanicilar()
-        {
-            //var users = await _userManager.Users.ToListAsync();
-            var users = await _userManager.Users
-                                  .Where(user => user.UserName != "admin")
-                                  .ToListAsync();
-            if (users == null || !users.Any())
-            {
-                ViewBag.Message = "Hiç kullanıcı bulunamadı.";
-                return View();
-            }
-            return View(users);
-        }
-        */
-
         public async Task<IActionResult> Mesaj(int id)
         {
             var etkinlik = await _context.Etkinlikler.FindAsync(id);
@@ -148,7 +131,7 @@ namespace YAZLAB2.Controllers
 
             var detayModel = new KullaniciEtkinlikViewModel
             {
-                User = user, // Burada User özelliğini kullanın
+                User = user,
                 KatildigiEtkinlikler = await _context.Etkinlikler
                     .Where(e => katilimciEtkinlikler.Contains(e.EtkinlikId))
                     .ToListAsync(),
@@ -158,8 +141,6 @@ namespace YAZLAB2.Controllers
             return View(detayModel);
         }
 
-
-        // Kullanıcı Düzenle
         [HttpGet]
         public async Task<IActionResult> KullaniciDuzenle(string id)
         {
@@ -203,7 +184,6 @@ namespace YAZLAB2.Controllers
         }
 
 
-        // Kullanıcı Sil
         [HttpPost]
         public async Task<IActionResult> KullaniciSil(string id)
         {
@@ -361,12 +341,7 @@ namespace YAZLAB2.Controllers
             return RedirectToAction("TumEtkinlikler");
         }
     
-
-
-
-
-    // Etkinlik Onayla
-    [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> EtkinlikOnayla(int id)
         {
             var etkinlik = await _context.Etkinlikler.FindAsync(id);
@@ -397,11 +372,23 @@ namespace YAZLAB2.Controllers
         }
         public async Task<IActionResult> TumPuanlar()
         {
-            var puanlar = await _context.Puanlar.ToListAsync();
-            return View(puanlar);
+            var puanlar = await _context.Puanlar
+               .Join(_context.Users, // Join işlemi
+                     puan => puan.KullaniciID, // Puanlar tablosundaki KullaniciID'yi User tablosundaki Id ile eşleştir
+                     user => user.Id,
+                     (puan, user) => new // Yeni bir anonim tip oluşturuyoruz
+                     {
+                         PuanId = puan.PuanId,
+                         KullaniciID = puan.KullaniciID,
+                         UserName = user.UserName, // Kullanıcı adı
+                         PuanDegeri = puan.PuanDegeri,
+                         KazanilanTarih = puan.KazanilanTarih
+                     })
+               .ToListAsync(); // Listeye dönüştür
+
+            return View(puanlar); // View'a gönder
         }
 
-        // Etkinlik Reddet
         [HttpPost]
         public async Task<IActionResult> EtkinlikReddet(int id)
         {

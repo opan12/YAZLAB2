@@ -16,6 +16,5 @@ namespace YAZLAB2.Models
         public double Lng { get; set; }
         public string Kategori { get; set; }
         public string KatilimDurumu { get; set; }
-       // public string EtkinlikResmi { get; set; }
     }
 }

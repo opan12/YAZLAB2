@@ -10,8 +10,8 @@
         public TimeSpan Saat { get; set; }
         public TimeSpan EtkinlikSuresi { get; set; }
         public string Konum { get; set; }
-        public string KategoriAdi { get; set; } // Kategori Adı
-        public string KullaniciAdi { get; set; } // Kullanıcı Adı
+        public string KategoriAdi { get; set; }
+        public string KullaniciAdi { get; set; }
         public string EtkinlikResmi { get; set; }
         public bool OnayDurumu { get; set; }
     }

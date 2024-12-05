@@ -10,24 +10,24 @@ namespace YAZLAB2.Service
         {
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
-                Port = 587, // TLS için doğru port
-                Credentials = new NetworkCredential("caglagok369@gmail.com", "efur dsku pahq ckwz"), // Gmail hesabınızın bilgileri
-                EnableSsl = true // SSL/TLS bağlantısı aktif
+                Port = 587,
+                Credentials = new NetworkCredential("caglagok369@gmail.com", "efur dsku pahq ckwz"), 
+                EnableSsl = true 
             };
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress("your-email@gmail.com"), // Gönderen e-posta adresi
+                From = new MailAddress("your-email@gmail.com"), 
                 Subject = "Şifre Sıfırlama Talebi",
                 Body = $"Şifrenizi sıfırlamak için linke tıklayın: {resetLink}",
-                IsBodyHtml = true // HTML içerik kullanıyorsanız true yapın
+                IsBodyHtml = true 
             };
 
-            mailMessage.To.Add(toEmail); // Alıcı e-posta adresi
+            mailMessage.To.Add(toEmail);
 
             try
             {
-                await smtpClient.SendMailAsync(mailMessage); // E-posta gönder
+                await smtpClient.SendMailAsync(mailMessage);
             }
             catch (Exception ex)
             {
@@ -40,29 +40,29 @@ namespace YAZLAB2.Service
         {
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
-                Port = 587, // TLS için doğru port
-                Credentials = new NetworkCredential("caglagok369@gmail.com", "efur dsku pahq ckwz"), // Gmail hesabınızın bilgileri
-                EnableSsl = true // SSL/TLS bağlantısı aktif
+                Port = 587, 
+                Credentials = new NetworkCredential("caglagok369@gmail.com", "efur dsku pahq ckwz"),
+                EnableSsl = true 
             };
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress("caglagok369@gmail.com"), // Gönderen e-posta adresi
+                From = new MailAddress("caglagok369@gmail.com"), 
                 Subject = "Hesap Onay Kodu",
                 Body = $"Hesabınızı onaylamak için aşağıdaki kodu kullanın: <strong>{confirmationCode}</strong>",
-                IsBodyHtml = true // HTML içerik kullanıyorsanız true yapın
+                IsBodyHtml = true 
             };
 
-            mailMessage.To.Add(toEmail); // Alıcı e-posta adresi
+            mailMessage.To.Add(toEmail); 
 
             try
             {
-                await smtpClient.SendMailAsync(mailMessage); // E-posta gönder
+                await smtpClient.SendMailAsync(mailMessage); 
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Hata: {ex.Message}");
-                throw; // Hata fırlatılabilir
+                throw; 
             }
         }
     }
