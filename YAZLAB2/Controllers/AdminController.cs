@@ -48,7 +48,7 @@ namespace YAZLAB2.Controllers
             };
 
 
-            IdentityResult result = await _userManager.CreateAsync(Appuser, "AWDj#BBGAq2q2C");
+            IdentityResult result = await _userManager.CreateAsync(Appuser, "");
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(Appuser, "Admin");
